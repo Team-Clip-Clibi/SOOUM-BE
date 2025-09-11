@@ -34,5 +34,5 @@ interface MemberDocs {
         - 프로필 이미지 업데이트 API
         - 사용자가 프로필 이미지를 변경할 수 있도록 합니다.
     """)
-    fun updateProfileImage(profileImg: String?, id: Long): ResponseEntity<Void>
+    fun updateProfileImage(name: String?, id: Long): ResponseEntity<Void>
 }

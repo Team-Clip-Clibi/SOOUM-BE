@@ -1,4 +1,4 @@
-package com.clip.batch
+package com.clip
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @EnableScheduling
 @EnableBatchProcessing
+@SpringBootApplication
 class BatchApplication
 
 fun main(args: Array<String>) {

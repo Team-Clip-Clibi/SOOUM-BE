@@ -11,6 +11,6 @@ public interface AppVersionRepository extends JpaRepository<AppVersion, Long> {
     @Query("select a from AppVersion a where a.deviceType = :deviceType")
     Optional<AppVersion> findByDeviceType(DeviceType deviceType);
 
-    @Query("select a.latestVersion from AppVersion a where a.deviceType = com.clip.data.member.entity.DeviceType.IOS")
+    @Query("select a.latestVersion from AppVersion a where a.deviceType = com.clip.data.version.entity.DeviceType.IOS")
     String findIosLatestVersion();
 }

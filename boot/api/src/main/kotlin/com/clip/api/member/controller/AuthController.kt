@@ -8,6 +8,7 @@ import com.clip.api.member.dto.SignUpResponse
 import com.clip.api.member.service.AuthUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -18,13 +19,13 @@ class AuthController(
 ): AuthDocs {
 
     @PostMapping("/login")
-    override fun login(loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
+    override fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
         val response = authUseCase.login(loginRequest)
         return ResponseEntity.ok(response)
     }
 
     @PostMapping("/sign-up")
-    override fun signUp(signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse> {
+    override fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse> {
         val response = authUseCase.signUp(signUpRequest)
         return ResponseEntity.ok(response)
     }

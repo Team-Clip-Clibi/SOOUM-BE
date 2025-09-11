@@ -13,7 +13,7 @@ import java.util.List;
 public class ProfileImgService {
     private final ProfileImgRepository profileImgRepository;
 
-    public void saveDefaultProfileImg(String imgName) {
+    public void saveProfileImg(String imgName) {
         profileImgRepository.save(new ProfileImg(imgName));
     }
 

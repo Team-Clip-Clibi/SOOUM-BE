@@ -42,5 +42,7 @@ exclude-auth-path-patterns:
       method: POST
     - pathPattern: /api/version/**
       method: GET
+    - pathPattern: /app/version/**
+      method: GET
     - path-pattern: /api/rsa/public-key
       method: GET

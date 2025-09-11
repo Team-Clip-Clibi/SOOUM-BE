@@ -7,6 +7,9 @@ import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
 import com.clip.global.util.BadWordFilter
+import com.clip.infra.rekognition.RekognitionService
+import com.clip.infra.s3.S3ImgPathProperties
+import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,7 +18,9 @@ class MemberUseCase(
     private val suspendedService: SuspendedService,
     private val memberService: MemberService,
     private val decodeWithRsa: DecodeWithRsa,
-    private val imgService: ImgService,
+    private val s3ImgService: S3ImgService,
+    private val s3ImgPathProperties: S3ImgPathProperties,
+    private val rekognitionService: RekognitionService,
     private val profileImgService: ProfileImgService,
 ) {
     companion object {
@@ -32,11 +37,12 @@ class MemberUseCase(
         val member = memberService.findMemberOp(deviceId)
         val suspended = suspendedService.findSuspensionByDeviceId(deviceId)
         val isBanned = suspended.map { it.isBanUser }.orElse(false)
+        val withdrawn = suspended.map { !it.isBanUser }.orElse(false) && member.isEmpty
         val isRegistered = member.isPresent
         return CheckAvailableResponse(
             rejoinAvailableAt = suspended.map { it.untilBan }.orElse(null),
             banned = isBanned,
-            withdrawn = !isBanned,
+            withdrawn = withdrawn,
             registered = isRegistered,
         )
     }
@@ -54,17 +60,17 @@ class MemberUseCase(
     }
 
     @Transactional
-    fun updateProfileImage(profileImg: String?, id: Long) {
+    fun updateProfileImage(name: String?, id: Long) {
         val member = memberService.findMember(id)
         // 프로필 이미지가 null이거나 빈 문자열이면 함수 종료
-        profileImg?.takeIf { it.isNotBlank() }?.let { imgName ->
+        name?.takeIf { it.isNotBlank() }?.let { imgName ->
             // 이미지 저장 여부 확인
-            if (!imgService.isProfileImgSaved(imgName)) {
-                throw EntityNotFoundException(ExceptionMessage.IMAGE_NOT_FOUND.message)
+            if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
+                throw NoSuchElementException("Image not found in S3")
             }
             // 이미지 검토 중인지 확인
-            if (imgService.isModeratingProfileImg(imgName)) {
-                throw EntityNotFoundException(ExceptionMessage.IMAGE_REJECTED_BY_MODERATION.message)
+            if (rekognitionService.isModeratingImg(s3ImgPathProperties.profileImg, imgName)) {
+                throw IllegalStateException("Image is under moderation")
             }
 
             // 프로필 이미지 업데이트 처리

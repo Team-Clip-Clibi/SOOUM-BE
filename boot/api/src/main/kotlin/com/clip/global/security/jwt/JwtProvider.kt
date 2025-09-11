@@ -28,19 +28,16 @@ class JwtProvider(
         const val ROLE_CLAIM = "role"
     }
 
-    fun createAccessToken(id: Long, role: Role): String {
+    fun createAccessToken(id: Long?, role: Role): String {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
         val expiration = now.plusDays(JwtProperties.ACCESS_TOKEN_EXPIRE_DAY)
-        val claims = mapOf(
-            ID_CLAIM to id,
-            ROLE_CLAIM to role
-        )
         return Jwts.builder()
             .setIssuedAt(Date.from(now.toInstant()))
             .setIssuer(ISSUER)
             .setExpiration(Date.from(expiration.toInstant()))
             .setSubject(ACCESS_SUBJECT)
-            .setClaims(claims)
+            .claim(ID_CLAIM, id)
+            .claim(ROLE_CLAIM, role)
             .signWith(
                 getSigningKey(),
                 SignatureAlgorithm.HS256
@@ -48,19 +45,16 @@ class JwtProvider(
             .compact()
     }
 
-    fun createRefreshToken(id: Long, role: Role): String {
+    fun createRefreshToken(id: Long?, role: Role): String {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
         val expiration = now.plusMonths(JwtProperties.REFRESH_TOKEN_EXPIRE_MONTH)
-        val claims = mapOf(
-            ID_CLAIM to id,
-            ROLE_CLAIM to role
-        )
         return Jwts.builder()
             .setIssuedAt(Date.from(now.toInstant()))
             .setIssuer(ISSUER)
             .setExpiration(Date.from(expiration.toInstant()))
             .setSubject(REFRESH_SUBJECT)
-            .setClaims(claims)
+            .claim(ID_CLAIM, id)
+            .claim(ROLE_CLAIM, role)
             .signWith(
                 getSigningKey(),
                 SignatureAlgorithm.HS256
@@ -86,18 +80,11 @@ class JwtProvider(
         val authorities = setOf(SimpleGrantedAuthority(role.field))
 
         return UsernamePasswordAuthenticationToken(
-            User(claims[ID_CLAIM, Long::class.java].toString(), "", authorities),
+            User(claims[ID_CLAIM].toString(), "", authorities),
             token,
             authorities
         )
     }
-
-    fun getId(token: String?): Long? {
-        return token?.let {
-            getClaims(it)[ID_CLAIM, Long::class.java]
-        }
-    }
-
     private fun getClaims(token: String): Claims =
         Jwts.parserBuilder()
             .setSigningKey(getSigningKey())
@@ -107,7 +94,7 @@ class JwtProvider(
 
     private fun getRole(token: String): Role? {
         val claims = getClaims(token)
-        return claims[ROLE_CLAIM, Role::class.java]
+        return Role.getRole(claims[ROLE_CLAIM]?.toString())
     }
 
     private fun getSigningKey(): Key =
