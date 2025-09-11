@@ -16,6 +16,6 @@ spring:
         credentials:
           accessKey: ${accessKey}
           secretKey: ${secretKey}
-        DEFAULT_CARD_IMG: card/default/
-        USER_CARD_IMG: card/user/
-        PROFILE_IMG: profile/
+        default-card-img: card/default/
+        user-card-img: card/user/
+        profile-img: profile/
