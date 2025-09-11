@@ -1,0 +1,48 @@
+spring:
+  profiles:
+    group:
+      local:
+        - data-local
+        - cloud-local
+
+  jackson:
+    time-zone: Asia/Seoul
+
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
+      repositories:
+        enabled: false
+
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+
+server:
+  shutdown: graceful
+
+jwt:
+  key: ${JWT_KEY}
+
+exclude-auth-path-patterns:
+  paths:
+    - path-pattern: /health-check
+      method: GET
+    - path-pattern: /swagger-ui/**
+      method: GET
+    - path-pattern: /swagger-resources/**
+      method: GET
+    - path-pattern: /v3/api-docs/**
+      method: GET
+    - pathPattern: /api/auth/sign-up
+      method: POST
+    - pathPattern: /api/auth/login
+      method: POST
+    - pathPattern: /api/members/check-available
+      method: POST
+    - pathPattern: /api/version/**
+      method: GET
+    - pathPattern: /app/version/**
+      method: GET
+    - path-pattern: /api/rsa/public-key
+      method: GET
