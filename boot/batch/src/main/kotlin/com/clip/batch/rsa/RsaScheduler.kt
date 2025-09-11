@@ -13,8 +13,7 @@ class RsaScheduler(
 ) {
     private val logger = KotlinLogging.logger {}
 
-//    @Scheduled(cron = "0 0 6 * * ?")
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 6 * * ?")
     fun schedule() {
         try {
             logger.info { "========RsaScheduler start========" }
