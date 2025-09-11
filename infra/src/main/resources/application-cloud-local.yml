@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    aws:
+      region: ap-northeast-2
+      stack.auto: false
+      rekognition:
+        credentials:
+          accessKey: ${accessKey}
+          secretKey: ${secretKey}
+      s3:
+        img:
+          bucket: sooum-test-img
+        fcm:
+          bucket: sooum-test-fcm
+          sdk: ${FCM_SDK}
+        credentials:
+          accessKey: ${accessKey}
+          secretKey: ${secretKey}
+        DEFAULT_CARD_IMG: card/default/
+        USER_CARD_IMG: card/user/
+        PROFILE_IMG: profile/

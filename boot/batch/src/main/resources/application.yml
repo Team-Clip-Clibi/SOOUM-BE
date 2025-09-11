@@ -1,0 +1,15 @@
+spring:
+  batch:
+    job:
+  profiles:
+    group:
+      local:
+        - data-local
+
+  jackson:
+    time-zone: Asia/Seoul
+
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
