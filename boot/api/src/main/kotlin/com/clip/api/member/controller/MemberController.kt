@@ -12,30 +12,30 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/members")
 class MemberController(
-    private val memberUserCase: MemberUseCase
+    private val memberUseCase: MemberUseCase
 ): MemberDocs {
 
     @PostMapping("/check-available")
     override fun checkAvailableSignUp(@RequestBody checkAvailableRequest: CheckAvailableRequest): ResponseEntity<CheckAvailableResponse> {
-        val response = memberUserCase.checkAvailableSignUp(checkAvailableRequest)
+        val response = memberUseCase.checkAvailableSignUp(checkAvailableRequest)
         return ResponseEntity.ok(response)
     }
 
     @PostMapping("/validate-nickname")
     override fun validateNickname(@RequestParam nickname: String): ResponseEntity<NicknameValidateResponse> {
-        val response = memberUserCase.validateNickname(nickname)
+        val response = memberUseCase.validateNickname(nickname)
         return ResponseEntity.ok(response)
     }
 
     @PatchMapping("/nickname")
     override fun updateNickname(@RequestParam nickname: String, @AccessUser id: Long): ResponseEntity<Void> {
-        memberUserCase.updateNickname(nickname, id)
+        memberUseCase.updateNickname(nickname, id)
         return ResponseEntity.noContent().build()
     }
 
     @PatchMapping("/profile-img")
-    override fun updateProfileImage(@RequestParam profileImg: String?, @AccessUser id: Long): ResponseEntity<Void> {
-        memberUserCase.updateProfileImage(profileImg, id)
+    override fun updateProfileImage(@RequestParam name: String?, @AccessUser id: Long): ResponseEntity<Void> {
+        memberUseCase.updateProfileImage(name, id)
         return ResponseEntity.noContent().build()
     }
 }
