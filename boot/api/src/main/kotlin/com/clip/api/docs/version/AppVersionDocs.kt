@@ -1,6 +1,6 @@
 package com.clip.api.docs.version
 
-import com.clip.api.version.dto.AppVersionStatus
+import com.clip.api.version.dto.AppVersionStatusResponse
 import com.clip.data.version.entity.DeviceType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -13,5 +13,5 @@ interface  AppVersionDocs {
         - 앱 버전 확인 API
         - 값은 PENDING,UPDATE,OK가 존재하며, UPDATE일 경우에만 강제 업데이트를 진행합니다.
     """)
-    fun checkVersion(type: DeviceType, version: String): ResponseEntity<AppVersionStatus>
+    fun checkVersion(type: DeviceType, version: String): ResponseEntity<AppVersionStatusResponse>
 }

@@ -1,6 +1,6 @@
 package com.clip.api.version.dto
 
-data class AppVersionStatus(
+data class AppVersionStatusResponse(
     val status: AppVersionStatusEnum
 )
 

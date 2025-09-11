@@ -15,5 +15,9 @@ public class AppVersionService {
         return appVersionRepository.findByDeviceType(deviceType).orElseThrow(() -> new IllegalArgumentException("AppVersion not found for device type: " + deviceType));
     }
 
+    public String getIOSLatestVersion() {
+        return appVersionRepository.findIosLatestVersion();
+    }
+
 
 }

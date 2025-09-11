@@ -2,6 +2,7 @@ package com.clip.api.version.service
 
 import com.clip.api.version.dto.AppVersionStatus
 import com.clip.api.version.dto.AppVersionStatusEnum
+import com.clip.api.version.dto.AppVersionStatusResponse
 import com.clip.data.version.entity.DeviceType
 import com.clip.data.version.service.AppVersionService
 import org.springframework.stereotype.Service
@@ -10,13 +11,13 @@ import org.springframework.stereotype.Service
 class AppVersionUseCase(
     private val appVersionService: AppVersionService,
 ) {
-    fun checkVersion(type: DeviceType, version: String): AppVersionStatus {
+    fun checkVersion(type: DeviceType, version: String): AppVersionStatusResponse {
         val appVersion = appVersionService.getAppVersionByDeviceType(type)
 
         return when {
-            isPendingVersion(appVersion.pendingVersion, appVersion.latestVersion, version) -> AppVersionStatus(AppVersionStatusEnum.PENDING)
-            isUpdateVersion(appVersion.minVersion, version) -> AppVersionStatus(AppVersionStatusEnum.UPDATE)
-            else -> AppVersionStatus(AppVersionStatusEnum.OK)
+            isPendingVersion(appVersion.pendingVersion, appVersion.latestVersion, version) -> AppVersionStatusResponse(AppVersionStatusEnum.PENDING)
+            isUpdateVersion(appVersion.minVersion, version) -> AppVersionStatusResponse(AppVersionStatusEnum.UPDATE)
+            else -> AppVersionStatusResponse(AppVersionStatusEnum.OK)
         }
     }
 
@@ -41,4 +42,24 @@ class AppVersionUseCase(
 
     private fun String.toVersionParts(): List<Int> =
         split(".").map { it.toInt() }
+
+
+    /*
+     *  iOS 레거시 버전 관리
+     */
+    fun findIosLatestVersion(): String {
+        return appVersionService.iosLatestVersion
+    }
+
+    fun findIosVersionStatus(version: String): AppVersionStatus {
+        val appVersion = appVersionService.getAppVersionByDeviceType(DeviceType.IOS)
+        return when {
+            isPendingVersion(appVersion.pendingVersion, appVersion.latestVersion, version) -> AppVersionStatus.PENDING
+            isUpdateVersion(appVersion.minVersion, version) -> AppVersionStatus.UPDATE
+            else -> AppVersionStatus.OK
+        }
+    }
+
+
+
 }
