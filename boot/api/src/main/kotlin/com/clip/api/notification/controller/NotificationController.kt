@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/notifications")
 class NotificationController(
     private val notificationUseCase: NotificationUseCase
 ) {
