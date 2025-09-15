@@ -13,6 +13,10 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    public RefreshToken save(RefreshToken refreshToken) {
+        return  refreshTokenRepository.save(refreshToken);
+    }
+
     public void save(String token, Member member) {
         refreshTokenRepository.save(new RefreshToken(token, member));
     }

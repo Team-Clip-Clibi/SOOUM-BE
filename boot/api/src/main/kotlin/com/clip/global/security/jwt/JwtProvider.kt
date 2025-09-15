@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import java.security.Key
+import java.time.LocalDateTime
 
 @Component
 class JwtProvider(
@@ -62,6 +63,12 @@ class JwtProvider(
             .compact()
     }
 
+    fun isTokenOwner(token: String, userId: Long): Boolean =
+        getClaims(token)
+            .get(ID_CLAIM,Long::class.java)
+            .equals(userId)
+
+
     fun validateToken(token: String): Boolean =
         runCatching {
             val claims = Jwts.parserBuilder()
@@ -100,4 +107,64 @@ class JwtProvider(
     private fun getSigningKey(): Key =
         Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
 
+    fun reissueToken(refreshToken: String, userId: Long): TokenDto =
+        refreshToken
+            .also { require(isRefreshToken(it)) { "Not Refresh Token" } }
+            .also { require(isTokenOwner(it, userId)) { "Token Owner Mismatch" } }
+            .also { require(validateToken(it)) { "Invalid Refresh Token" } }
+            .let {
+                val newAccessToken = reissueAccessToken(it, userId)
+                val newRefreshToken = rotationRefreshToken(it, userId)
+                TokenDto(
+                    accessToken = newAccessToken,
+                    refreshToken = newRefreshToken
+                )
+            }
+
+    private fun reissueAccessToken(refreshToken: String, userId: Long): String =
+        refreshToken
+            .let { getRole(it) ?: Role.USER }
+            .let { createAccessToken(userId, it) }
+
+    private fun rotationRefreshToken(refreshToken: String, userId: Long): String =
+        refreshToken
+            .let { refreshToken -> getRole(refreshToken) ?: Role.USER }
+            .let { role ->
+                Jwts.builder()
+                    .setIssuedAt(
+                        Date.from(
+                            ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toInstant()
+                        )
+                    )
+                    .setIssuer(ISSUER)
+                    .setExpiration(
+                        Date.from(
+                            getRefreshTokenExpiration(refreshToken)
+                                .atZone(ZoneId.of("Asia/Seoul"))
+                                .toInstant()
+                        )
+                    )
+                    .setSubject(REFRESH_SUBJECT)
+                    .claim(ID_CLAIM, userId)
+                    .claim(ROLE_CLAIM, role)
+                    .signWith(
+                        getSigningKey(),
+                        SignatureAlgorithm.HS256
+                    )
+                    .compact()
+            }
+
+    private fun getRefreshTokenExpiration(refreshToken: String): LocalDateTime =
+        getClaims(refreshToken).expiration.toInstant()
+            .atZone(ZoneId.of("Asia/Seoul"))
+            .toLocalDateTime()
+
+    private fun isRefreshToken(refreshToken: String): Boolean =
+        getClaims(refreshToken).subject.equals(REFRESH_SUBJECT)
 }
+
+
+data class TokenDto(
+    val accessToken: String,
+    val refreshToken: String
+)
