@@ -1,5 +1,6 @@
 package com.clip.api.notification.controller
 
+import com.clip.api.docs.notification.NotificationDocs
 import com.clip.api.notification.controller.dto.NotificationDto
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.global.security.annotation.AccessUser
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/notifications")
 class NotificationController(
     private val notificationUseCase: NotificationUseCase
-) {
+): NotificationDocs {
 
     @PatchMapping("/{id}/read")
-    fun updateNotificationAsRead(
+    override fun updateNotificationToRead(
         @PathVariable id: Long,
         @AccessUser userId: Long
     ): ResponseEntity<Void> =
@@ -22,71 +23,98 @@ class NotificationController(
 
 
     @GetMapping("/unread", "/unread/{lastId}")
-    fun findUnreadNotifications(
+    override fun findUnreadNotifications(
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ): ResponseEntity<List<NotificationDto.CommonNotificationInfo>> =
-        notificationUseCase.findUnreadNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
-
-
-    @GetMapping("/unread/card", "/unread/card/{lastId}")
-    fun findUnreadCardNotifications(
-        @PathVariable(required = false) lastId: Long?,
-        @AccessUser userId: Long
-    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> =
-        notificationUseCase.findUnreadCardNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
-
-
-    @GetMapping("/unread/follow", "/unread/follow/{lastId}")
-    fun findUnreadFollowNotifications(
-        @PathVariable(required = false) lastId: Long?,
-        @AccessUser userId: Long
-    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> =
-        notificationUseCase.findUnreadFollowNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
-
-
-    @GetMapping("/unread/notice", "/unread/notice/{lastId}")
-    fun findUnreadNoticeNotifications(
-        @PathVariable(required = false) lastId: Long?,
-        @AccessUser userId: Long
-    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> =
-        notificationUseCase.findUnreadNoticeNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
+    ): ResponseEntity<List<NotificationDto.CommonNotificationInfo>> {
+        val findUnreadNotifications = notificationUseCase.findUnreadNotifications(lastId, userId)
+        if (findUnreadNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findUnreadNotifications)
+    }
 
     @GetMapping("/read", "/read/{lastId}")
-    fun findReadNotifications(
+    override fun findReadNotifications(
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ): ResponseEntity<List<NotificationDto.CommonNotificationInfo>> =
-        notificationUseCase.findReadNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
+    ): ResponseEntity<List<NotificationDto.CommonNotificationInfo>> {
+        val findReadNotifications = notificationUseCase.findReadNotifications(lastId, userId)
+        if (findReadNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findReadNotifications)
+    }
 
+    @GetMapping("/unread/card", "/unread/card/{lastId}")
+    override fun findUnreadCardNotifications(
+        @PathVariable(required = false) lastId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> {
+        val findUnreadCardNotifications = notificationUseCase.findUnreadCardNotifications(lastId, userId)
+        if (findUnreadCardNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findUnreadCardNotifications)
+    }
 
     @GetMapping("/read/card", "/read/card/{lastId}")
-    fun findReadCardNotifications(
+    override fun findReadCardNotifications(
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> =
-        notificationUseCase.findReadCardNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
+    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> {
+        val findReadCardNotifications = notificationUseCase.findReadCardNotifications(lastId, userId)
+        if (findReadCardNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findReadCardNotifications)
+    }
+
+    @GetMapping("/unread/follow", "/unread/follow/{lastId}")
+    override fun findUnreadFollowNotifications(
+        @PathVariable(required = false) lastId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> {
+        val findUnreadFollowNotifications = notificationUseCase.findUnreadFollowNotifications(lastId, userId)
+        if (findUnreadFollowNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findUnreadFollowNotifications)
+    }
 
     @GetMapping("/read/follow", "/read/follow/{lastId}")
-    fun findReadFollowNotifications(
+    override fun findReadFollowNotifications(
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ) : ResponseEntity<List<NotificationDto.NotificationInfoResponse>> =
-        notificationUseCase.findReadFollowNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
+    ) : ResponseEntity<List<NotificationDto.NotificationInfoResponse>> {
+        val findReadFollowNotifications = notificationUseCase.findReadFollowNotifications(lastId, userId)
+        if (findReadFollowNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findReadFollowNotifications)
+    }
+
+    @GetMapping("/unread/notice", "/unread/notice/{lastId}")
+    override fun findUnreadNoticeNotifications(
+        @PathVariable(required = false) lastId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<List<NotificationDto.NotificationInfoResponse>> {
+        val findUnreadNoticeNotifications = notificationUseCase.findUnreadNoticeNotifications(lastId, userId)
+        if (findUnreadNoticeNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findUnreadNoticeNotifications)
+    }
 
     @GetMapping("/read/notice", "/read/notice/{lastId}")
-    fun findReadNoticeNotifications(
+    override fun findReadNoticeNotifications(
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ) : ResponseEntity<List<NotificationDto.NotificationInfoResponse>> =
-        notificationUseCase.findReadNoticeNotifications(lastId, userId)
-            .let { ResponseEntity.ok(it) }
-
+    ) : ResponseEntity<List<NotificationDto.NotificationInfoResponse>> {
+        val findReadNoticeNotifications = notificationUseCase.findReadNoticeNotifications(lastId, userId)
+        if (findReadNoticeNotifications.isEmpty()) {
+            return ResponseEntity.noContent().build()
+        }
+        return ResponseEntity.ok().body(findReadNoticeNotifications)
+    }
 }
