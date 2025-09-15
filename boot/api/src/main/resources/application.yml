@@ -4,6 +4,9 @@ spring:
       local:
         - data-local
         - cloud-local
+      dev:
+        - data-dev
+        - cloud-dev
 
   jackson:
     time-zone: Asia/Seoul
