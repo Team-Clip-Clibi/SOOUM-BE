@@ -5,7 +5,9 @@ import com.clip.api.member.dto.LoginRequest
 import com.clip.api.member.dto.LoginResponse
 import com.clip.api.member.dto.SignUpRequest
 import com.clip.api.member.dto.SignUpResponse
+import com.clip.api.member.dto.TokenDto
 import com.clip.api.member.service.AuthUseCase
+import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -30,5 +32,11 @@ class AuthController(
         return ResponseEntity.ok(response)
     }
 
-
+    @PostMapping("/token/reissue")
+    override fun getReissueAccessToken(
+        @RequestBody tokenDto: TokenDto,
+        @AccessUser userId: Long)
+    : ResponseEntity<TokenDto> =
+        authUseCase.reissueAccessToken(tokenDto, userId)
+            .let { ResponseEntity.ok(it) }
 }

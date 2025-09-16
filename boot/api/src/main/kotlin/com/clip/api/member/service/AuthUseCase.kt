@@ -4,6 +4,7 @@ import com.clip.api.member.dto.LoginRequest
 import com.clip.api.member.dto.LoginResponse
 import com.clip.api.member.dto.SignUpRequest
 import com.clip.api.member.dto.SignUpResponse
+import com.clip.api.member.dto.TokenDto
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.PolicyTerm
 import com.clip.data.member.service.MemberService
@@ -80,6 +81,18 @@ class AuthUseCase(
             accessToken = accessToken,
             refreshToken = refreshToken,
             nickname = member.nickname,
+        )
+    }
+
+    fun reissueAccessToken(request: TokenDto, userId: Long): TokenDto {
+        val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)
+        val refreshToken = refreshTokenService.findByMember(userId)
+        refreshToken.update(reissueToken.refreshToken)
+        refreshTokenService.save(refreshToken)
+
+        return TokenDto(
+            accessToken = reissueToken.accessToken,
+            refreshToken = reissueToken.refreshToken
         )
     }
 

@@ -4,6 +4,7 @@ import com.clip.api.member.dto.LoginRequest
 import com.clip.api.member.dto.LoginResponse
 import com.clip.api.member.dto.SignUpRequest
 import com.clip.api.member.dto.SignUpResponse
+import com.clip.api.member.dto.TokenDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -24,4 +25,11 @@ interface AuthDocs {
         - 회원가입 시 deviceId는 RSA로 암호화되어 전송됩니다.
     """)
     fun signUp(signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse>
+
+    @Operation(summary = "Access token 재발행 API", description = """
+        - Access Token reissue API. Refresh Token을 사용해 새로운 Access Token을 발행합니다.
+        - Refresh Token도 사용되었기 때문에 동일한 기간만큼만 유요한 새로운 Refresh Token도 함께 발행됩니다.
+        - 기존의 Refresh Token은 폐기됩니다.
+    """)
+    fun getReissueAccessToken(tokenDto: TokenDto, userId: Long): ResponseEntity<TokenDto>
 }
