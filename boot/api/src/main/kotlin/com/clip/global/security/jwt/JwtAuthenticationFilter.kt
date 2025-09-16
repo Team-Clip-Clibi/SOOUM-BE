@@ -1,7 +1,7 @@
 package com.clip.global.security.jwt
 
 import com.clip.global.config.security.ExcludeAuthPathProperties
-import com.clip.global.security.jwt.exception.InvalidTokenException
+import com.clip.global.exception.TokenException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -31,32 +31,21 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        runCatching {
-            if (isExcludedPath(request)) {
-                filterChain.doFilter(request, response)
-                return
-            }
+        if (isExcludedPath(request)) {
+            filterChain.doFilter(request, response)
+            return
+        }
 
-            val token = request.getHeader(AUTHORIZATION_HEADER)
-                ?.takeIf { it.startsWith(BEARER_PREFIX) }
-                ?.substring(BEARER_PREFIX.length)
-                ?: throw InvalidTokenException()
+        val token = request.getHeader(AUTHORIZATION_HEADER)
+            ?.takeIf { it.startsWith(BEARER_PREFIX) }
+            ?.substring(BEARER_PREFIX.length)
+            ?: throw TokenException.InvalidTokenException(token = null)
 
-            if (jwtProvider.validateToken(token)) {
-                setAuthentication(token)
-                filterChain.doFilter(request, response)
-            } else {
-                throw InvalidTokenException()
-            }
-        }.onFailure { e ->
-            if (e is InvalidTokenException) {
-                with(response) {
-                    status = HttpServletResponse.SC_UNAUTHORIZED
-                    writer.use { it.flush() }
-                }
-            } else {
-                throw e
-            }
+        if (jwtProvider.validateToken(token)) {
+            setAuthentication(token)
+            filterChain.doFilter(request, response)
+        } else {
+            throw TokenException.InvalidTokenException(token = token)
         }
     }
 
