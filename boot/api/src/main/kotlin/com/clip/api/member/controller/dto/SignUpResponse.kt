@@ -1,4 +1,4 @@
-package com.clip.api.member.dto
+package com.clip.api.member.controller.dto
 
 data class SignUpResponse(
     val accessToken: String,

@@ -1,10 +1,10 @@
 package com.clip.api.docs.member
 
-import com.clip.api.member.dto.LoginRequest
-import com.clip.api.member.dto.LoginResponse
-import com.clip.api.member.dto.SignUpRequest
-import com.clip.api.member.dto.SignUpResponse
-import com.clip.api.member.dto.TokenDto
+import com.clip.api.member.controller.dto.LoginRequest
+import com.clip.api.member.controller.dto.LoginResponse
+import com.clip.api.member.controller.dto.SignUpRequest
+import com.clip.api.member.controller.dto.SignUpResponse
+import com.clip.api.member.controller.dto.TokenDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity

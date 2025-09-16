@@ -1,4 +1,4 @@
-package com.clip.api.member.dto
+package com.clip.api.member.controller.dto
 
 import java.time.LocalDateTime
 

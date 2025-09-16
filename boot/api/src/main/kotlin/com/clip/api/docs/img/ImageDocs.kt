@@ -1,6 +1,6 @@
 package com.clip.api.docs.img
 
-import com.clip.api.img.dto.ImageUrlInfoResponse
+import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity

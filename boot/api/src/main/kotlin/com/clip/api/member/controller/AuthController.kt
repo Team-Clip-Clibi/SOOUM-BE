@@ -1,11 +1,11 @@
 package com.clip.api.member.controller
 
 import com.clip.api.docs.member.AuthDocs
-import com.clip.api.member.dto.LoginRequest
-import com.clip.api.member.dto.LoginResponse
-import com.clip.api.member.dto.SignUpRequest
-import com.clip.api.member.dto.SignUpResponse
-import com.clip.api.member.dto.TokenDto
+import com.clip.api.member.controller.dto.LoginRequest
+import com.clip.api.member.controller.dto.LoginResponse
+import com.clip.api.member.controller.dto.SignUpRequest
+import com.clip.api.member.controller.dto.SignUpResponse
+import com.clip.api.member.controller.dto.TokenDto
 import com.clip.api.member.service.AuthUseCase
 import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity

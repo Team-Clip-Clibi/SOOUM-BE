@@ -1,7 +1,7 @@
 package com.clip.api.rsa.controller
 
 import com.clip.api.docs.rsa.RsaDocs
-import com.clip.api.rsa.dto.KeyInfoResponse
+import com.clip.api.rsa.controller.dto.KeyInfoResponse
 import com.clip.api.rsa.service.RsaUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
