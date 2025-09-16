@@ -1,6 +1,6 @@
 package com.clip.api.version.controller
 
-import com.clip.api.version.dto.AppVersionStatus
+import com.clip.api.version.controller.dto.AppVersionStatus
 import com.clip.api.version.service.AppVersionUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

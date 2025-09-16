@@ -1,6 +1,6 @@
 package com.clip.api.docs.version
 
-import com.clip.api.version.dto.AppVersionStatusResponse
+import com.clip.api.version.controller.dto.AppVersionStatusResponse
 import com.clip.data.version.entity.DeviceType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag

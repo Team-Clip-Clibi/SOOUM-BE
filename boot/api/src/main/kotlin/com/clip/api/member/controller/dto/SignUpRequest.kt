@@ -1,4 +1,4 @@
-package com.clip.api.member.dto
+package com.clip.api.member.controller.dto
 
 import com.clip.data.member.entity.DeviceType
 

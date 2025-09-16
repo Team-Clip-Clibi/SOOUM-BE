@@ -1,6 +1,6 @@
 package com.clip.api.img
 
-import com.clip.api.img.dto.ImageUrlInfoResponse
+import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import com.clip.data.img.service.ProfileImgService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService

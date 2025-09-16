@@ -1,6 +1,6 @@
 package com.clip.api.docs.rsa
 
-import com.clip.api.rsa.dto.KeyInfoResponse
+import com.clip.api.rsa.controller.dto.KeyInfoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity

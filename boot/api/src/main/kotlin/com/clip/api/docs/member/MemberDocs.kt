@@ -1,14 +1,21 @@
 package com.clip.api.docs.member
 
-import com.clip.api.member.dto.CheckAvailableRequest
-import com.clip.api.member.dto.CheckAvailableResponse
-import com.clip.api.member.dto.NicknameValidateResponse
+import com.clip.api.member.controller.dto.CheckAvailableRequest
+import com.clip.api.member.controller.dto.CheckAvailableResponse
+import com.clip.api.member.controller.dto.FCMRequest
+import com.clip.api.member.controller.dto.NicknameValidateResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 
 @Tag(name = "Member", description = "Member API")
 interface MemberDocs {
+
+    @Operation(summary = "FCM Token Update API", description = """
+        - FCM Update API
+        - FCM 토큰이 만료되면 새로운 FCM 토큰으로 업데이트합니다.
+    """)
+    fun updateFCMToken(fcmRequest: FCMRequest, userId: Long): ResponseEntity<Void>
 
     @Operation(summary = "가입 가능 여부 확인 API", description = """
         - 가입 가능 여부 확인 API

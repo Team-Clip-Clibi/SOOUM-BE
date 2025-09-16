@@ -1,8 +1,8 @@
 package com.clip.api.member.service
 
-import com.clip.api.member.dto.CheckAvailableRequest
-import com.clip.api.member.dto.CheckAvailableResponse
-import com.clip.api.member.dto.NicknameValidateResponse
+import com.clip.api.member.controller.dto.CheckAvailableRequest
+import com.clip.api.member.controller.dto.CheckAvailableResponse
+import com.clip.api.member.controller.dto.NicknameValidateResponse
 import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
@@ -82,6 +82,12 @@ class MemberUseCase(
         }
     }
 
+    @Transactional
+    fun updateFCMToken(fcmToken: String, userId: Long) {
+        val member = memberService.findMember(userId)
+        member.updateFCMToken(fcmToken)
+        memberService.save(member)
+    }
 
 
 }
