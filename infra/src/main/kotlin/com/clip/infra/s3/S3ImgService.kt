@@ -1,4 +1,5 @@
 package com.clip.infra.s3
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.s3.S3Client
@@ -12,11 +13,19 @@ import java.time.Duration
 class S3ImgService(
     private val s3Presigner: S3Presigner,
     private val s3Client: S3Client,
+    private val S3ImgPathProperties: S3ImgPathProperties,
     @Value("\${spring.cloud.aws.s3.img.bucket}") private val bucket: String
 ) {
     companion object {
+        private val log = LoggerFactory.getLogger(S3ImgService::class.java)
         private val EXPIRY_TIME: Duration = Duration.ofHours(24)
     }
+
+    fun generateDefaultCardImgUrl(imgName: String): String =
+        generateGetPresignedUrl(S3ImgPathProperties.defaultCardImg, imgName)
+
+    fun generateUserCardImgUrl(imgName: String): String =
+        generateGetPresignedUrl(S3ImgPathProperties.userCardImg, imgName)
 
     fun generateGetPresignedUrl(imgPathPrefix: String, imgName: String): String =
         s3Presigner.presignGetObject(
@@ -57,6 +66,7 @@ class S3ImgService(
             )
             true
         } catch (e: Exception) {
+            log.error("method : isImgSaved s3 이미지 저장 여부 확인 중 에러 발생 ", e)
             false
         }
 
