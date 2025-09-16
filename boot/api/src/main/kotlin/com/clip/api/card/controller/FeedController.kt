@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@RequestMapping("/cards/feeds/popular")
+@RequestMapping("/api/cards/feeds")
 @RestController
-class PopularFeedController(
+class FeedController(
     private val popularFeedUseCase: PopularFeedUseCase
 ): FeedDocs {
 
-    @GetMapping
+    @GetMapping("/popular")
     override fun getPopularFeed(
         @RequestParam(required = false) latitude: Double?,
         @RequestParam(required = false) longitude: Double?,
