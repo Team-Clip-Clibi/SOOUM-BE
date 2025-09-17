@@ -139,7 +139,7 @@ class JwtProvider(
                     .setIssuer(ISSUER)
                     .setExpiration(
                         Date.from(
-                            getRefreshTokenExpiration(refreshToken)
+                            getTokenExpiration(refreshToken)
                                 .atZone(ZoneId.of("Asia/Seoul"))
                                 .toInstant()
                         )
@@ -154,8 +154,8 @@ class JwtProvider(
                     .compact()
             }
 
-    private fun getRefreshTokenExpiration(refreshToken: String): LocalDateTime =
-        getClaims(refreshToken).expiration.toInstant()
+    fun getTokenExpiration(token: String): LocalDateTime =
+        getClaims(token).expiration.toInstant()
             .atZone(ZoneId.of("Asia/Seoul"))
             .toLocalDateTime()
 

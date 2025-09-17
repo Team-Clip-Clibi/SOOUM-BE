@@ -5,11 +5,14 @@ import com.clip.api.member.controller.dto.LoginResponse
 import com.clip.api.member.controller.dto.SignUpRequest
 import com.clip.api.member.controller.dto.SignUpResponse
 import com.clip.api.member.controller.dto.TokenDto
+import com.clip.data.member.entity.Blacklist
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.PolicyTerm
+import com.clip.data.member.service.BlacklistService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.PolicyService
 import com.clip.data.member.service.RefreshTokenService
+import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
 import com.clip.global.util.NicknameGenerator
 import org.springframework.stereotype.Service
@@ -20,6 +23,7 @@ class AuthUseCase(
     private val decodeWithRsa: DecodeWithRsa,
     private val memberService: MemberService,
     private val refreshTokenService: RefreshTokenService,
+    private val blacklistService: BlacklistService,
     private val policyService: PolicyService,
     private val jwtProvider: JwtProvider,
 ) {
@@ -84,11 +88,22 @@ class AuthUseCase(
         )
     }
 
+    @Transactional
     fun reissueAccessToken(request: TokenDto, userId: Long): TokenDto {
+        if (blacklistService.findByToken(request.refreshToken).isPresent)
+            throw TokenException.InvalidTokenException("블랙리스트에 등록된 토큰입니다.")
+
         val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)
         val refreshToken = refreshTokenService.findByMember(userId)
-        refreshToken.update(reissueToken.refreshToken)
+            .update(reissueToken.refreshToken)
         refreshTokenService.save(refreshToken)
+
+        blacklistService.save(
+            Blacklist(
+                request.refreshToken,
+                jwtProvider.getTokenExpiration(request.refreshToken)
+            )
+        )
 
         return TokenDto(
             accessToken = reissueToken.accessToken,

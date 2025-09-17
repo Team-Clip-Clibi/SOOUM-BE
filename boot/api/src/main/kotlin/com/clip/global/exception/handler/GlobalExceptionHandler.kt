@@ -17,8 +17,14 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(errorResponse)
     }
 
-    @ExceptionHandler(TokenException::class)
-    fun tokenException(e: TokenException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(TokenException.InvalidTokenException::class)
+    fun invalidTokenException(e: TokenException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(TokenException.ExpiredTokenException::class)
+    fun expiredTokenException(e: TokenException.ExpiredTokenException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
