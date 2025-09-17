@@ -1,10 +1,7 @@
 package com.clip.api.member.controller
 
 import com.clip.api.docs.member.MemberDocs
-import com.clip.api.member.controller.dto.CheckAvailableRequest
-import com.clip.api.member.controller.dto.CheckAvailableResponse
-import com.clip.api.member.controller.dto.FCMRequest
-import com.clip.api.member.controller.dto.NicknameValidateResponse
+import com.clip.api.member.controller.dto.*
 import com.clip.api.member.service.MemberUseCase
 import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
@@ -48,4 +45,8 @@ class MemberController(
         memberUseCase.updateProfileImage(name, id)
         return ResponseEntity.noContent().build()
     }
+
+    @GetMapping("/generate-nickname")
+    override fun generateNickname(): ResponseEntity<NicknameResponse> =
+        ResponseEntity.ok(memberUseCase.generateNickname())
 }

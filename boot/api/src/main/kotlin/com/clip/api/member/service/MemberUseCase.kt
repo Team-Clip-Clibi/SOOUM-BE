@@ -2,11 +2,14 @@ package com.clip.api.member.service
 
 import com.clip.api.member.controller.dto.CheckAvailableRequest
 import com.clip.api.member.controller.dto.CheckAvailableResponse
+import com.clip.api.member.controller.dto.NicknameResponse
 import com.clip.api.member.controller.dto.NicknameValidateResponse
 import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
+import com.clip.global.exception.ImageException
 import com.clip.global.util.BadWordFilter
+import com.clip.global.util.NicknameGenerator
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
@@ -66,11 +69,11 @@ class MemberUseCase(
         name?.takeIf { it.isNotBlank() }?.let { imgName ->
             // 이미지 저장 여부 확인
             if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
-                throw NoSuchElementException("Image not found in S3")
+                throw ImageException.ImageNotFoundException(imgName = imgName)
             }
             // 이미지 검토 중인지 확인
             if (rekognitionService.isModeratingImg(s3ImgPathProperties.profileImg, imgName)) {
-                throw IllegalStateException("Image is under moderation")
+                throw ImageException.InvalidImageException(imgName = imgName)
             }
 
             // 프로필 이미지 업데이트 처리
@@ -89,5 +92,6 @@ class MemberUseCase(
         memberService.save(member)
     }
 
-
+    fun generateNickname() : NicknameResponse =
+        NicknameResponse(NicknameGenerator.generate())
 }

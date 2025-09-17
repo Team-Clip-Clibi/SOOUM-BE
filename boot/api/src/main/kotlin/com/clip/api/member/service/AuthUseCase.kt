@@ -12,9 +12,13 @@ import com.clip.data.member.service.BlacklistService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.PolicyService
 import com.clip.data.member.service.RefreshTokenService
+import com.clip.global.exception.ImageException
 import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
 import com.clip.global.util.NicknameGenerator
+import com.clip.infra.rekognition.RekognitionService
+import com.clip.infra.s3.S3ImgPathProperties
+import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -26,6 +30,9 @@ class AuthUseCase(
     private val blacklistService: BlacklistService,
     private val policyService: PolicyService,
     private val jwtProvider: JwtProvider,
+    private val s3ImgService: S3ImgService,
+    private val rekognitionService: RekognitionService,
+    private val s3ImgPathProperties: S3ImgPathProperties,
 ) {
 
     @Transactional
@@ -49,6 +56,16 @@ class AuthUseCase(
     fun signUp(request: SignUpRequest): SignUpResponse {
         val encryptedDeviceId = request.memberInfo.encryptedDeviceId
         val deviceId = decodeWithRsa.execute(encryptedDeviceId)
+        request.memberInfo.profileImage?.takeIf { it.isNotBlank() }?.let { imgName ->
+            // 이미지 저장 여부 확인
+            if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
+                throw ImageException.ImageNotFoundException(imgName = imgName)
+            }
+            // 이미지 검토 (부적절한 이미지 여부)
+            if (rekognitionService.isModeratingImg(s3ImgPathProperties.profileImg, imgName)) {
+                throw ImageException.InvalidImageException(imgName = imgName)
+            }
+        }
 
         val findMemberOp = memberService.findMemberOp(deviceId)
         val member = if (findMemberOp.isPresent) {
@@ -61,7 +78,8 @@ class AuthUseCase(
                     .deviceId(deviceId)
                     .deviceType(request.memberInfo.deviceType)
                     .firebaseToken(request.memberInfo.fcmToken)
-                    .nickname(NicknameGenerator.generate())
+                    .nickname(request.memberInfo.nickname)
+                    .profileImgName(request.memberInfo.profileImage)
                     .isAllowNotify(true)
                     .build()
             )
@@ -84,7 +102,6 @@ class AuthUseCase(
         return SignUpResponse(
             accessToken = accessToken,
             refreshToken = refreshToken,
-            nickname = member.nickname,
         )
     }
 
@@ -110,5 +127,4 @@ class AuthUseCase(
             refreshToken = reissueToken.refreshToken
         )
     }
-
 }

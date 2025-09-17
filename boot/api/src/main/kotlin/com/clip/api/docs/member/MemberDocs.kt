@@ -1,9 +1,6 @@
 package com.clip.api.docs.member
 
-import com.clip.api.member.controller.dto.CheckAvailableRequest
-import com.clip.api.member.controller.dto.CheckAvailableResponse
-import com.clip.api.member.controller.dto.FCMRequest
-import com.clip.api.member.controller.dto.NicknameValidateResponse
+import com.clip.api.member.controller.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -42,4 +39,10 @@ interface MemberDocs {
         - 사용자가 프로필 이미지를 변경할 수 있도록 합니다.
     """)
     fun updateProfileImage(name: String?, id: Long): ResponseEntity<Void>
+
+    @Operation(summary = "닉네임 생성 API", description = """
+        - 닉네임 생성 API
+        - 사용자가 랜덤으로 생성된 닉네임을 받을 수 있도록 합니다.
+    """)
+    fun generateNickname(): ResponseEntity<NicknameResponse>
 }
