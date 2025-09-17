@@ -12,6 +12,8 @@ data class MemberInfo(
     val deviceType: DeviceType,
     val fcmToken: String?,
     val isNotificationAgreed: Boolean,
+    val nickname: String?,
+    val profileImage: String?,
 )
 
 data class Policy(

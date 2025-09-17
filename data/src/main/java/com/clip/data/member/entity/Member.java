@@ -56,7 +56,7 @@ public class Member extends BaseEntity {
     private String profileImgName;
 
     @Builder
-    public Member(String deviceId, DeviceType deviceType, String firebaseToken, String nickname, boolean isAllowNotify) {
+    public Member(String deviceId, DeviceType deviceType, String firebaseToken, String nickname, String profileImgName, boolean isAllowNotify) {
         this.deviceId = deviceId;
         this.deviceType = deviceType;
         this.firebaseToken = firebaseToken;
@@ -66,7 +66,7 @@ public class Member extends BaseEntity {
         this.totalVisitorCnt = 0;
         this.deletedAt = null;
         this.untilBan = null;
-        this.profileImgName = null;
+        this.profileImgName = profileImgName;
         this.role = Role.USER;
     }
 

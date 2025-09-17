@@ -49,3 +49,5 @@ exclude-auth-path-patterns:
       method: GET
     - path-pattern: /api/rsa/public-key
       method: GET
+    - path-pattern: /api/members/generate-nickname
+      method: GET
