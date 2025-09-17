@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
+import java.time.LocalDateTime
+import java.time.ZoneId
+import kotlin.text.get
 
 @Component
 class JwtBlacklistInterceptor(
@@ -34,6 +37,9 @@ class JwtBlacklistInterceptor(
     }
 
     private fun isBlackListToken(token: String): Boolean {
-        return blacklistService.findByToken(token).isPresent
+        val optional = blacklistService.findByToken(token)
+        val blacklistToken = optional.orElse(null) ?: return false
+        val expiredAt = blacklistToken.expiredAt
+        return expiredAt.isAfter(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
     }
 }
