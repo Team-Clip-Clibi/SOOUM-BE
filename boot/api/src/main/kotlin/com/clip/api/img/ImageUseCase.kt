@@ -1,5 +1,6 @@
 package com.clip.api.img
 
+import com.clip.api.img.controller.dto.ImageUploadRequest
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import com.clip.data.img.service.ProfileImgService
 import com.clip.infra.s3.S3ImgPathProperties
@@ -13,11 +14,11 @@ class ImageUseCase(
     private val s3ImgPathProperties: S3ImgPathProperties,
     private val profileImgService: ProfileImgService
 ) {
-    fun createProfileUploadUrlAndSave(extension: String): ImageUrlInfoResponse {
-        if (!extension.equals("jpeg", ignoreCase = true)) {
+    fun createProfileUploadUrlAndSave(imageUploadRequest: ImageUploadRequest): ImageUrlInfoResponse {
+        if (!imageUploadRequest.extension.equals("jpeg", ignoreCase = true)) {
             throw UnsupportedOperationException("지원하지 않는 확장자입니다.")
         }
-        val imgName = "${UUID.randomUUID()}.$extension"
+        val imgName = "${UUID.randomUUID()}.$imageUploadRequest.extension"
 
         profileImgService.saveProfileImg(imgName)
         val uploadUrl = s3ImgService.generatePutPresignedUrl(
