@@ -33,4 +33,7 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
 }
