@@ -51,3 +51,5 @@ exclude-auth-path-patterns:
       method: GET
     - path-pattern: /api/members/generate-nickname
       method: GET
+    - path-pattern: /api/members/validate-nickname
+      method: POST
