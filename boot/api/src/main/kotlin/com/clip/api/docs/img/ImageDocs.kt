@@ -1,6 +1,5 @@
 package com.clip.api.docs.img
 
-import com.clip.api.img.controller.dto.ImageUploadRequest
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -15,5 +14,5 @@ interface ImageDocs {
         - 이미지 파일은 JPEG 형식만 허용됩니다.
         - Rekognition을 사용하여 부적절한 이미지인지 검사를 수행합니다.
     """)
-    fun uploadProfileImage(imageUploadRequest: ImageUploadRequest): ResponseEntity<ImageUrlInfoResponse>
+    fun uploadProfileImage(): ResponseEntity<ImageUrlInfoResponse>
 }
