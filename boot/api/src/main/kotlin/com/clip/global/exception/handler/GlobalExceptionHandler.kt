@@ -1,5 +1,6 @@
 package com.clip.global.exception.handler
 
+import com.clip.global.exception.BaseException
 import com.clip.global.exception.TokenException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
@@ -25,6 +26,12 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenException.ExpiredTokenException::class)
     fun expiredTokenException(e: TokenException.ExpiredTokenException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(BaseException::class)
+    fun baseException(e: BaseException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }

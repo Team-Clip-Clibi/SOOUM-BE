@@ -20,7 +20,7 @@ sealed class ImageException (
     class InvalidImageException(
         message: String = "부적절한 이미지 파일입니다.",
         imgName: String? = null
-    ) : TokenException(
+    ) : ImageException(
         HttpStatus.UNPROCESSABLE_ENTITY,
         message,
         imgName
