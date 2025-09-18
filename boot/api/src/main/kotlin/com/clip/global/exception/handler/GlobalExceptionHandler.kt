@@ -1,6 +1,7 @@
 package com.clip.global.exception.handler
 
 import com.clip.global.exception.BaseException
+import com.clip.global.exception.ImageException
 import com.clip.global.exception.TokenException
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
@@ -29,6 +30,19 @@ class GlobalExceptionHandler {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
+
+    @ExceptionHandler(ImageException.InvalidImageException::class)
+    fun invalidImageException(e: ImageException.InvalidImageException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(ImageException.ImageNotFoundException::class)
+    fun imageNotFoundException(e: ImageException.ImageNotFoundException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
 
     @ExceptionHandler(BaseException::class)
     fun baseException(e: BaseException): ResponseEntity<ErrorResponse> {
