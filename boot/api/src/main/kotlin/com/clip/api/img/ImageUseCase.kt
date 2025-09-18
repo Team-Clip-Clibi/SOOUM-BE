@@ -14,11 +14,8 @@ class ImageUseCase(
     private val s3ImgPathProperties: S3ImgPathProperties,
     private val profileImgService: ProfileImgService
 ) {
-    fun createProfileUploadUrlAndSave(imageUploadRequest: ImageUploadRequest): ImageUrlInfoResponse {
-        if (!imageUploadRequest.extension.equals("jpeg", ignoreCase = true)) {
-            throw UnsupportedOperationException("지원하지 않는 확장자입니다.")
-        }
-        val imgName = "${UUID.randomUUID()}.$imageUploadRequest.extension"
+    fun createProfileUploadUrlAndSave(): ImageUrlInfoResponse {
+        val imgName = UUID.randomUUID().toString()
 
         profileImgService.saveProfileImg(imgName)
         val uploadUrl = s3ImgService.generatePutPresignedUrl(
