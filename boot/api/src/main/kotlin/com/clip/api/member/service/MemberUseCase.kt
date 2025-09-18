@@ -62,7 +62,7 @@ class MemberUseCase(
     fun updateProfileImage(profileImageDto: ProfileImageDto, id: Long) {
         val member = memberService.findMember(id)
         // 프로필 이미지가 null이거나 빈 문자열이면 함수 종료
-        profileImageDto.imageName.takeIf { it.isNotBlank() }?.let { imgName ->
+        profileImageDto.imageName?.takeIf { it.isNotBlank() }?.let { imgName ->
             // 이미지 저장 여부 확인
             if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
                 throw ImageException.ImageNotFoundException(imgName = imgName)
