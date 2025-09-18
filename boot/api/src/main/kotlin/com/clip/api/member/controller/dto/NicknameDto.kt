@@ -1,6 +1,6 @@
 package com.clip.api.member.controller.dto
 
-data class NicknameResponse(
+data class NicknameDto(
     val nickname: String
 ) {
 }

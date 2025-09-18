@@ -26,23 +26,23 @@ interface MemberDocs {
         - 닉네임이 유효한지 검사합니다.
         - 닉네임은 공백이 아니어야 하며, 욕설 필터링을 통과해야 하고, 금지된 닉네임 목록에 포함되지 않아야 합니다.
     """)
-    fun validateNickname(nickname: String): ResponseEntity<NicknameValidateResponse>
+    fun validateNickname(nicknameDto: NicknameDto): ResponseEntity<NicknameValidateResponse>
 
     @Operation(summary = "닉네임 업데이트 API", description = """
         - 닉네임 업데이트 API
         - 사용자가 닉네임을 변경할 수 있도록 합니다.
     """)
-    fun updateNickname(nickname: String, id: Long): ResponseEntity<Void>
+    fun updateNickname(nicknameDto: NicknameDto, id: Long): ResponseEntity<Void>
 
     @Operation(summary = "프로필 이미지 업데이트 API", description = """
         - 프로필 이미지 업데이트 API
         - 사용자가 프로필 이미지를 변경할 수 있도록 합니다.
     """)
-    fun updateProfileImage(name: String?, id: Long): ResponseEntity<Void>
+    fun updateProfileImage(profileImageDto: ProfileImageDto, id: Long): ResponseEntity<Void>
 
     @Operation(summary = "닉네임 생성 API", description = """
         - 닉네임 생성 API
         - 사용자가 랜덤으로 생성된 닉네임을 받을 수 있도록 합니다.
     """)
-    fun generateNickname(): ResponseEntity<NicknameResponse>
+    fun generateNickname(): ResponseEntity<NicknameDto>
 }

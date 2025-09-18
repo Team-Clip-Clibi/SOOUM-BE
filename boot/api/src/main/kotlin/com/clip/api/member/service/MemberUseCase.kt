@@ -1,9 +1,6 @@
 package com.clip.api.member.service
 
-import com.clip.api.member.controller.dto.CheckAvailableRequest
-import com.clip.api.member.controller.dto.CheckAvailableResponse
-import com.clip.api.member.controller.dto.NicknameResponse
-import com.clip.api.member.controller.dto.NicknameValidateResponse
+import com.clip.api.member.controller.dto.*
 import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
@@ -50,23 +47,22 @@ class MemberUseCase(
         )
     }
 
-    @Transactional(readOnly = true)
-    fun validateNickname(nickname: String) : NicknameValidateResponse {
+    fun validateNickname(nicknameDto: NicknameDto) : NicknameValidateResponse {
         return NicknameValidateResponse(
-            nickname.isNotBlank() && !BadWordFilter.isBadWord(nickname) && nickname !in FORBIDDEN_NICKNAME
+            nicknameDto.nickname.isNotBlank() && !BadWordFilter.isBadWord(nicknameDto.nickname) && nicknameDto.nickname !in FORBIDDEN_NICKNAME
         )
     }
 
     @Transactional
-    fun updateNickname(nickname: String, id: Long) {
-        memberService.findMember(id).updateNickname(nickname)
+    fun updateNickname(nicknameDto: NicknameDto, id: Long) {
+        memberService.findMember(id).updateNickname(nicknameDto.nickname)
     }
 
     @Transactional
-    fun updateProfileImage(name: String?, id: Long) {
+    fun updateProfileImage(profileImageDto: ProfileImageDto, id: Long) {
         val member = memberService.findMember(id)
         // 프로필 이미지가 null이거나 빈 문자열이면 함수 종료
-        name?.takeIf { it.isNotBlank() }?.let { imgName ->
+        profileImageDto.imageName.takeIf { it.isNotBlank() }?.let { imgName ->
             // 이미지 저장 여부 확인
             if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
                 throw ImageException.ImageNotFoundException(imgName = imgName)
@@ -92,6 +88,6 @@ class MemberUseCase(
         memberService.save(member)
     }
 
-    fun generateNickname() : NicknameResponse =
-        NicknameResponse(NicknameGenerator.generate())
+    fun generateNickname() : NicknameDto =
+        NicknameDto(NicknameGenerator.generate())
 }

@@ -29,24 +29,24 @@ class MemberController(
     }
 
     @PostMapping("/validate-nickname")
-    override fun validateNickname(@RequestParam nickname: String): ResponseEntity<NicknameValidateResponse> {
-        val response = memberUseCase.validateNickname(nickname)
+    override fun validateNickname(@RequestBody nicknameDto: NicknameDto): ResponseEntity<NicknameValidateResponse> {
+        val response = memberUseCase.validateNickname(nicknameDto)
         return ResponseEntity.ok(response)
     }
 
     @PatchMapping("/nickname")
-    override fun updateNickname(@RequestParam nickname: String, @AccessUser id: Long): ResponseEntity<Void> {
-        memberUseCase.updateNickname(nickname, id)
+    override fun updateNickname(@RequestBody nicknameDto: NicknameDto, @AccessUser id: Long): ResponseEntity<Void> {
+        memberUseCase.updateNickname(nicknameDto, id)
         return ResponseEntity.noContent().build()
     }
 
     @PatchMapping("/profile-img")
-    override fun updateProfileImage(@RequestParam name: String?, @AccessUser id: Long): ResponseEntity<Void> {
-        memberUseCase.updateProfileImage(name, id)
+    override fun updateProfileImage(@RequestBody profileImageDto: ProfileImageDto, @AccessUser id: Long): ResponseEntity<Void> {
+        memberUseCase.updateProfileImage(profileImageDto, id)
         return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/generate-nickname")
-    override fun generateNickname(): ResponseEntity<NicknameResponse> =
+    override fun generateNickname(): ResponseEntity<NicknameDto> =
         ResponseEntity.ok(memberUseCase.generateNickname())
 }
