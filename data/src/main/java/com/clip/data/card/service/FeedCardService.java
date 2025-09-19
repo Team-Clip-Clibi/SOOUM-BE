@@ -19,7 +19,7 @@ public class FeedCardService {
     private final FeedCardRepository feedCardRepository;
     private static final int MAX_PAGE_SIZE = 50;
 
-    public List<FeedCard> findByLastId(Optional<Long> lastId, List<Long> blockMemberPkList) {
+    public List<FeedCard> getLatestFeeds(Optional<Long> lastId, List<Long> blockMemberPkList) {
         Pageable pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
         return feedCardRepository.findByNextPage(lastId.orElse(null), blockMemberPkList, pageRequest);
     }

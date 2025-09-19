@@ -1,0 +1,43 @@
+package com.clip.api.card.service
+
+import com.clip.api.card.controller.dto.FeedResponse
+import com.clip.api.card.mapper.LatestFeedMapper
+import com.clip.api.card.mapper.PopularFeedMapper
+import com.clip.api.card.util.DistanceDisplayUtil
+import com.clip.data.block.service.BlockMemberService
+import com.clip.data.card.service.CommentCardService
+import com.clip.data.card.service.FeedCardService
+import com.clip.data.card.service.FeedLikeService
+import org.springframework.stereotype.Service
+import java.util.*
+
+@Service
+class LatestFeedUseCase(
+    private val blockMemberService: BlockMemberService,
+    private val feedLikeService: FeedLikeService,
+    private val commentCardService: CommentCardService,
+    private val latestFeedMapper: LatestFeedMapper,
+    private val feedCardService: FeedCardService,
+)  {
+
+    fun findLatestFeeds(
+        latitude: Double?,
+        longitude: Double?,
+        lastId: Long?,
+        userId: Long
+    ): List<FeedResponse> {
+        val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
+        val latestFeeds = feedCardService.getLatestFeeds(Optional.ofNullable(lastId), blockedMembers)
+
+        val feedLikes = feedLikeService.findByTargetCards(latestFeeds)
+        val comments = commentCardService.findCommentCardsIn(latestFeeds)
+
+        return latestFeeds.map {
+            latestFeedMapper.toLatestFeedResponse(
+                it,
+                comments,
+                feedLikes,
+                DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude))
+        }
+    }
+}

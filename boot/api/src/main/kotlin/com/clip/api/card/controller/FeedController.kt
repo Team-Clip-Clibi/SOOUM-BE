@@ -1,11 +1,13 @@
 package com.clip.api.card.controller
 
 import com.clip.api.card.controller.dto.FeedResponse
+import com.clip.api.card.service.LatestFeedUseCase
 import com.clip.api.card.service.PopularFeedUseCase
 import com.clip.api.docs.card.FeedDocs
 import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -13,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/cards/feeds")
 @RestController
 class FeedController(
-    private val popularFeedUseCase: PopularFeedUseCase
+    private val popularFeedUseCase: PopularFeedUseCase,
+    private val latestFeedUseCase: LatestFeedUseCase,
 ): FeedDocs {
 
     @GetMapping("/popular")
@@ -28,4 +31,15 @@ class FeedController(
         }
         return ResponseEntity.ok(findPopularFeeds)
     }
+
+    @GetMapping("/latest", "/latest/{lastId}")
+    override fun getLatestFeed(
+        @RequestParam(required = false) latitude: Double?,
+        @RequestParam(required = false) longitude: Double?,
+        @PathVariable(required = false) lastId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<List<FeedResponse>> =
+        latestFeedUseCase.findLatestFeeds(latitude, longitude, lastId, userId).takeIf { it.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
 }
