@@ -9,13 +9,13 @@ spring:
           secretKey: ${secretKey}
       s3:
         img:
-          bucket: sooum-test-img
+          bucket: sooum-img
         fcm:
-          bucket: sooum-test-fcm
+          bucket: sooum-fcm
           sdk: ${FCM_SDK}
         credentials:
           accessKey: ${accessKey}
           secretKey: ${secretKey}
-        default-card-img: card/default/
-        user-card-img: card/user/
-        profile-img: profile/
+        default-card-img: test/card/default/
+        user-card-img: test/card/user/
+        profile-img: test/profile/
