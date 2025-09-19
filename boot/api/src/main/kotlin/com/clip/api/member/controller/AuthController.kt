@@ -9,6 +9,7 @@ import com.clip.api.member.controller.dto.TokenDto
 import com.clip.api.member.service.AuthUseCase
 import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,6 +20,14 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authUseCase: AuthUseCase
 ): AuthDocs {
+
+    @DeleteMapping("/withdrawal")
+    override fun withdrawal(
+        @RequestBody withdrawalRequest: TokenDto,
+        @AccessUser userId: Long
+    ): ResponseEntity<Void> =
+        authUseCase.withdrawal(withdrawalRequest, userId)
+            .let { ResponseEntity.ok().build() }
 
     @PostMapping("/login")
     override fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
