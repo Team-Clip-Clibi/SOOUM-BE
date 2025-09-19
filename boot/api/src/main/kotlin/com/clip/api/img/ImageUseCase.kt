@@ -15,7 +15,7 @@ class ImageUseCase(
     private val profileImgService: ProfileImgService
 ) {
     fun createProfileUploadUrlAndSave(): ImageUrlInfoResponse {
-        val imgName = UUID.randomUUID().toString()
+        val imgName = "${UUID.randomUUID()}.jpeg"
 
         profileImgService.saveProfileImg(imgName)
         val uploadUrl = s3ImgService.generatePutPresignedUrl(
