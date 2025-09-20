@@ -13,7 +13,7 @@ object BadWordFilter {
     }
 
     private fun loadWords(filename: String): Set<String> =
-        javaClass.classLoader.getResourceAsStream(filename)!!.bufferedReader().readLines().toSet()
+        javaClass.classLoader.getResourceAsStream(filename)!!.bufferedReader().use {it.readLines().toSet()}
 
     private fun buildPatternText(): String =
         delimiters.joinToString(separator = "", prefix = "[", postfix = "]*") { Regex.escape(it) }
