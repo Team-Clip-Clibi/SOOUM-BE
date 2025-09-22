@@ -1,8 +1,7 @@
 package com.clip.api.card.service
 
 import com.clip.api.card.controller.dto.FeedResponse
-import com.clip.api.card.mapper.LatestFeedMapper
-import com.clip.api.card.mapper.PopularFeedMapper
+import com.clip.api.card.mapper.FeedMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.CommentCardService
@@ -16,7 +15,7 @@ class LatestFeedUseCase(
     private val blockMemberService: BlockMemberService,
     private val feedLikeService: FeedLikeService,
     private val commentCardService: CommentCardService,
-    private val latestFeedMapper: LatestFeedMapper,
+    private val feedMapper: FeedMapper,
     private val feedCardService: FeedCardService,
 )  {
 
@@ -33,7 +32,7 @@ class LatestFeedUseCase(
         val comments = commentCardService.findCommentCardsIn(latestFeeds)
 
         return latestFeeds.map {
-            latestFeedMapper.toLatestFeedResponse(
+            feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,
