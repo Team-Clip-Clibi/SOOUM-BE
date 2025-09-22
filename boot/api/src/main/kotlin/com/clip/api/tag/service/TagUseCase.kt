@@ -16,6 +16,6 @@ class TagUseCase(
 
     fun findRelatedTags(relatedTag: String, resultCnt: Int): TagInfoResponse =
         tagService.findRelatedTags(relatedTag, resultCnt.coerceIn(0, MAX_RESULT_CNT))
-            .map { TagInfo(name = it.content, usageCnt = it.count) }
+            .map { TagInfo(id = it.pk.toString(), name = it.content, usageCnt = it.count) }
             .let(::TagInfoResponse)
 }

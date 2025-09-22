@@ -10,6 +10,7 @@ data class TagInfoResponse(
 )
 
 data class TagInfo(
+    val id: String,
     val name: String,
     val usageCnt: Int,
 )
