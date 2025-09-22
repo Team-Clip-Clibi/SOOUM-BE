@@ -17,7 +17,6 @@ import com.clip.data.notification.service.NotificationHistoryService
 import com.clip.global.exception.ImageException
 import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
-import com.clip.global.util.NicknameGenerator
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
@@ -110,14 +109,23 @@ class AuthUseCase(
     }
 
     @Transactional
-    fun reissueAccessToken(request: TokenDto, userId: Long): TokenDto {
+    fun reissueAccessToken(request: TokenDto): TokenDto {
         if (blacklistService.findByToken(request.refreshToken).isPresent)
             throw TokenException.InvalidTokenException("블랙리스트에 등록된 토큰입니다.")
+
+        val userId = jwtProvider.getUserId(request.refreshToken)
 
         val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)
         val refreshToken = refreshTokenService.findByMember(userId)
             .update(reissueToken.refreshToken)
         refreshTokenService.save(refreshToken)
+
+        blacklistService.save(
+            Blacklist(
+                request.accessToken,
+                jwtProvider.getTokenExpiration(request.accessToken)
+            )
+        )
 
         blacklistService.save(
             Blacklist(
@@ -149,7 +157,7 @@ class AuthUseCase(
         profileImgService.updateProfileImgNull(userId)
         policyService.deletePolicyTerm(userId)
         refreshTokenService.deleteRefreshToken(userId)
-        notificationHistoryService.deleteAllNotificationHistory(userId);
+        notificationHistoryService.deleteAllNotificationHistory(userId)
         memberService.deleteMember(userId)
     }
 }

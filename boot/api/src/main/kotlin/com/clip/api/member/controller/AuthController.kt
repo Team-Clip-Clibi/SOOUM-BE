@@ -44,8 +44,7 @@ class AuthController(
     @PostMapping("/token/reissue")
     override fun getReissueAccessToken(
         @RequestBody tokenDto: TokenDto,
-        @AccessUser userId: Long)
-    : ResponseEntity<TokenDto> =
-        authUseCase.reissueAccessToken(tokenDto, userId)
+    ): ResponseEntity<TokenDto> =
+        authUseCase.reissueAccessToken(tokenDto)
             .let { ResponseEntity.ok(it) }
 }
