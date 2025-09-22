@@ -15,7 +15,8 @@ public interface PopularFeedRepository extends JpaRepository<PopularFeed, Long> 
 
     @Query("select pc from PopularFeed pc " +
                 "inner join pc.popularCard f " +
-                "join fetch pc.popularCard " +
+                "join fetch pc.popularCard fc " +
+                "join fetch fc.writer " +
             "where f.writer.pk not in :blockedMembers " +
             "and ((pc.version = :likeVersion and pc.popularityType = 'LIKE') " +
                 "or (pc.version = :commentVersion and pc.popularityType = 'COMMENT'))" +

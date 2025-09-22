@@ -5,15 +5,16 @@ import com.clip.data.card.entity.CommentCard
 import com.clip.data.card.entity.FeedCard
 import com.clip.data.card.entity.FeedLike
 import com.clip.data.card.entity.imgtype.CardImgType
+import com.clip.data.member.entity.Role
 import com.clip.global.util.CardUtil
 import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Component
 
 @Component
-class LatestFeedMapper(
+class FeedMapper(
     private val s3ImgService: S3ImgService,
 ) {
-    fun toLatestFeedResponse(
+    fun toFeedResponse(
         targetFeedCard: FeedCard,
         comments: List<CommentCard>,
         feedLikes: List<FeedLike>,
@@ -31,6 +32,7 @@ class LatestFeedMapper(
             distance = distance,
             createdAt = targetFeedCard.createdAt,
             storyExpirationTime = if (targetFeedCard.isStory) targetFeedCard.createdAt.plusHours(24) else null,
+            isAdminCard = targetFeedCard.writer.role.equals(Role.ADMIN)
         )
 
 }

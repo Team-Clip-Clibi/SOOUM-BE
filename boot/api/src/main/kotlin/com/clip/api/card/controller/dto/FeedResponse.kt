@@ -15,4 +15,5 @@ data class FeedResponse(
     val createdAt: LocalDateTime,
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     val storyExpirationTime: LocalDateTime?,
+    val isAdminCard: Boolean,
 )
