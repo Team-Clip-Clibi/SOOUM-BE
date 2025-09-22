@@ -24,9 +24,9 @@ public class FeedCardService {
         return feedCardRepository.findByNextPage(lastId.orElse(null), blockMemberPkList, pageRequest);
     }
 
-    public List<FeedCard> findFeedsByDistance (Optional<Long> lastPk, Point userLocation, double minDist, double maxDist, List<Long> blockMemberPks) {
+    public List<FeedCard> findFeedsByDistance (Optional<Long> lastPk, Point userLocation, double distance, List<Long> blockMemberPks) {
         Pageable pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
-        return feedCardRepository.findNextByDistance(lastPk.orElse(null), userLocation, minDist, maxDist, blockMemberPks, pageRequest);
+        return feedCardRepository.findNextByDistance(lastPk.orElse(null), userLocation, distance, blockMemberPks, pageRequest);
     }
 
     public void deleteFeedCard(Long feedCardPk) {

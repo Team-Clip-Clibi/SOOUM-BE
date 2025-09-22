@@ -29,17 +29,18 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                                   Pageable pageable);
 
     @Query("select f from FeedCard f " +
+            "join fetch f.writer " +
             "where (:lastPk is null or f.pk < :lastPk) " +
             "and f.writer.pk not in :blockMemberPks " +
-            "and (St_Distance(f.location, :userLocation) <= :maxDist " +
-                "and St_Distance(f.location, :userLocation) >= :minDist " +
-                "and (f.isStory = false or (f.isStory = true and f.createdAt > (current_timestamp - 1 day)))) " +
+            "and ST_Contains(ST_Buffer(:userLocation, :distance), f.location) " +
+            "and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000) " +
+                "and (f.isStory = false or (f.isStory = true and f.createdAt > (current_timestamp - 1 day))) " +
                 "and f.isDeleted = false " +
                 "and f.isPublic = true " +
                 "and f.isFeedActive = true " +
             "order by f.pk desc")
     List<FeedCard> findNextByDistance(@Param("lastPk") Long lastPk, @Param("userLocation") Point userLocation,
-                                      @Param("minDist") double minDist, @Param("maxDist") double maxDist,
+                                      @Param("distance") double distance,
                                       @Param("blockMemberPks") List<Long> blockMemberPks,
                                       Pageable pageable);
 
