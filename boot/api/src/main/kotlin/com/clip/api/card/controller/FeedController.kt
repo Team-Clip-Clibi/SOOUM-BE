@@ -1,6 +1,7 @@
 package com.clip.api.card.controller
 
 import com.clip.api.card.controller.dto.FeedResponse
+import com.clip.api.card.service.DistanceFeedUseCase
 import com.clip.api.card.service.LatestFeedUseCase
 import com.clip.api.card.service.PopularFeedUseCase
 import com.clip.api.docs.card.FeedDocs
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class FeedController(
     private val popularFeedUseCase: PopularFeedUseCase,
     private val latestFeedUseCase: LatestFeedUseCase,
+    private val distanceFeedUseCase: DistanceFeedUseCase,
 ): FeedDocs {
 
     @GetMapping("/popular")
@@ -42,4 +44,17 @@ class FeedController(
         latestFeedUseCase.findLatestFeeds(latitude, longitude, lastId, userId).takeIf { it.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()
+
+    @GetMapping("/distance", "/distance/{lastId}")
+    override fun getDistanceFeed(
+        @RequestParam latitude: Double,
+        @RequestParam longitude: Double,
+        @RequestParam distance: Double,
+        @PathVariable(required = false) lastId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<List<FeedResponse>> =
+        distanceFeedUseCase.findDistanceFeeds(latitude, longitude, distance, lastId, userId).takeIf { it.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
+
 }
