@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 @Getter
 public enum Role {
+    ADMIN("ROLE_ADMIN"),
     USER("ROLE_USER"),
     BANNED("ROLE_BANNED");
 

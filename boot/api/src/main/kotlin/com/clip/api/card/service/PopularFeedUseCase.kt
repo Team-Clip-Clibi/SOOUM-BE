@@ -1,7 +1,7 @@
 package com.clip.api.card.service
 
 import com.clip.api.card.controller.dto.FeedResponse
-import com.clip.api.card.mapper.PopularFeedMapper
+import com.clip.api.card.mapper.FeedMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.CommentCardService
@@ -15,7 +15,7 @@ class PopularFeedUseCase(
     private val blockMemberService: BlockMemberService,
     private val feedLikeService: FeedLikeService,
     private val commentCardService: CommentCardService,
-    private val popularFeedMapper: PopularFeedMapper,
+    private val feedMapper: FeedMapper,
 ) {
 
     fun findPopularFeeds(latitude: Double?, longitude: Double?, userId: Long): List<FeedResponse> {
@@ -26,7 +26,7 @@ class PopularFeedUseCase(
         val comments = commentCardService.findCommentCardsIn(popularFeeds)
 
         return popularFeeds.map {
-            popularFeedMapper.toPopularFeedResponse(
+            feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,

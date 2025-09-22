@@ -16,6 +16,7 @@ import java.util.List;
 public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
     @Query("select f " +
             "from FeedCard f " +
+                "join fetch f.writer " +
             "where (:lastId is null or f.pk < :lastId) " +
                 "and f.writer.pk not in :blockMemberPkList " +
                 "and (f.isStory=false or (f.isStory = true and f.createdAt > (current_timestamp - 1 day) )) " +
