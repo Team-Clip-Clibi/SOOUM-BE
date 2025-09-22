@@ -1,0 +1,54 @@
+default-img:
+  abstract:
+    - Abstract1.jpeg
+    - Abstract2.jpeg
+    - Abstract3.jpeg
+    - Abstract4.jpeg
+    - Abstract5.jpeg
+    - Abstract6.jpeg
+    - Abstract7.jpeg
+
+  color:
+    - Blue
+    - Green
+    - Yellow
+    - Orange
+    - Red
+    - Purple
+    - Pink
+
+  nature:
+    - Leaf.jpeg
+    - Sea.jpeg
+    - Sand.jpeg
+    - Cloud.jpeg
+    - Snow.jpeg
+    - Flower.jpeg
+    - Moon.jpeg
+
+  sensitivity:
+    - Bed.jpeg
+    - Shadow.jpeg
+    - Aireplane.jpeg
+    - Cat.jpeg
+    - Window.jpeg
+    - Light.jpeg
+    - Book.jpeg
+
+  food:
+    - Coffee.jpeg
+    - Icecream.jpeg
+    - Cake.jpeg
+    - Lemon.jpeg
+    - Candy.jpeg
+    - Cupcake.jpeg
+    - Beer.jpeg
+
+  memo:
+    - memo1.jpeg
+    - memo2.jpeg
+    - memo3.jpeg
+    - memo4.jpeg
+    - memo5.jpeg
+    - memo6.jpeg
+    - memo7.jpeg

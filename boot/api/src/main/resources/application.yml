@@ -55,3 +55,5 @@ exclude-auth-path-patterns:
       method: POST
     - path-pattern: /api/images/profile
       method: POST
+    - path-pattern: /api/images/defaults
+      method: GET

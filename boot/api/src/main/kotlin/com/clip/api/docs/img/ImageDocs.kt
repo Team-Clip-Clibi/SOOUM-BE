@@ -1,5 +1,6 @@
 package com.clip.api.docs.img
 
+import com.clip.api.img.controller.dto.DefaultImagesResponse
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -15,4 +16,9 @@ interface ImageDocs {
         - Rekognition을 사용하여 부적절한 이미지인지 검사를 수행합니다.
     """)
     fun uploadProfileImage(): ResponseEntity<ImageUrlInfoResponse>
+
+    @Operation(summary = "기본 배경 리스트 조회 API", description = """
+        - 카드 작성 시 사용되는 배경 사진 중 기본 배경 사진의 이름과 현재 사용 가능 여부를 조회합니다.
+    """)
+    fun getDefaultImgs(): ResponseEntity<DefaultImagesResponse>
 }
