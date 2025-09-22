@@ -13,8 +13,8 @@ spring:
 
   data:
     redis:
-      port: ${REDIS_PORT}
-      host: ${REDIS_HOST}
+      port: 9999
+      host: localhost
       repositories:
         enabled: false
 
@@ -25,7 +25,7 @@ server:
   shutdown: graceful
 
 jwt:
-  key: ${JWT_KEY}
+  key: slkjf2fjslifjo2jfow48jgfwjfvoiw398jvow894jfowv49w8jgf932w8gfsoiejfo
 
 exclude-auth-path-patterns:
   paths:

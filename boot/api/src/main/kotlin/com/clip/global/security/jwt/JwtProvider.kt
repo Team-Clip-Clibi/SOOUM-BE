@@ -2,6 +2,7 @@ package com.clip.global.security.jwt
 
 import com.clip.data.member.entity.Role
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -81,6 +82,9 @@ class JwtProvider(
             expiration.after(Date())
         }.getOrDefault(false)
 
+    fun getUserId(token: String): Long =
+        getClaims(token).get(ID_CLAIM, Long::class.java)
+
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token)
         val role = getRole(token) ?: Role.USER
@@ -110,7 +114,6 @@ class JwtProvider(
     fun reissueToken(refreshToken: String, userId: Long): TokenDto =
         refreshToken
             .also { require(isRefreshToken(it)) { "Not Refresh Token" } }
-            .also { require(isTokenOwner(it, userId)) { "Token Owner Mismatch" } }
             .also { require(validateToken(it)) { "Invalid Refresh Token" } }
             .let {
                 val newAccessToken = reissueAccessToken(it, userId)
@@ -155,7 +158,14 @@ class JwtProvider(
             }
 
     fun getTokenExpiration(token: String): LocalDateTime =
-        getClaims(token).expiration.toInstant()
+        try {
+            Jwts.parserBuilder().setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .body.expiration
+        } catch (e: ExpiredJwtException){
+            e.claims.expiration
+        }.toInstant()
             .atZone(ZoneId.of("Asia/Seoul"))
             .toLocalDateTime()
 

@@ -33,9 +33,10 @@ interface AuthDocs {
     fun signUp(signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse>
 
     @Operation(summary = "Access token 재발행 API", description = """
+        - Authentication Header에 토큰을 담아 요청하지 않아도 됩니다.
         - Access Token reissue API. Refresh Token을 사용해 새로운 Access Token을 발행합니다.
         - Refresh Token도 사용되었기 때문에 동일한 기간만큼만 유요한 새로운 Refresh Token도 함께 발행됩니다.
         - 기존의 Refresh Token은 폐기됩니다.
     """)
-    fun getReissueAccessToken(tokenDto: TokenDto, userId: Long): ResponseEntity<TokenDto>
+    fun getReissueAccessToken(tokenDto: TokenDto): ResponseEntity<TokenDto>
 }
