@@ -19,7 +19,6 @@ interface ImageDocs {
 
     @Operation(summary = "기본 배경 리스트 조회 API", description = """
         - 카드 작성 시 사용되는 배경 사진 중 기본 배경 사진의 이름과 현재 사용 가능 여부를 조회합니다.
-        - 카테고리가 READ_ONLY인 이미지는 하위호환을 위해 제공되는 읽기 전용 이미지입니다.(카드 작성 시 사용 불가합니다.)
     """)
     fun getDefaultImgs(): ResponseEntity<DefaultImagesResponse>
 }

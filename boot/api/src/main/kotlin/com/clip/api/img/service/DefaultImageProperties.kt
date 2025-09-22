@@ -9,9 +9,10 @@ import org.springframework.context.annotation.PropertySource
 @ConfigurationProperties(prefix = "default-img")
 @PropertySource("classpath:img/DefaultImageName.yml", factory = YamlPropertySourceFactory::class)
 class DefaultImageProperties {
-    lateinit var readOnly: List<String>
+    lateinit var abstract: List<String>
     lateinit var color: List<String>
     lateinit var nature: List<String>
-    lateinit var daily: List<String>
+    lateinit var sensitivity: List<String>
     lateinit var food: List<String>
+    lateinit var memo: List<String>
 }

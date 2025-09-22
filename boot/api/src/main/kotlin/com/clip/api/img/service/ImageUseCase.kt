@@ -36,19 +36,18 @@ class ImageUseCase(
 
         return DefaultImagesResponse(
             mapOf(
-                DefaultImgCategory.READ_ONLY to defaultImageProperties.readOnly.map {
+                DefaultImgCategory.ABSTRACT to defaultImageProperties.abstract.map {
                     ImgInfo(
                         it,
                         s3ImgService.generateDefaultCardImgUrl(it)
                     )
-                },
-                DefaultImgCategory.NATURE to defaultImageProperties.nature.map {
+                } ,DefaultImgCategory.NATURE to defaultImageProperties.nature.map {
                     ImgInfo(
                         it,
                         s3ImgService.generateDefaultCardImgUrl(it)
                     )
                 } ,
-                DefaultImgCategory.DAILY to defaultImageProperties.daily.map {
+                DefaultImgCategory.SENSITIVITY to defaultImageProperties.sensitivity.map {
                     ImgInfo(
                         it,
                         s3ImgService.generateDefaultCardImgUrl(it)
@@ -61,6 +60,12 @@ class ImageUseCase(
                     )
                 } ,
                 DefaultImgCategory.COLOR to defaultImageProperties.color.map {
+                    ImgInfo(
+                        it,
+                        s3ImgService.generateDefaultCardImgUrl(it)
+                    )
+                },
+                DefaultImgCategory.MEMO to defaultImageProperties.memo.map {
                     ImgInfo(
                         it,
                         s3ImgService.generateDefaultCardImgUrl(it)
