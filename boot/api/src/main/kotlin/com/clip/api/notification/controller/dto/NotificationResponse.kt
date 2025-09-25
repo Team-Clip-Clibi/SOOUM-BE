@@ -17,6 +17,26 @@ object NotificationDto {
         open val createTime: LocalDateTime
     )
 
+    data class FollowNotificationInfoResponse(
+        override val notificationId: Long,
+        override val notificationType: NotificationType,
+        override val createTime: LocalDateTime,
+        val nickName: String,
+        val userId: Long
+    ) : CommonNotificationInfo(notificationId, notificationType, createTime) {
+
+        companion object {
+            fun of(history: NotificationHistory): FollowNotificationInfoResponse =
+                FollowNotificationInfoResponse(
+                    notificationId = history.pk,
+                    notificationType = history.notificationType,
+                    createTime = history.createdAt,
+                    nickName = history.fromMember.nickname,
+                    userId = history.fromMember.pk
+                )
+        }
+    }
+
     data class NotificationInfoResponse(
         override val notificationId: Long,
         override val notificationType: NotificationType,
