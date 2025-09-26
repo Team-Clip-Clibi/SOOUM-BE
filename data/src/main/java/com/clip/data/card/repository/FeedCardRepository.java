@@ -37,10 +37,10 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                     "and f.writer not in (:blockMemberPks) " +
                     "and ST_Contains(ST_Buffer(:userLocation, :distance), f.location) " +
                     "and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000) " +
-                    "and (f.is_story = 0 or (f.is_story = 1 and f.created_at > (CURRENT_TIMESTAMP - interval 1 day ))) " +
-                    "and f.is_deleted = 0 " +
-                    "and f.is_public = 1 " +
-                    "and f.is_feed_active = 1 " +
+                    "and (f.is_story = false or (f.is_story = true and f.created_at > (CURRENT_TIMESTAMP - interval 1 day ))) " +
+                    "and f.is_deleted = false " +
+                    "and f.is_public = true " +
+                    "and f.is_feed_active = true " +
                     "order by f.pk desc",
             nativeQuery = true
     )
