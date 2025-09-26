@@ -28,17 +28,22 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                                   @Param("blockMemberPkList") List<Long> blockMemberPkList,
                                   Pageable pageable);
 
-    @Query("select f from FeedCard f " +
-            "join fetch f.writer " +
-            "where (:lastPk is null or f.pk < :lastPk) " +
-            "and f.writer.pk not in :blockMemberPks " +
-            "and ST_Contains(ST_Buffer(:userLocation, :distance), f.location) " +
-            "and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000) " +
-                "and (f.isStory = false or (f.isStory = true and f.createdAt > (current_timestamp - 1 day))) " +
-                "and f.isDeleted = false " +
-                "and f.isPublic = true " +
-                "and f.isFeedActive = true " +
-            "order by f.pk desc")
+
+    @Query(
+            value = "select f.* " +
+                    "from feed_card f " +
+                    "join member m on f.writer = m.pk " +
+                    "where (:lastPk is null or f.pk < :lastPk) " +
+                    "and f.writer not in (:blockMemberPks) " +
+                    "and ST_Contains(ST_Buffer(:userLocation, :distance), f.location) " +
+                    "and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000) " +
+                    "and (f.is_story = 0 or (f.is_story = 1 and f.created_at > (CURRENT_TIMESTAMP - interval 1 day ))) " +
+                    "and f.is_deleted = 0 " +
+                    "and f.is_public = 1 " +
+                    "and f.is_feed_active = 1 " +
+                    "order by f.pk desc",
+            nativeQuery = true
+    )
     List<FeedCard> findNextByDistance(@Param("lastPk") Long lastPk, @Param("userLocation") Point userLocation,
                                       @Param("distance") double distance,
                                       @Param("blockMemberPks") List<Long> blockMemberPks,
