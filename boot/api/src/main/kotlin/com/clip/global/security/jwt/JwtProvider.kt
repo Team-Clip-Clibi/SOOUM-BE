@@ -64,12 +64,6 @@ class JwtProvider(
             .compact()
     }
 
-    fun isTokenOwner(token: String, userId: Long): Boolean =
-        getClaims(token)
-            .get(ID_CLAIM,Long::class.java)
-            .equals(userId)
-
-
     fun validateToken(token: String): Boolean =
         runCatching {
             val claims = Jwts.parserBuilder()
@@ -83,7 +77,7 @@ class JwtProvider(
         }.getOrDefault(false)
 
     fun getUserId(token: String): Long =
-        getClaims(token).get(ID_CLAIM, Long::class.java)
+        getClaims(token)[ID_CLAIM].toString().toLong()
 
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token)
