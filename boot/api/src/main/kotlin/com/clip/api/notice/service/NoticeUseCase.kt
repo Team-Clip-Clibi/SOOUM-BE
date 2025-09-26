@@ -14,6 +14,7 @@ class NoticeUseCase(
         noticeService.findNotices(lastId)
             .map {
                 NoticeInfo(
+                    id = it.pk,
                     title = it.title,
                     url = it.url,
                     createdAt = it.date

@@ -7,6 +7,7 @@ data class NoticeInfoResponse(
 )
 
 data class NoticeInfo(
+    val id: Long,
     val title: String,
     val url: String?,
     val createdAt: LocalDate
