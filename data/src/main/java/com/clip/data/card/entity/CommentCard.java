@@ -1,7 +1,6 @@
 package com.clip.data.card.entity;
 
 import com.clip.data.card.entity.font.Font;
-import com.clip.data.card.entity.fontsize.FontSize;
 import com.clip.data.card.entity.imgtype.CardImgType;
 import com.clip.data.card.entity.parenttype.CardType;
 import com.clip.data.member.entity.Member;
@@ -33,8 +32,8 @@ public class CommentCard extends Card {
     private Long masterCard;
 
     @Builder
-    public CommentCard(String content, FontSize fontSize, Font font, Point location, CardImgType imgType, String imgName, Member writer, CardType parentCardType, Long parentCardPk, Long masterCard, String writerIp) {
-        super(content, fontSize, font, location, imgType, imgName, writer, writerIp);
+    public CommentCard(String content, Font font, Point location, CardImgType imgType, String imgName, Member writer, CardType parentCardType, Long parentCardPk, Long masterCard, String writerIp) {
+        super(content, font, location, imgType, imgName, writer, writerIp);
         this.parentCardType = parentCardType;
         this.parentCardPk = parentCardPk;
         this.masterCard = masterCard;
