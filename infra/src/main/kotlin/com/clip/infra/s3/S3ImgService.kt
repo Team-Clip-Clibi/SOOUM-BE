@@ -53,6 +53,9 @@ class S3ImgService(
                 .build()
         ).url().toString()
 
+    fun isCardImgSaved(imgName: String): Boolean =
+        isImgSaved(S3ImgPathProperties.userCardImg, imgName)
+
     /**
      * s3에 사진이 존재하면 true, 아니면 false
      */

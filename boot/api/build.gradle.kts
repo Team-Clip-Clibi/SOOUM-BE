@@ -30,6 +30,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation ("org.springframework.retry:spring-retry")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -39,9 +40,10 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-
     // MySQL spatial
     implementation("org.hibernate:hibernate-spatial:6.1.7.Final")
+    //firebase
+    implementation("com.google.firebase:firebase-admin:9.4.1")
 
 }
 

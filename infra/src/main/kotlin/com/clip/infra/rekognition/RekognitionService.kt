@@ -1,5 +1,6 @@
 package com.clip.infra.rekognition
 
+import com.clip.infra.s3.S3ImgPathProperties
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.rekognition.RekognitionClient
@@ -10,7 +11,8 @@ import software.amazon.awssdk.services.rekognition.model.S3Object
 
 @Service
 class RekognitionService(
-    private val rekognitionClient: RekognitionClient
+    private val rekognitionClient: RekognitionClient,
+    private val s3ImgPathProperties: S3ImgPathProperties,
 ) {
     @Value("\${spring.cloud.aws.s3.img.bucket}")
     private lateinit var bucket: String
@@ -18,6 +20,9 @@ class RekognitionService(
     fun getModerationLabels(build: DetectModerationLabelsRequest): List<ModerationLabel> {
         return rekognitionClient.detectModerationLabels(build).moderationLabels()
     }
+
+    fun isModeratingCardImg(imgName: String): Boolean =
+        isModeratingImg(s3ImgPathProperties.userCardImg, imgName)
 
     fun isModeratingImg(filePath: String, imgName: String): Boolean {
         val build = DetectModerationLabelsRequest.builder()

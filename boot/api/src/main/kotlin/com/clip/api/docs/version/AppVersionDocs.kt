@@ -1,7 +1,7 @@
 package com.clip.api.docs.version
 
 import com.clip.api.version.controller.dto.AppVersionStatusResponse
-import com.clip.data.version.entity.DeviceType
+import com.clip.data.member.entity.DeviceType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity

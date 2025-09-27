@@ -33,7 +33,7 @@ public interface FeedTagRepository extends JpaRepository<FeedTag, Long> {
                              Pageable pageable);
 
     @Query("select count(ft) from FeedTag ft where ft.tag.pk = :tagPk " +
-            "and ft.feedCard.isDeleted = false and ft.feedCard.isPublic = false and ft.feedCard.isStory = false")
+            "and ft.feedCard.isDeleted = false and ft.feedCard.isStory = false")
     Integer countTagFeeds(@Param("tagPk") Long tagPk);
 
    @Query(value = """

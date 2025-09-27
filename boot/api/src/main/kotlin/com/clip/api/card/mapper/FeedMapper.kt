@@ -26,6 +26,7 @@ class FeedMapper(
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(targetFeedCard.imgName)
                 CardImgType.USER -> s3ImgService.generateUserCardImgUrl(targetFeedCard.imgName)
             },
+            cardImgName = targetFeedCard.imgName,
             likeCnt = CardUtil.countLikes(targetFeedCard, feedLikes),
             commentCardCnt = CardUtil.countComments(targetFeedCard, comments),
             font = targetFeedCard.font,

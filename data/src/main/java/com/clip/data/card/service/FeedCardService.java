@@ -51,8 +51,8 @@ public class FeedCardService {
                 .orElseThrow(() -> new EntityNotFoundException("카드를 찾을 수 없습니다."));
     }
 
-    public void saveFeedCard(FeedCard feedCard) {
-        feedCardRepository.save(feedCard);
+    public FeedCard saveFeedCard(FeedCard feedCard) {
+        return feedCardRepository.save(feedCard);
     }
 
     public Long findFeedCardCnt(Member cardOwnerMember) {

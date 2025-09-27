@@ -1,6 +1,8 @@
 package com.clip.data.tag.service;
 
+import com.clip.data.card.entity.FeedCard;
 import com.clip.data.tag.entity.FeedTag;
+import com.clip.data.tag.entity.Tag;
 import com.clip.data.tag.repository.FeedTagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,13 @@ public class FeedTagService {
 
     public void saveAll(List<FeedTag> feedTagList) {
         feedTagRepository.saveAll(feedTagList);
+    }
+
+    public List<FeedTag> saveAll(FeedCard feedCard, List<Tag> tags) {
+        List<FeedTag> feedTags = tags.stream()
+                .map(tag -> FeedTag.builder().feedCard(feedCard).tag(tag).build())
+                .toList();
+        return feedTagRepository.saveAll(feedTags);
     }
 
     public void deleteFeedTag(Long memberPk) {
