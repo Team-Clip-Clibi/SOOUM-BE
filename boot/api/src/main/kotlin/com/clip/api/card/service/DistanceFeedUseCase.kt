@@ -2,10 +2,12 @@ package com.clip.api.card.service
 
 import com.clip.api.card.controller.dto.FeedResponse
 import com.clip.api.card.mapper.FeedMapper
+import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.FeedCardService
 import com.clip.data.card.service.FeedLikeService
+import org.geolatte.geom.jts.JTS
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.springframework.stereotype.Service
@@ -31,15 +33,15 @@ class DistanceFeedUseCase(
         val userLocation = GeometryFactory().createPoint(Coordinate(longitude, latitude))
         val distanceFeeds = feedCardService.findFeedsByDistance(Optional.ofNullable(lastId), userLocation, distance , blockedMembers)
 
-        val feedLikes = feedLikeService.findByTargetCards(distanceFeeds)
-        val comments = commentCardService.findCommentCardsIn(distanceFeeds)
+        val feedLikes = feedLikeService.findByTargetCardIds(distanceFeeds.map { it.pk })
+        val comments = commentCardService.findCommentCardsIn(distanceFeeds.map { it.pk })
 
         return distanceFeeds.map {
             feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,
-                com.clip.api.card.util.DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude)
+                DistanceDisplayUtil.calculateAndFormat(JTS.to(it.location), latitude, longitude)
             )
         }
     }
