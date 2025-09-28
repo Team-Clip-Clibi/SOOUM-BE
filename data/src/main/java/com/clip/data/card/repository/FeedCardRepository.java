@@ -21,7 +21,6 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                 "and f.writer.pk not in :blockMemberPkList " +
                 "and (f.isStory=false or (f.isStory = true and f.createdAt > (current_timestamp - 1 day) )) " +
                 "and f.isDeleted = false " +
-                "and f.isPublic = true " +
                 "and f.isFeedActive = true " +
             "order by f.pk desc")
     List<FeedCard> findByNextPage(@Param("lastId") Long lastId,
@@ -36,7 +35,6 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
             "and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000) " +
                 "and (f.isStory = false or (f.isStory = true and f.createdAt > (current_timestamp - 1 day))) " +
                 "and f.isDeleted = false " +
-                "and f.isPublic = true " +
                 "and f.isFeedActive = true " +
             "order by f.pk desc")
     List<FeedCard> findNextByDistance(@Param("lastPk") Long lastPk, @Param("userLocation") Point userLocation,
@@ -58,8 +56,7 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                                    PageRequest pageRequest);
 
     @Query("select fc from FeedCard fc " +
-            "where fc.isPublic = true " +
-                "and (fc.isStory=false or (fc.isStory = true and fc.createdAt > (current_timestamp - 1 day))) " +
+            "where (fc.isStory=false or (fc.isStory = true and fc.createdAt > (current_timestamp - 1 day))) " +
                 "and fc.writer.pk = :memberPk " +
                 "and (:lastPk is null or fc.pk < :lastPk) " +
             "order by fc.pk desc ")

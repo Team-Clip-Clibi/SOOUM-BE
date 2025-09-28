@@ -1,6 +1,8 @@
 package com.clip.api.notification.service
 
 import com.clip.api.notification.controller.dto.NotificationDto
+import com.clip.data.card.entity.Card
+import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.NotificationHistory
 import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.data.notification.service.NotificationHistoryService
@@ -9,7 +11,8 @@ import java.util.*
 
 @Service
 class NotificationUseCase(
-    private val notificationHistoryService: NotificationHistoryService
+    private val notificationHistoryService: NotificationHistoryService,
+    private val memberService: MemberService
 ) {
     fun updateNotificationStatusToRead(notificationId: Long, userId: Long) {
         if (isNotificationOwner(userId, notificationId)) {
@@ -43,6 +46,11 @@ class NotificationUseCase(
                     else -> NotificationDto.NotificationInfoResponse.of(notification)
                 }
             }.toList()
+
+    fun saveCommentCardHistory(fromMemberId: Long, targetCardId: Long, parentCard: Card): NotificationHistory {
+        val fromMember = memberService.findMember(fromMemberId)
+        return notificationHistoryService.save(NotificationHistory.ofCommentWrite(fromMember, targetCardId, parentCard))
+    }
 
 
     private fun isDeleteNotification(notification: NotificationHistory) =

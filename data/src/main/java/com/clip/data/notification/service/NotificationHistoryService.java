@@ -49,8 +49,8 @@ public class NotificationHistoryService {
     }
 
     @Transactional
-    public Long save(NotificationHistory notificationHistory) {
-        return notificationHistoryRepository.save(notificationHistory).getPk();
+    public NotificationHistory save(NotificationHistory notificationHistory) {
+        return notificationHistoryRepository.save(notificationHistory);
     }
 
     public void deleteAllNotificationHistory(Long memberPk) {

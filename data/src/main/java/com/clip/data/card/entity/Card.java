@@ -1,7 +1,6 @@
 package com.clip.data.card.entity;
 
 import com.clip.data.card.entity.font.Font;
-import com.clip.data.card.entity.fontsize.FontSize;
 import com.clip.data.card.entity.imgtype.CardImgType;
 import com.clip.data.common.entity.BaseEntity;
 import com.clip.data.member.entity.Member;
@@ -24,10 +23,6 @@ public abstract class Card extends BaseEntity {
     @NotNull
     @Column(name = "CONTENT", columnDefinition = "TEXT")
     private String content;
-
-    @NotNull
-    @Enumerated(value = EnumType.STRING)
-    private FontSize fontSize;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
@@ -59,9 +54,8 @@ public abstract class Card extends BaseEntity {
         this.isDeleted = true;
     }
 
-    public Card(String content, FontSize fontSize, Font font, Point location, CardImgType imgType, String imgName, Member writer, String writerIp) {
+    public Card(String content, Font font, Point location, CardImgType imgType, String imgName, Member writer, String writerIp) {
         this.content = content;
-        this.fontSize = fontSize;
         this.font = font;
         this.location = location;
         this.imgType = imgType;

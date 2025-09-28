@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -55,8 +56,57 @@ public class TagService {
     }
 
     @Transactional
-    public void saveAll(List<Tag> tags) {
-        tagRepository.saveAll(tags);
+    public List<Tag> saveAll(List<Tag> tags) {
+        return tagRepository.saveAll(tags);
+    }
+
+    @Transactional
+    public List<Tag> saveAllAndIncrementTagCnt(List<String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return List.of();
+        }
+        List<Tag> existsTags = findTagList(tags);
+        incrementTagCount(existsTags);
+
+        tags.removeAll(
+                existsTags.stream()
+                        .map(Tag::getContent)
+                        .toList()
+        );
+
+        List<Tag> newTagList = saveAll(
+                tags.stream()
+                        .map(tag -> Tag.ofFeed(tag, isActiveWords(tag)))
+                        .toList()
+        );
+
+        return Stream.concat(existsTags.stream(), newTagList.stream()).toList();
+    }
+
+    @Transactional
+    public List<Tag> saveAllAndNoIncrementTagCnt(List<String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return List.of();
+        }
+        List<Tag> existsTags = findTagList(tags);
+
+        tags.removeAll(
+                existsTags.stream()
+                        .map(Tag::getContent)
+                        .toList()
+        );
+
+        List<Tag> newTagList = saveAll(
+                tags.stream()
+                        .map(tag -> Tag.ofFeed(tag, isActiveWords(tag)))
+                        .toList()
+        );
+
+        return Stream.concat(existsTags.stream(), newTagList.stream()).toList();
+    }
+
+    private boolean isActiveWords(String tagContent) {
+        return !DeactivateTagWords.deactivateWordsList.contains(tagContent);
     }
 
     public List<Tag> findRecommendTags(List<Tag> excludeTags) {
