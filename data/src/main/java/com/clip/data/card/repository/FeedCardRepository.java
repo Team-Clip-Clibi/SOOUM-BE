@@ -35,6 +35,7 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                f.img_type as imgType,
                f.img_name as imgName,
                f.font as font,
+               f.content as content,
                f.created_at as createdAt,
                f.is_story as isStory,
                m.role as role,

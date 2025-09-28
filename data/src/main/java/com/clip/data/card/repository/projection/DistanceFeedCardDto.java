@@ -8,6 +8,7 @@ public interface DistanceFeedCardDto {
     String getImgType();
     String getImgName();
     String getFont();
+    String getContent();
     LocalDateTime getCreatedAt();
     boolean getIsStory();
     String getRole();
