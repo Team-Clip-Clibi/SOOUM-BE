@@ -1,6 +1,7 @@
 package com.clip.data.version.entity;
 
 import com.clip.data.common.entity.BaseEntity;
+import com.clip.data.member.entity.DeviceType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

@@ -3,7 +3,7 @@ package com.clip.api.version.service
 import com.clip.api.version.controller.dto.AppVersionStatus
 import com.clip.api.version.controller.dto.AppVersionStatusEnum
 import com.clip.api.version.controller.dto.AppVersionStatusResponse
-import com.clip.data.version.entity.DeviceType
+import com.clip.data.member.entity.DeviceType
 import com.clip.data.version.service.AppVersionService
 import org.springframework.stereotype.Service
 

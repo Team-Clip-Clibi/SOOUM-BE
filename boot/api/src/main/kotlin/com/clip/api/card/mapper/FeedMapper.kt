@@ -28,6 +28,7 @@ class FeedMapper(
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(targetFeedCard.imgName)
                 CardImgType.USER -> s3ImgService.generateUserCardImgUrl(targetFeedCard.imgName)
             },
+            cardImgName = targetFeedCard.imgName,
             likeCnt = CardUtil.countLikes(targetFeedCard, feedLikes),
             commentCardCnt = CardUtil.countComments(targetFeedCard, comments),
             font = targetFeedCard.font,
@@ -49,6 +50,7 @@ class FeedMapper(
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(feedcard.imgName)
                 CardImgType.USER -> s3ImgService.generateUserCardImgUrl(feedcard.imgName)
             },
+            cardImgName = feedcard.imgName,
             likeCnt = feedLikes.count { it.targetCard?.pk == feedcard.pk },
             commentCardCnt = comments.count { it.parentCardPk == feedcard.pk },
             font = Font.valueOf(feedcard.font),
