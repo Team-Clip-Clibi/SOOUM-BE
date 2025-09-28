@@ -34,9 +34,8 @@ public class CommentCardService {
         return commentCardRepository.findAllByMasterCard(masterCardPk);
     }
 
-    public List<CommentCard> findCommentCardsIn(List<FeedCard> targetList) {
-        List<Long> feedCardPks = targetList.stream().map(FeedCard::getPk).toList();
-        return commentCardRepository.findCommentCardsIn(feedCardPks);
+    public List<CommentCard> findCommentCardsIn(List<Long> targetList) {
+        return commentCardRepository.findCommentCardsIn(targetList);
     }
 
     public CommentCard findCommentCard(Long commentCardPk) {

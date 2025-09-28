@@ -19,6 +19,10 @@ public class FeedLikeService {
         return feedLikeRepository.findByTargetList(targetCards);
     }
 
+    public List<FeedLike> findByTargetCardIds(List<Long> targetCardPks) {
+        return feedLikeRepository.findByTargetCardPks(targetCardPks);
+    }
+
     public void deleteAllFeedLikes(Long feedCardPk) {
         feedLikeRepository.deleteAllFeedLikes(feedCardPk);
     }

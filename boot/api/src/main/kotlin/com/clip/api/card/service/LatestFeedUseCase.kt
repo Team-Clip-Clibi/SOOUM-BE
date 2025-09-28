@@ -29,7 +29,7 @@ class LatestFeedUseCase(
         val latestFeeds = feedCardService.getLatestFeeds(Optional.ofNullable(lastId), blockedMembers)
 
         val feedLikes = feedLikeService.findByTargetCards(latestFeeds)
-        val comments = commentCardService.findCommentCardsIn(latestFeeds)
+        val comments = commentCardService.findCommentCardsIn(latestFeeds.map { it.pk })
 
         return latestFeeds.map {
             feedMapper.toFeedResponse(

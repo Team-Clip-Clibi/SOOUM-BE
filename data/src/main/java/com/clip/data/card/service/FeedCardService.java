@@ -2,6 +2,7 @@ package com.clip.data.card.service;
 
 import com.clip.data.card.entity.FeedCard;
 import com.clip.data.card.repository.FeedCardRepository;
+import com.clip.data.card.repository.projection.DistanceFeedCardDto;
 import com.clip.data.member.entity.Member;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,10 @@ public class FeedCardService {
         return feedCardRepository.findByNextPage(lastId.orElse(null), blockMemberPkList, pageRequest);
     }
 
-    public List<FeedCard> findFeedsByDistance (Optional<Long> lastPk, Point userLocation, double distance, List<Long> blockMemberPks) {
+    public List<DistanceFeedCardDto> findFeedsByDistance (Optional<Long> lastPk, Point userLocation, double distance, List<Long> blockMemberPks) {
         Pageable pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
-        return feedCardRepository.findNextByDistance(lastPk.orElse(null), userLocation, distance, blockMemberPks, pageRequest);
+        List<Long> queryBlockList = blockMemberPks == null || blockMemberPks.isEmpty() ? null : blockMemberPks;
+        return feedCardRepository.findNextByDistance(lastPk.orElse(null), userLocation, distance, queryBlockList, pageRequest);
     }
 
     public void deleteFeedCard(Long feedCardPk) {

@@ -10,6 +10,7 @@ data class FeedResponse(
     val commentCardCnt: Int,
     val cardImgUrl: String,
     val cardImgName: String,
+    val cardContent: String,
     val font: Font,
     val distance: String?,
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
