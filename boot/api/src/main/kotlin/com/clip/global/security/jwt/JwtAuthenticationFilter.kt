@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.server.PathContainer
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
@@ -38,14 +39,14 @@ class JwtAuthenticationFilter(
         val token = request.getHeader(AUTHORIZATION_HEADER)
             ?.takeIf { it.startsWith(BEARER_PREFIX) }
             ?.substring(BEARER_PREFIX.length)
-            ?: return unauthorized(response, "Missing or invalid Authorization")
+            ?: return toResponse(response, HttpStatus.UNAUTHORIZED, "Missing or invalid Authorization")
 
 
         if (jwtProvider.validateToken(token)) {
             setAuthentication(token)
             filterChain.doFilter(request, response)
         } else {
-            return unauthorized(response, "Invalid token")
+            return toResponse(response, HttpStatus.FORBIDDEN, "Invalid token")
         }
     }
 
@@ -66,8 +67,8 @@ class JwtAuthenticationFilter(
         }
     }
 
-    private fun unauthorized(response: HttpServletResponse, message: String) {
-        response.status = HttpServletResponse.SC_UNAUTHORIZED
+    private fun toResponse(response: HttpServletResponse, httpStatus: HttpStatus, message: String) {
+        response.status = httpStatus.ordinal
         response.contentType = "application/json"
         response.writer.write("""{"code":"UNAUTHORIZED","message":"$message"}""")
     }
