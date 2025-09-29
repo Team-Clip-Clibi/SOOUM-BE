@@ -1,7 +1,6 @@
 package com.clip.global.security.jwt
 
 import com.clip.global.config.security.ExcludeAuthPathProperties
-import com.clip.global.exception.TokenException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
