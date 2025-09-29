@@ -39,14 +39,14 @@ class JwtAuthenticationFilter(
         val token = request.getHeader(AUTHORIZATION_HEADER)
             ?.takeIf { it.startsWith(BEARER_PREFIX) }
             ?.substring(BEARER_PREFIX.length)
-            ?: return toResponse(response, HttpStatus.UNAUTHORIZED, "Missing or invalid Authorization")
+            ?: return unauthorizedResponse(response, "Missing or invalid Authorization")
 
 
         if (jwtProvider.validateToken(token)) {
             setAuthentication(token)
             filterChain.doFilter(request, response)
         } else {
-            return toResponse(response, HttpStatus.FORBIDDEN, "Invalid token")
+            return unauthorizedResponse(response, "Invalid token")
         }
     }
 
@@ -67,8 +67,8 @@ class JwtAuthenticationFilter(
         }
     }
 
-    private fun toResponse(response: HttpServletResponse, httpStatus: HttpStatus, message: String) {
-        response.status = httpStatus.ordinal
+    private fun unauthorizedResponse(response: HttpServletResponse, message: String) {
+        response.status = HttpStatus.UNAUTHORIZED.value()
         response.contentType = "application/json"
         response.writer.write("""{"code":"UNAUTHORIZED","message":"$message"}""")
     }
