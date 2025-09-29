@@ -1,12 +1,12 @@
 package com.clip.global.security.jwt
 
 import com.clip.global.config.security.ExcludeAuthPathProperties
-import com.clip.global.exception.TokenException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.server.PathContainer
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
@@ -39,13 +39,14 @@ class JwtAuthenticationFilter(
         val token = request.getHeader(AUTHORIZATION_HEADER)
             ?.takeIf { it.startsWith(BEARER_PREFIX) }
             ?.substring(BEARER_PREFIX.length)
-            ?: throw TokenException.InvalidTokenException(token = null)
+            ?: return unauthorizedResponse(response, "Missing or invalid Authorization")
+
 
         if (jwtProvider.validateToken(token)) {
             setAuthentication(token)
             filterChain.doFilter(request, response)
         } else {
-            throw TokenException.InvalidTokenException(token = token)
+            return unauthorizedResponse(response, "Invalid token")
         }
     }
 
@@ -64,5 +65,11 @@ class JwtAuthenticationFilter(
         jwtProvider.getAuthentication(token).takeIf { jwtProvider.validateToken(token) }?.let { authentication ->
             SecurityContextHolder.getContext().authentication = authentication
         }
+    }
+
+    private fun unauthorizedResponse(response: HttpServletResponse, message: String) {
+        response.status = HttpStatus.UNAUTHORIZED.value()
+        response.contentType = "application/json"
+        response.writer.write("""{"code":"UNAUTHORIZED","message":"$message"}""")
     }
 }
