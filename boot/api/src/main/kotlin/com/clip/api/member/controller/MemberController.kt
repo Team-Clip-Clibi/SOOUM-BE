@@ -49,4 +49,10 @@ class MemberController(
     @GetMapping("/generate-nickname")
     override fun generateNickname(): ResponseEntity<NicknameDto> =
         ResponseEntity.ok(memberUseCase.generateNickname())
+
+    @GetMapping("/permissions/posting")
+    override fun getPostingPermissions(
+        @AccessUser userId: Long
+    ): ResponseEntity<PostingPermissionDto> =
+        ResponseEntity.ok(memberUseCase.getPostingPermissions(userId))
 }

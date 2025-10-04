@@ -12,6 +12,8 @@ import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class MemberUseCase(
@@ -90,4 +92,21 @@ class MemberUseCase(
 
     fun generateNickname() : NicknameDto =
         NicknameDto(NicknameGenerator.generate())
+
+    @Transactional
+    fun getPostingPermissions(userId: Long): PostingPermissionDto {
+        val now = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+        val member = memberService.findMember(userId)
+
+        val untilBan = member.untilBan
+
+        if (untilBan != null && untilBan.isAfter(now))
+            return PostingPermissionDto(true, member.untilBan)
+
+        if (untilBan != null && untilBan.isBefore(now))
+            member.unban()
+            memberService.save(member)
+
+        return PostingPermissionDto(false, member.untilBan)
+    }
 }

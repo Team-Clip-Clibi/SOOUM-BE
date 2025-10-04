@@ -45,4 +45,9 @@ interface MemberDocs {
         - 사용자가 랜덤으로 생성된 닉네임을 받을 수 있도록 합니다.
     """)
     fun generateNickname(): ResponseEntity<NicknameDto>
+
+    @Operation(summary = "글 작성 차단 여부 조회 API", description = """
+        - 차단되지 않은 유저의 expiredAt은 null 입니다.
+    """)
+    fun getPostingPermissions(userId: Long): ResponseEntity<PostingPermissionDto>
 }
