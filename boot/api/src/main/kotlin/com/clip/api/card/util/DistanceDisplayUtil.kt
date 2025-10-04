@@ -13,7 +13,7 @@ class DistanceDisplayUtil {
     companion object {
 
         fun calculateAndFormat(
-            cardLocation: Point,
+            cardLocation: Point?,
             latitude: Double?,
             longitude: Double?
         ): String? {
@@ -22,7 +22,7 @@ class DistanceDisplayUtil {
         }
 
         fun calculate(
-            cardLocation: Point,
+            cardLocation: Point?,
             latitude: Double?,
             longitude: Double?
         ): Double? {
@@ -34,7 +34,7 @@ class DistanceDisplayUtil {
             val coordinate = Coordinate(longitude!!, latitude!!)
             val targetPoint = geometry.createPoint(coordinate)
 
-            return cardLocation.distance(targetPoint) * 100
+            return cardLocation!!.distance(targetPoint) * 100
         }
 
 
