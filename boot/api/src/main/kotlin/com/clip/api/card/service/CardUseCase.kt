@@ -75,7 +75,7 @@ class CardUseCase(
                 member
             )
         )
-        if (isUserImgType(CardImgType.USER))
+        if (isUserImgType(createFeedCardRequest.imgType))
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
 
         val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags)
@@ -155,7 +155,8 @@ class CardUseCase(
     }
 
     private fun isBanPeriodExpired(member: Member): Boolean =
-        member.untilBan.isBefore(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) && member.role.equals(Role.BANNED)
+        (member.untilBan?.isBefore(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) == true)
+                && member.role == Role.BANNED
 
     private fun isUserImgType(cardImgType: CardImgType) =
         cardImgType == CardImgType.USER
