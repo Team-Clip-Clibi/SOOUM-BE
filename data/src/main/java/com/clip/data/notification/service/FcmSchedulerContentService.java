@@ -1,6 +1,7 @@
 package com.clip.data.notification.service;
 
 import com.clip.data.notification.entity.FcmSchedulerContent;
+import com.clip.data.notification.repository.FcmSchedulerContentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FcmSchedulerContentService {
 
+    private final FcmSchedulerContentRepository fcmSchedulerContentRepository;
+
     public FcmSchedulerContent findFirstSchedulerContent() {
-        return
+        return fcmSchedulerContentRepository.findByPk(1L).orElseThrow();
     }
 }
