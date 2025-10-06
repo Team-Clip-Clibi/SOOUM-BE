@@ -1,17 +1,23 @@
 package com.clip.api.card.service
 
+import com.clip.api.card.controller.dto.CardDetailResponse
+import com.clip.api.card.controller.dto.CardResponse
 import com.clip.api.card.controller.dto.CreateCommentCardRequest
 import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import com.clip.api.card.mapper.CardMapper
+import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.NotificationFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
+import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.entity.Card
 import com.clip.data.card.entity.CommentCard
 import com.clip.data.card.entity.FeedCard
 import com.clip.data.card.entity.imgtype.CardImgType
 import com.clip.data.card.entity.parenttype.CardType
 import com.clip.data.card.service.CommentCardService
+import com.clip.data.card.service.CommentLikeService
 import com.clip.data.card.service.FeedCardService
+import com.clip.data.card.service.FeedLikeService
 import com.clip.data.img.service.CardImgService
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.Role
@@ -30,6 +36,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 @Service
 class CardUseCase(
@@ -45,6 +52,9 @@ class CardUseCase(
     private val commentCardService: CommentCardService,
     private val notificationUseCase: NotificationUseCase,
     private val applicationEventPublisher: ApplicationEventPublisher,
+    private val feedLikeService: FeedLikeService,
+    private val commentLikeService: CommentLikeService,
+    private val blockMemberService: BlockMemberService,
 ) {
 
     companion object {
@@ -117,7 +127,7 @@ class CardUseCase(
         val savedTags = tagService.saveAllAndNoIncrementTagCnt(createCommentCardRequest.tags)
         commentTagService.saveAll(commentCard, savedTags)
 
-        if (!parentCard.isWriter(userId)) {
+        if (parentCard.writer.pk != userId) {
             val commentWriteNotification = notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
             if (parentCard.writer.isAllowNotify)
                 applicationEventPublisher.publishEvent(
@@ -130,6 +140,54 @@ class CardUseCase(
                         NotificationType.COMMENT_WRITE
                     )
                 )
+        }
+    }
+
+    fun getFeedCardDetail(latitude: Double?, longitude: Double?, cardId: Long, userId: Long): CardDetailResponse {
+        val card: Card = getParentCard(cardId)
+        val writer = card.writer
+        val tags = tagService.getTagsByCard(card)
+        val distance = DistanceDisplayUtil.calculateAndFormat(card.location, latitude, longitude)
+
+        return when (card) {
+            is FeedCard -> {
+                feedCardService.increaseViewCnt(card.pk, userId)
+                val feedLikes = feedLikeService.findByTargetCardIds(listOf(cardId))
+                val comments = commentCardService.findCommentCardsIn(listOf(cardId))
+                cardMapper.toFeedCardDetailResponse(card, writer, feedLikes, comments, distance, userId, tags)
+            }
+            is CommentCard -> {
+                commentCardService.increaseViewCnt(card.pk, userId)
+                val parentCard = getParentCard(card.parentCardPk)
+                val commentLikes = commentLikeService.findByTargetCardIds(listOf(cardId))
+                val comments = commentCardService.findCommentCardsIn(listOf(cardId))
+                cardMapper.toCommentCardDetailResponse(card, writer, commentLikes, comments, distance, userId, tags, parentCard)
+            }
+            else -> throw IllegalArgumentException()
+
+        }
+    }
+
+    fun getCommentCard(
+        latitude: Double?,
+        longitude: Double?,
+        lastId: Long?,
+        cardId: Long,
+        userId: Long
+    ): List<CardResponse> {
+
+        val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
+        val comments = commentCardService.findCommentsByLastPk(cardId, Optional.ofNullable(lastId), blockedMembers)
+        val commentLikes = commentLikeService.findByTargetCardIds(comments.map { it.pk })
+        val childComments = commentCardService.findChildCommentsByParents(comments.map { it.pk })
+
+        return comments.map {
+            cardMapper.toCommentResponse(
+                it,
+                childComments,
+                commentLikes,
+                DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude)
+            )
         }
     }
 

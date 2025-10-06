@@ -1,5 +1,7 @@
 package com.clip.api.docs.card
 
+import com.clip.api.card.controller.dto.CardDetailResponse
+import com.clip.api.card.controller.dto.CardResponse
 import com.clip.api.card.controller.dto.CreateCommentCardRequest
 import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -28,4 +30,26 @@ interface CardDocs {
         createCommentCardRequest: CreateCommentCardRequest,
         userId: Long,
     ): ResponseEntity<Unit>
+
+    @Operation(summary = "카드 상세 조회 API", description = """
+        - 카드 상세 조회 API
+    """)
+    fun getCardDetail(
+        latitude: Double?,
+        longitude: Double?,
+        cardId: Long,
+        userId: Long,
+    ): ResponseEntity<CardDetailResponse>
+
+    @Operation(summary = "답 카드 리스트 조회 API", description = """
+        - 답 카드 리스트 조회 API
+        - last 파라미터를 통해 페이징을 지원합니다. (last 파라미터는 이전 요청에서 반환된 카드 피드 리스트의 마지막 카드 ID입니다.)
+    """)
+    fun getCommentCard(
+        latitude: Double?,
+        longitude: Double?,
+        lastId: Long?,
+        cardId: Long,
+        userId: Long,
+    ): ResponseEntity<List<CardResponse>>
 }
