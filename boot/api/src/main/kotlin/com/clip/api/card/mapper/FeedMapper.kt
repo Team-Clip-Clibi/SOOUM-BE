@@ -1,6 +1,6 @@
 package com.clip.api.card.mapper
 
-import com.clip.api.card.controller.dto.FeedResponse
+import com.clip.api.card.controller.dto.FeedCardResponse
 import com.clip.data.card.entity.CommentCard
 import com.clip.data.card.entity.FeedCard
 import com.clip.data.card.entity.FeedLike
@@ -21,8 +21,8 @@ class FeedMapper(
         comments: List<CommentCard>,
         feedLikes: List<FeedLike>,
         distance: String?,
-    ): FeedResponse =
-        FeedResponse(
+    ): FeedCardResponse =
+        FeedCardResponse(
             cardId = targetFeedCard.pk.toString(),
             cardImgUrl = when(targetFeedCard.imgType){
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(targetFeedCard.imgName)
@@ -44,8 +44,8 @@ class FeedMapper(
         comments: List<CommentCard>,
         feedLikes: List<FeedLike>,
         distance: String?,
-    ): FeedResponse =
-        FeedResponse(
+    ): FeedCardResponse =
+        FeedCardResponse(
             cardId = feedcard.pk.toString(),
             cardImgUrl = when(CardImgType.valueOf(feedcard.imgType)){
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(feedcard.imgName)
