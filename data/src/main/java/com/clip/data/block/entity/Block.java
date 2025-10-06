@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "uk_block_from_to", columnNames = {"from_member", "to_member"})
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Block extends BaseEntity {
     @Id @Tsid
