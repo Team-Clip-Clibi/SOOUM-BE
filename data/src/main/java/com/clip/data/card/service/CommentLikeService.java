@@ -29,8 +29,8 @@ public class CommentLikeService {
                 .orElseThrow(() -> new EntityNotFoundException("좋아요 이력을 찾을 수 않습니다."));
     }
 
-    public List<CommentLike> findByTargetCards(List<CommentCard> commentCards) {
-        return commentLikeRepository.findByTargetCardIn(commentCards);
+    public List<CommentLike> findByTargetCardIds(List<Long> targetCardPks) {
+        return commentLikeRepository.findByTargetCardIn(targetCardPks);
     }
 
     @Transactional

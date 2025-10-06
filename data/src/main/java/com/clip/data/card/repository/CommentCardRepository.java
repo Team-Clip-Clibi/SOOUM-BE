@@ -24,13 +24,14 @@ public interface CommentCardRepository extends JpaRepository<CommentCard, Long> 
     @Query("select cc from CommentCard cc where cc.parentCardPk in :parentCardPk")
     List<CommentCard> findChildCards(@Param("parentCardPk") List<Long> parentCardPk);
 
-    @Query("select cc from CommentCard cc where cc.pk = :commentCardPk")
+    @Query("select cc from CommentCard cc join fetch cc.writer where cc.pk = :commentCardPk")
     Optional<CommentCard> findCommentCard(@Param("commentCardPk") Long commentCardPk);
 
     @Query("select count(cc) from CommentCard cc where cc.isDeleted = false and cc.parentCardPk = :parentCardPk")
     Integer countCommentsByParentCard(@Param("parentCardPk") Long parentCardPk);
 
     @Query("select cc from CommentCard cc" +
+           " join fetch cc.writer"+
             " where (:lastPk is null or cc.pk < :lastPk)" +
                 " and cc.isDeleted = false" +
                 " and cc.parentCardPk = :parentCardPk" +
@@ -50,4 +51,9 @@ public interface CommentCardRepository extends JpaRepository<CommentCard, Long> 
     @Transactional
     @Query("delete from CommentCard cc WHERE cc.writer.pk = :memberPk")
     void deleteCommentCardByMemberPk(@Param("memberPk") Long memberPk);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("update CommentCard cc set cc.viewCnt = cc.viewCnt + 1 where cc.pk = :commentCardPk and cc.writer.pk <> :viewerMemberPk")
+    void increaseViewCnt(@Param("commentCardPk") Long commentCardPk, @Param("viewerMemberPk") Long viewerMemberPk);
 }

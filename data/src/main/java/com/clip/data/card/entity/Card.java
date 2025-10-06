@@ -46,6 +46,9 @@ public abstract class Card extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member writer;
 
+    @Column(name = "VIEW_CNT")
+    private int viewCnt = 0;
+
     @NotNull
     @Column(name = "WRITER_IP")
     private String writerIp;

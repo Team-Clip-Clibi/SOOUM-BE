@@ -65,8 +65,7 @@ public class CommentCardService {
         return commentCardRepository.findCommentsInfo(currentCardPk, lastPk.orElse(null), blockMemberPks, pageRequest);
     }
 
-    public List<CommentCard> findChildCommentsByParents(List<CommentCard> commentCards) {
-        List<Long> commentCardsPk = commentCards.stream().map(CommentCard::getPk).toList();
+    public List<CommentCard> findChildCommentsByParents(List<Long> commentCardsPk) {
         return commentCardRepository.findChildCards(commentCardsPk);
     }
 
@@ -89,5 +88,9 @@ public class CommentCardService {
 
     public void deleteAllComments(List<CommentCard> comments) {
         commentCardRepository.deleteAllInBatch(comments);
+    }
+
+    public void increaseViewCnt(Long commentCardPk, Long viewerMemberPk) {
+        commentCardRepository.increaseViewCnt(commentCardPk, viewerMemberPk);
     }
 }

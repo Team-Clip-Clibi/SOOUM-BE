@@ -36,7 +36,7 @@ public class FeedCardService {
     }
 
     public FeedCard findFeedCard(Long feedCardPk) {
-        return feedCardRepository.findById(feedCardPk)
+        return feedCardRepository.findWithMember(feedCardPk)
                 .orElseThrow(() -> new EntityNotFoundException("카드를 찾을 수 없습니다."));
     }
 
@@ -74,4 +74,9 @@ public class FeedCardService {
     public void deleteFeedCardByMemberPk(Long memberPk) {
         feedCardRepository.deleteFeedCardByMemberPk(memberPk);
     }
+
+    public void increaseViewCnt(Long feedCardPk, Long viewerMemberPk) {
+        feedCardRepository.increaseViewCnt(feedCardPk, viewerMemberPk);
+    }
+
 }
