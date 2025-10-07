@@ -1,9 +1,6 @@
 package com.clip.api.card.controller
 
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import com.clip.api.card.service.CardUseCase
 import com.clip.api.docs.card.CardDocs
 import com.clip.global.security.annotation.AccessUser
@@ -54,7 +51,7 @@ class CardController(
         @RequestParam(required = false) longitude: Double?,
         @PathVariable(required = false) lastId: Long?,
         @PathVariable cardId: Long,
-        @AccessUser userId: Long): ResponseEntity<List<CardResponse>> =
+        @AccessUser userId: Long): ResponseEntity<List<CommentCardResponse>> =
         cardUseCase.getCommentCard(latitude, longitude, lastId, cardId, userId)
             .takeIf { it.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
