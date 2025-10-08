@@ -31,9 +31,9 @@ import com.clip.global.exception.ImageException
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgService
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -189,6 +189,20 @@ class CardUseCase(
                 DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude)
             )
         }
+    }
+
+    @Transactional
+    fun deleteFeedCardWithRelations(feedCard: FeedCard) {
+        feedTagService.deleteByFeedCardPk(feedCard.pk)
+        feedLikeService.deleteAllFeedLikes(feedCard.pk)
+        feedCardService.deleteFeedCard(feedCard.pk)
+    }
+
+    @Transactional
+    fun deleteCommentCardWithRelations(commentCard: CommentCard) {
+        commentTagService.deleteByCommentCardPk(commentCard.pk)
+        commentLikeService.deleteAllFeedLikes(commentCard.pk)
+        commentCardService.deleteCommentCard(commentCard.pk)
     }
 
     private fun getMasterCardId(card: Card): Long {

@@ -7,6 +7,7 @@ import com.clip.data.notification.entity.NotificationHistory
 import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.data.notification.service.NotificationHistoryService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -61,5 +62,22 @@ class NotificationUseCase(
 
     private fun isFollowNotification(notification: NotificationHistory) =
         notification.notificationType.equals(NotificationType.FOLLOW)
+
+    @Transactional
+     fun saveCardDeletedHistoryByReport(toMemberId: Long): NotificationHistory {
+         val member = memberService.findMember(toMemberId)
+         return notificationHistoryService.save(
+             NotificationHistory.ofDeleted(member)
+         )
+     }
+
+    @Transactional
+    fun saveBlockedHistoryAndDeletePreviousHistories(toMemberId: Long): NotificationHistory {
+        notificationHistoryService.deletePreviousBlockedHistories(toMemberId)
+        val member = memberService.findMember(toMemberId)
+        return notificationHistoryService.save(
+            NotificationHistory.ofBlocked(member)
+        )
+    }
 
 }
