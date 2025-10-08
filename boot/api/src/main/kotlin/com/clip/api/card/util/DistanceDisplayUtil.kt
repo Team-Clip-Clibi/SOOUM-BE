@@ -26,7 +26,7 @@ class DistanceDisplayUtil {
             latitude: Double?,
             longitude: Double?
         ): Double? {
-            if (isInValidLocationInfo(cardLocation, latitude, longitude)) {
+            if (isInvalidLocationInfo(cardLocation, latitude, longitude)) {
                 return null
             }
 
@@ -38,26 +38,23 @@ class DistanceDisplayUtil {
         }
 
 
-        fun format(distanceMeter: Double): String {
-            return when {
-                distanceMeter <= 100 -> "100m"
-                distanceMeter < 1000 -> {
-                    val rounded = (distanceMeter / 100) * 100
-                    "${rounded}m"
-                }
-                else -> {
-                    val rounded = (distanceMeter / 100) * 100
-                    val km = rounded / 1000.0
-                    if (km % 1.0 == 0.0) {
-                        "${km.toInt()}km"
-                    } else {
-                        "%.1fkm".format(km)
-                    }
+        fun format(distanceKm: Double): String {
+            return if (distanceKm < 1.0) {
+                // 1km 미만 → 미터 단위로 표시
+                val meter = (distanceKm * 1000).toInt()
+                "${meter}m"
+            } else {
+                // 1km 이상 → 0.1km 단위로 표시
+                val roundedKm = (distanceKm * 10).toInt() / 10.0
+                if (roundedKm % 1.0 == 0.0) {
+                    "${roundedKm.toInt()}km"
+                } else {
+                    "%.1fkm".format(roundedKm)
                 }
             }
         }
 
-        private fun isInValidLocationInfo(
+        private fun isInvalidLocationInfo(
             cardLocation: Point?,
             latitude: Double?,
             longitude: Double?
