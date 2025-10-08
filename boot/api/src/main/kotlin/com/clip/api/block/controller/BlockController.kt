@@ -1,6 +1,7 @@
 package com.clip.api.block.controller
 
 import com.clip.api.block.service.BlockUseCase
+import com.clip.api.docs.block.BlockDocs
 import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/blocks")
 class BlockController(
     private val blockUseCase: BlockUseCase,
-) {
+): BlockDocs {
 
     @PostMapping("/{toMemberId}")
-    fun saveBlockMember(
+    override fun saveBlockMember(
         @PathVariable toMemberId: Long,
         @AccessUser fromMemberId: Long
     ): ResponseEntity<Void> =
@@ -24,7 +25,7 @@ class BlockController(
             .let { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{toMemberId}")
-    fun deleteBlockMember(
+    override fun deleteBlockMember(
         @PathVariable toMemberId: Long,
         @AccessUser fromMemberId: Long
     ): ResponseEntity<Void> =
