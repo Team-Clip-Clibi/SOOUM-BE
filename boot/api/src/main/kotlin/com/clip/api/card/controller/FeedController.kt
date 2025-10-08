@@ -1,6 +1,7 @@
 package com.clip.api.card.controller
 
 import com.clip.api.card.controller.dto.CardResponse
+import com.clip.api.card.controller.dto.FeedCardResponse
 import com.clip.api.card.service.DistanceFeedUseCase
 import com.clip.api.card.service.LatestFeedUseCase
 import com.clip.api.card.service.PopularFeedUseCase
@@ -26,7 +27,7 @@ class FeedController(
         @RequestParam(required = false) latitude: Double?,
         @RequestParam(required = false) longitude: Double?,
         @AccessUser userId: Long
-    ): ResponseEntity<List<CardResponse>> {
+    ): ResponseEntity<List<FeedCardResponse>> {
         val findPopularFeeds = popularFeedUseCase.findPopularFeeds(latitude, longitude, userId)
         if (findPopularFeeds.isEmpty()) {
             return ResponseEntity.noContent().build()
@@ -40,7 +41,7 @@ class FeedController(
         @RequestParam(required = false) longitude: Double?,
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ): ResponseEntity<List<CardResponse>> =
+    ): ResponseEntity<List<FeedCardResponse>> =
         latestFeedUseCase.findLatestFeeds(latitude, longitude, lastId, userId).takeIf { it.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()
@@ -52,7 +53,7 @@ class FeedController(
         @RequestParam distance: Double,
         @PathVariable(required = false) lastId: Long?,
         @AccessUser userId: Long
-    ): ResponseEntity<List<CardResponse>> =
+    ): ResponseEntity<List<FeedCardResponse>> =
         distanceFeedUseCase.findDistanceFeeds(latitude, longitude, distance, lastId, userId).takeIf { it.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()

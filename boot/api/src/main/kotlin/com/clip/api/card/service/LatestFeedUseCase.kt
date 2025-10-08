@@ -1,6 +1,7 @@
 package com.clip.api.card.service
 
 import com.clip.api.card.controller.dto.CardResponse
+import com.clip.api.card.controller.dto.FeedCardResponse
 import com.clip.api.card.mapper.FeedMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.data.block.service.BlockMemberService
@@ -24,7 +25,7 @@ class LatestFeedUseCase(
         longitude: Double?,
         lastId: Long?,
         userId: Long
-    ): List<CardResponse> {
+    ): List<FeedCardResponse> {
         val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
         val latestFeeds = feedCardService.getLatestFeeds(Optional.ofNullable(lastId), blockedMembers)
 

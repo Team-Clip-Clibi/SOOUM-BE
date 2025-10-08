@@ -1,9 +1,6 @@
 package com.clip.api.docs.card
 
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
@@ -51,5 +48,5 @@ interface CardDocs {
         lastId: Long?,
         cardId: Long,
         userId: Long,
-    ): ResponseEntity<List<CardResponse>>
+    ): ResponseEntity<List<CommentCardResponse>>
 }

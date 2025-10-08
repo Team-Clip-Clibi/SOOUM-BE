@@ -1,9 +1,6 @@
 package com.clip.api.card.service
 
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.NotificationFCMEvent
@@ -174,7 +171,7 @@ class CardUseCase(
         lastId: Long?,
         cardId: Long,
         userId: Long
-    ): List<CardResponse> {
+    ): List<CommentCardResponse> {
 
         val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
         val comments = commentCardService.findCommentsByLastPk(cardId, Optional.ofNullable(lastId), blockedMembers)
