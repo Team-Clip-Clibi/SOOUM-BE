@@ -17,7 +17,7 @@ class NoticeUseCase(
                     id = it.pk,
                     title = it.title,
                     url = it.url,
-                    createdAt = it.date,
+                    createdAt = it.date.atStartOfDay(),
                     noticeType = it.noticeType
                 )
             }.run (::NoticeInfoResponse)

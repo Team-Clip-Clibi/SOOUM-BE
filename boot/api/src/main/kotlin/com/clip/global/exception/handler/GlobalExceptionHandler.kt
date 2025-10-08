@@ -29,7 +29,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(TokenException.ExpiredTokenException::class)
     fun expiredTokenException(e: TokenException.ExpiredTokenException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
-        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
     }
 
     @ExceptionHandler(ImageException.InvalidImageException::class)
