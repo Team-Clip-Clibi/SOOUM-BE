@@ -40,11 +40,6 @@ class RekognitionService(
             .build()
 
         val moderationLabels = getModerationLabels(build)
-        println("moderationLabels = ${moderationLabels}")
-        println("isExplicitNudity = ${moderationLabels.any { label -> isExplicitNudity(label)}}")
-        println("isExplicitSexualActivity = ${moderationLabels.any { label -> isExplicitSexualActivity(label)}}")
-        println("isSexToys = ${moderationLabels.any { label -> isSexToys(label)}}")
-        println("isInjury = ${moderationLabels.any { label -> isGraphicViolence(label)}}")
         return moderationLabels.any { label ->
             isExplicitNudity(label) || isExplicitSexualActivity(label) || isSexToys(label) || isGraphicViolence(label)
         }
