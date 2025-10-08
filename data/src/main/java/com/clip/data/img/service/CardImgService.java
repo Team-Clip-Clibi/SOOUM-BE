@@ -32,7 +32,7 @@ public class CardImgService {
         }else throw new EntityNotFoundException();
     }
 
-    public void saveDefaultCardImg(String imgName) {
+    public void saveCardImg(String imgName) {
         cardImgRepository.save(new CardImg(imgName));
     }
 

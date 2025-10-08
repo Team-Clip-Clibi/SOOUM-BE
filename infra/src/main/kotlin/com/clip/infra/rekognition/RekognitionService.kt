@@ -26,7 +26,7 @@ class RekognitionService(
 
     fun isModeratingImg(filePath: String, imgName: String): Boolean {
         val build = DetectModerationLabelsRequest.builder()
-            .minConfidence(70F)
+            .minConfidence(50F)
             .image(
                 Image.builder()
                     .s3Object(
@@ -40,8 +40,13 @@ class RekognitionService(
             .build()
 
         val moderationLabels = getModerationLabels(build)
+        println("moderationLabels = ${moderationLabels}")
+        println("isExplicitNudity = ${moderationLabels.any { label -> isExplicitNudity(label)}}")
+        println("isExplicitSexualActivity = ${moderationLabels.any { label -> isExplicitSexualActivity(label)}}")
+        println("isSexToys = ${moderationLabels.any { label -> isSexToys(label)}}")
+        println("isInjury = ${moderationLabels.any { label -> isGraphicViolence(label)}}")
         return moderationLabels.any { label ->
-            isExplicitNudity(label) || isExplicitSexualActivity(label) || isSexToys(label)
+            isExplicitNudity(label) || isExplicitSexualActivity(label) || isSexToys(label) || isGraphicViolence(label)
         }
     }
 
@@ -56,6 +61,10 @@ class RekognitionService(
 
         private fun isExplicitNudity(label: ModerationLabel): Boolean {
             return label.name().equals("Explicit Nudity", ignoreCase = true) && label.taxonomyLevel() == 2
+        }
+
+        private fun isGraphicViolence(label: ModerationLabel): Boolean {
+            return label.name().equals("Graphic Violence", ignoreCase = true) && label.taxonomyLevel() == 2
         }
     }
 }
