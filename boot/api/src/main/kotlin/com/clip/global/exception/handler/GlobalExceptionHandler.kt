@@ -23,13 +23,13 @@ class GlobalExceptionHandler {
     @ExceptionHandler(TokenException.InvalidTokenException::class)
     fun invalidTokenException(e: TokenException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
-        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
     }
 
     @ExceptionHandler(TokenException.ExpiredTokenException::class)
     fun expiredTokenException(e: TokenException.ExpiredTokenException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse)
     }
 
     @ExceptionHandler(ImageException.InvalidImageException::class)
