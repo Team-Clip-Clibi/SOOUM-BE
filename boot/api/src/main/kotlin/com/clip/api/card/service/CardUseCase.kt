@@ -234,7 +234,7 @@ class CardUseCase(
         if (!s3ImgService.isCardImgSaved(imgName))
             throw ImageException.ImageNotFoundException(imgName = imgName)
 
-        if (!rekognitionService.isModeratingCardImg(imgName))
+        if (rekognitionService.isModeratingCardImg(imgName))
             throw ImageException.InvalidImageException(imgName = imgName)
     }
 }

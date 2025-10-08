@@ -4,6 +4,7 @@ import com.clip.api.img.controller.dto.DefaultImagesResponse
 import com.clip.api.img.controller.dto.DefaultImgCategory
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import com.clip.api.img.controller.dto.ImgInfo
+import com.clip.data.img.service.CardImgService
 import com.clip.data.img.service.ProfileImgService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
@@ -16,7 +17,25 @@ class ImageUseCase(
     private val s3ImgPathProperties: S3ImgPathProperties,
     private val profileImgService: ProfileImgService,
     private val defaultImageProperties: DefaultImageProperties,
+    private val cardImgService: CardImgService,
 ) {
+
+    fun createUserCardImgUploadUrlAndSave() : ImageUrlInfoResponse {
+        val imgName = "${UUID.randomUUID()}.jpeg"
+
+        cardImgService.saveCardImg(imgName)
+
+        val uploadUrl = s3ImgService.generatePutPresignedUrl(
+            filePath = s3ImgPathProperties.userCardImg,
+            imgName = imgName,
+        )
+
+        return ImageUrlInfoResponse(
+            imgName = imgName,
+            imgUrl = uploadUrl,
+        )
+    }
+
     fun createProfileUploadUrlAndSave(): ImageUrlInfoResponse {
         val imgName = "${UUID.randomUUID()}.jpeg"
 

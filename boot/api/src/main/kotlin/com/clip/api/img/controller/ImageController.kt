@@ -6,7 +6,6 @@ import com.clip.api.img.service.ImageUseCase
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -16,7 +15,7 @@ class ImageController(
     private val imageUseCase: ImageUseCase
 ): ImageDocs {
 
-    @PostMapping("/profile")
+    @GetMapping("/profile")
     override fun uploadProfileImage(): ResponseEntity<ImageUrlInfoResponse> {
         val response = imageUseCase.createProfileUploadUrlAndSave()
         return ResponseEntity.ok(response)
@@ -25,5 +24,10 @@ class ImageController(
     @GetMapping("/defaults")
     override fun getDefaultImgs(): ResponseEntity<DefaultImagesResponse> =
         imageUseCase.findDefaultImageInfos()
+            .let { ResponseEntity.ok(it) }
+
+    @GetMapping("/card-img")
+    override fun getUploadCardImgUrl(): ResponseEntity<ImageUrlInfoResponse> =
+        imageUseCase.createUserCardImgUploadUrlAndSave()
             .let { ResponseEntity.ok(it) }
 }
