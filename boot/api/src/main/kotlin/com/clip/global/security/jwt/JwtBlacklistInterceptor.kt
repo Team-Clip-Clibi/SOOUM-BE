@@ -27,7 +27,7 @@ class JwtBlacklistInterceptor(
             ?.removePrefix(BEARER_PREFIX)
             ?.also {
                 if (isBlackListToken(it)) {
-                    throw TokenException.InvalidTokenException("블랙리스트에 등록된 토큰입니다.", it)
+                    throw TokenException.BlacklistTokenException("블랙리스트에 등록된 토큰입니다.", it)
                 }
             }
             ?: throw TokenException.InvalidTokenException("Authorization 헤더에 Bearer 토큰이 존재하지 않습니다.")
