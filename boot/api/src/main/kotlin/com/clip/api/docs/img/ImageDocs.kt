@@ -21,4 +21,10 @@ interface ImageDocs {
         - 카드 작성 시 사용되는 배경 사진 중 기본 배경 사진의 이름과 현재 사용 가능 여부를 조회합니다.
     """)
     fun getDefaultImgs(): ResponseEntity<DefaultImagesResponse>
+
+
+    @Operation(summary = "사용자 지정 배경 이미지 업로드 url 발급 API", description = """
+        - 사용자가 지정한 배경 이미지를 업로드할 수 있도록 업로드 URL을 발급합니다.
+    """)
+    fun getUploadCardImgUrl(): ResponseEntity<ImageUrlInfoResponse>
 }

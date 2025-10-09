@@ -21,7 +21,7 @@ sealed class TokenException(
         message: String = "만료된 토큰입니다.",
         token: String? = null
     ) : TokenException(
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.FORBIDDEN,
         message,
         token
     )
