@@ -111,9 +111,10 @@ class AuthUseCase(
     @Transactional
     fun reissueAccessToken(request: TokenDto): TokenDto {
         if (blacklistService.findByToken(request.refreshToken).isPresent)
-            throw TokenException.InvalidTokenException("블랙리스트에 등록된 토큰입니다.")
+            throw TokenException.BlacklistTokenException(token = request.refreshToken)
 
-        val userId = jwtProvider.getUserId(request.refreshToken)
+        val userId = runCatching { jwtProvider.getUserId(request.refreshToken) }
+            .getOrElse { throw TokenException.ExpiredTokenException(token = request.refreshToken) }
 
         val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)
         val refreshToken = refreshTokenService.findByMember(userId)
