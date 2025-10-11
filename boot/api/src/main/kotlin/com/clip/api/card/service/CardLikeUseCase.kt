@@ -9,6 +9,7 @@ import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.global.exception.IllegalArgumentException.ParameterNotFoundException
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.persistence.OptimisticLockException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
@@ -36,8 +37,13 @@ class CardLikeUseCase(
 
                 existingLike.orElse(null)?.let { like ->
                     if (!like.isDeleted) return
-                    like.create()
-                    sendNotification(card, likedMember)
+
+                    try {
+                        like.create()
+                        sendNotification(card, likedMember)
+                    } catch (e: OptimisticLockException) {
+                        logger.debug(e) { "Concurrent update detected for card=${card.pk}, user=${likedMember.pk}" }
+                    }
                     return
                 }
 
@@ -54,8 +60,13 @@ class CardLikeUseCase(
 
                 existingLike.orElse(null)?.let { like ->
                     if (!like.isDeleted) return
-                    like.create()
-                    sendNotification(card, likedMember)
+
+                    try {
+                        like.create()
+                        sendNotification(card, likedMember)
+                    } catch (e: OptimisticLockException) {
+                        logger.debug(e) { "Concurrent update detected for card=${card.pk}, user=${likedMember.pk}" }
+                    }
                     return
                 }
 
@@ -103,11 +114,23 @@ class CardLikeUseCase(
         val member = memberService.findMember(userId)
 
         when (val card = getCard(cardId)) {
-            is FeedCard -> feedLikeService.findFeedLikedOp(card.pk, member.pk)
-                .orElse(null)?.takeUnless { it.isDeleted }?.delete()
+            is FeedCard -> {
+                try {
+                    feedLikeService.findFeedLikedOp(card.pk, member.pk)
+                        .orElse(null)?.takeUnless { it.isDeleted }?.delete()
+                } catch (e: OptimisticLockException) {
+                    logger.debug(e) { "Concurrent delete detected for card=${card.pk}, user=${member.pk}" }
+                }
+            }
 
-            is CommentCard -> commentLikeService.findCommentLikedOp(card.pk, member.pk)
-                .orElse(null)?.takeUnless { it.isDeleted }?.delete()
+            is CommentCard -> {
+                try {
+                    commentLikeService.findCommentLikedOp(card.pk, member.pk)
+                        .orElse(null)?.takeUnless { it.isDeleted }?.delete()
+                } catch (e: OptimisticLockException) {
+                    logger.debug(e) { "Concurrent delete detected for card=${card.pk}, user=${member.pk}" }
+                }
+            }
 
             else -> throw IllegalArgumentException("지원하지 않는 카드 타입입니다.")
         }

@@ -36,6 +36,9 @@ public class CommentLike extends BaseEntity {
     @Column(name = "IS_DELETED")
     private boolean isDeleted;
 
+    @Version
+    private Long version;
+
     @Builder
     public CommentLike(CommentCard targetCard, Member likedMember) {
         this.targetCard = targetCard;
