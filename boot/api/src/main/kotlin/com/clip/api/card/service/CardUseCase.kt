@@ -11,15 +11,15 @@ import com.clip.data.card.entity.CommentCard
 import com.clip.data.card.entity.FeedCard
 import com.clip.data.card.entity.imgtype.CardImgType
 import com.clip.data.card.entity.parenttype.CardType
-import com.clip.data.card.service.CommentCardService
-import com.clip.data.card.service.CommentLikeService
-import com.clip.data.card.service.FeedCardService
-import com.clip.data.card.service.FeedLikeService
+import com.clip.data.card.service.*
 import com.clip.data.img.service.CardImgService
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.Role
 import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.notificationtype.NotificationType
+import com.clip.data.notification.service.NotificationHistoryService
+import com.clip.data.report.service.CommentReportService
+import com.clip.data.report.service.FeedReportService
 import com.clip.data.tag.service.CommentTagService
 import com.clip.data.tag.service.FeedTagService
 import com.clip.data.tag.service.TagService
@@ -52,7 +52,12 @@ class CardUseCase(
     private val feedLikeService: FeedLikeService,
     private val commentLikeService: CommentLikeService,
     private val blockMemberService: BlockMemberService,
-) {
+    private val feedReportService: FeedReportService,
+    private val commentReportService: CommentReportService,
+    private val popularFeedService: PopularFeedService,
+    private val notificationHistoryService: NotificationHistoryService,
+
+    ) {
 
     companion object {
         fun getIp(request: HttpServletRequest): String =
@@ -202,6 +207,42 @@ class CardUseCase(
         commentCardService.deleteCommentCard(commentCard.pk)
     }
 
+    @Transactional
+    fun deleteCard(cardId: Long, userId: Long) {
+        val card = getParentCard(cardId)
+        if (card.writer.pk != userId)
+            throw IllegalArgumentException("본인이 작성한 카드만 삭제할 수 있습니다.")
+
+        when (card) {
+            is FeedCard -> {
+                deleteFeedCardDependencies(card)
+                feedCardService.deleteFeedCard(card.pk)
+            }
+            is CommentCard -> {
+                deleteCommentCardDependencies(card)
+                commentCardService.deleteCommentCard(card.pk)
+            }
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+    private fun deleteFeedCardDependencies(feedCard: FeedCard) {
+        feedTagService.deleteByFeedCardPk(feedCard.pk)
+        cardImgService.deleteUserUploadPic(feedCard.imgName)
+        feedLikeService.deleteAllFeedLikes(feedCard.pk)
+        feedReportService.deleteReport(feedCard.pk)
+        popularFeedService.deletePopularCard(feedCard.pk)
+        notificationHistoryService.deleteNotification(feedCard.pk)
+    }
+
+    private fun deleteCommentCardDependencies(commentCard: CommentCard) {
+        commentTagService.deleteByCommentCardPk(commentCard.pk)
+        cardImgService.deleteUserUploadPic(commentCard.imgName)
+        commentLikeService.deleteAllFeedLikes(commentCard.pk)
+        commentReportService.deleteReport(commentCard)
+        notificationHistoryService.deleteNotification(commentCard.pk)
+    }
+
     private fun getMasterCardId(card: Card): Long {
         return when (card) {
             is FeedCard -> card.pk
@@ -219,8 +260,7 @@ class CardUseCase(
             return feedCardService.findFeedCard(cardId)
         else if (commentCardService.isExistCommentCard(cardId))
             return commentCardService.findCommentCard(cardId)
-        else throw ParameterNotFoundException("$cardId 에 해당하는 카드를 찾지 못해 답카드를 작성할 수 없습니다.",cardId)
-
+        else throw ParameterNotFoundException("카드(id: $cardId)를 찾을 수 없습니다.", cardId)
     }
 
     private fun isBanPeriodExpired(member: Member): Boolean =

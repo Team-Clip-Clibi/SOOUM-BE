@@ -57,4 +57,9 @@ class CardController(
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()
 
+    @DeleteMapping("/{cardId}")
+    override fun deleteCard(@PathVariable cardId: Long, @AccessUser userId: Long): ResponseEntity<Unit> =
+        cardUseCase.deleteCard(cardId, userId)
+            .let { ResponseEntity.ok().build() }
+
 }
