@@ -120,7 +120,7 @@ class CardMapper(
         distance: String?,
         userId: Long,
         tags: List<Tag>,
-        parentCard: Card
+        parentCard: Card?
     ) : CommentCardDetailResponse =
         CommentCardDetailResponse (
             cardId = card.pk.toString(),
@@ -144,12 +144,12 @@ class CardMapper(
             isCommentWritten = CardUtil.isWrittenCommentCard(card, comments, userId),
             tags = tags.map { TagResponse(it.pk, it.content) },
             isOwnCard = writer.pk == userId,
-            previousCardId = parentCard.pk.toString(),
-            isPreviousCardDeleted = parentCard.isDeleted,
-            previousCardImgUrl = parentCard.takeUnless { it.isDeleted }?.let { card ->
-                when (card.imgType) {
-                    CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(card.imgName)
-                    CardImgType.USER -> s3ImgService.generateUserCardImgUrl(card.imgName)
+            previousCardId = parentCard?.pk?.toString() ?: "",
+            isPreviousCardDeleted = parentCard == null,
+            previousCardImgUrl = parentCard?.let {
+                when (it.imgType){
+                    CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(it.imgName)
+                    CardImgType.USER -> s3ImgService.generateUserCardImgUrl(it.imgName)
                 }
             },
             visitedCnt = card.viewCnt

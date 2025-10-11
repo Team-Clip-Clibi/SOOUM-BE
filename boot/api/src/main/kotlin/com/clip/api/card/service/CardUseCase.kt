@@ -160,7 +160,11 @@ class CardUseCase(
             }
             is CommentCard -> {
                 commentCardService.increaseViewCnt(card.pk, userId)
-                val parentCard = getCard(card.parentCardPk)
+                val parentCard = when (card.parentCardType) {
+                    CardType.FEED_CARD -> feedCardService.findFeedCardOrNull(card.parentCardPk)
+                    CardType.COMMENT_CARD -> commentCardService.findCommentCardOrNull(card.parentCardPk)
+                    else -> null
+                }
                 val commentLikes = commentLikeService.findByTargetCardIds(listOf(cardId))
                 val comments = commentCardService.findCommentCardsIn(listOf(cardId))
                 cardMapper.toCommentCardDetailResponse(card, writer, commentLikes, comments, distance, userId, tags, parentCard)

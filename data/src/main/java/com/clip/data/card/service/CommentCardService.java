@@ -48,8 +48,8 @@ public class CommentCardService {
                 .orElseThrow(() -> new EntityNotFoundException("댓글 카드를 찾을 수 없습니다."));
     }
 
-    public Optional<CommentCard> findOptCommentCard(Long commentCardPk) {
-        return commentCardRepository.findById(commentCardPk);
+    public CommentCard findCommentCardOrNull(Long commentCardPk) {
+        return commentCardRepository.findById(commentCardPk).orElse(null);
     }
 
     public boolean isExistCommentCard(Long commentCardPk) {
