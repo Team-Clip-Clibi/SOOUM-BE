@@ -1,10 +1,6 @@
 package com.clip.api.member.service
 
-import com.clip.api.member.controller.dto.LoginRequest
-import com.clip.api.member.controller.dto.LoginResponse
-import com.clip.api.member.controller.dto.SignUpRequest
-import com.clip.api.member.controller.dto.SignUpResponse
-import com.clip.api.member.controller.dto.TokenDto
+import com.clip.api.member.controller.dto.*
 import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.entity.Blacklist
 import com.clip.data.member.entity.Member
@@ -20,6 +16,7 @@ import com.clip.global.security.jwt.JwtProvider
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
+import io.jsonwebtoken.ExpiredJwtException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -113,8 +110,11 @@ class AuthUseCase(
         if (blacklistService.findByToken(request.refreshToken).isPresent)
             throw TokenException.BlacklistTokenException(token = request.refreshToken)
 
-        val userId = runCatching { jwtProvider.getUserId(request.refreshToken) }
-            .getOrElse { throw TokenException.ExpiredTokenException(token = request.refreshToken) }
+        val userId = try {
+            jwtProvider.getUserId(request.refreshToken)
+        } catch (e: ExpiredJwtException) {
+            throw TokenException.ExpiredTokenException(token = request.refreshToken)
+        }
 
         val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)
         val refreshToken = refreshTokenService.findByMember(userId)
