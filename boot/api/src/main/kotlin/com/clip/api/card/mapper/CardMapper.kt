@@ -87,7 +87,7 @@ class CardMapper(
         tags: List<Tag>
     ): FeedCardDetailResponse =
         FeedCardDetailResponse(
-            cardId = card.pk.toString(),
+            cardId = card.pk,
             likeCnt = CardUtil.countLikes(card, feedLikes),
             commentCardCnt = CardUtil.countComments(card, comments),
             cardImgUrl = when(card.imgType){
@@ -123,7 +123,7 @@ class CardMapper(
         parentCard: Card?
     ) : CommentCardDetailResponse =
         CommentCardDetailResponse (
-            cardId = card.pk.toString(),
+            cardId = card.pk,
             likeCnt = CardUtil.countLikes(card, feedLikes),
             commentCardCnt = CardUtil.countComments(card, comments),
             cardImgUrl = when(card.imgType){
@@ -139,7 +139,6 @@ class CardMapper(
             memberId = writer.pk,
             nickname = writer.nickname,
             profileImgUrl = writer.profileImgName?.let { s3ImgService.generateGetPresignedUrl(s3ImgPathProperties.profileImg, it) },
-            profileImgName = writer.profileImgName,
             isLike = CardUtil.isLiked(card, feedLikes, userId),
             isCommentWritten = CardUtil.isWrittenCommentCard(card, comments, userId),
             tags = tags.map { TagResponse(it.pk, it.content) },
@@ -162,7 +161,7 @@ class CardMapper(
         distance: String?
     ): CommentCardResponse =
         CommentCardResponse(
-            cardId = card.pk.toString(),
+            cardId = card.pk,
             likeCnt = CardUtil.countLikes(card, commentLikes),
             commentCardCnt = CardUtil.countComments(card, childComments),
             cardImgUrl = when(card.imgType){

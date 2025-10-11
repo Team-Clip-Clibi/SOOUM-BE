@@ -23,7 +23,7 @@ class FeedMapper(
         distance: String?,
     ): FeedCardResponse =
         FeedCardResponse(
-            cardId = targetFeedCard.pk.toString(),
+            cardId = targetFeedCard.pk,
             cardImgUrl = when(targetFeedCard.imgType){
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(targetFeedCard.imgName)
                 CardImgType.USER -> s3ImgService.generateUserCardImgUrl(targetFeedCard.imgName)
@@ -46,7 +46,7 @@ class FeedMapper(
         distance: String?,
     ): FeedCardResponse =
         FeedCardResponse(
-            cardId = feedcard.pk.toString(),
+            cardId = feedcard.pk,
             cardImgUrl = when(CardImgType.valueOf(feedcard.imgType)){
                 CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(feedcard.imgName)
                 CardImgType.USER -> s3ImgService.generateUserCardImgUrl(feedcard.imgName)

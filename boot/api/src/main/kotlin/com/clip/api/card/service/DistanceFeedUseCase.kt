@@ -1,6 +1,5 @@
 package com.clip.api.card.service
 
-import com.clip.api.card.controller.dto.CardResponse
 import com.clip.api.card.controller.dto.FeedCardResponse
 import com.clip.api.card.mapper.FeedMapper
 import com.clip.api.card.util.DistanceDisplayUtil
