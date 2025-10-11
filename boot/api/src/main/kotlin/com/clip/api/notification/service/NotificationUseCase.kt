@@ -2,6 +2,9 @@ package com.clip.api.notification.service
 
 import com.clip.api.notification.controller.dto.NotificationDto
 import com.clip.data.card.entity.Card
+import com.clip.data.card.entity.CommentCard
+import com.clip.data.card.entity.FeedCard
+import com.clip.data.member.entity.Member
 import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.NotificationHistory
 import com.clip.data.notification.entity.notificationtype.NotificationType
@@ -77,6 +80,20 @@ class NotificationUseCase(
         val member = memberService.findMember(toMemberId)
         return notificationHistoryService.save(
             NotificationHistory.ofBlocked(member)
+        )
+    }
+
+    @Transactional
+    fun saveFeedLikeHistory(fromMember: Member, feedCard: FeedCard): NotificationHistory {
+        return notificationHistoryService.save(
+            NotificationHistory.ofFeedLike(fromMember, feedCard)
+        )
+    }
+
+    @Transactional
+    fun saveCommentLikeHistory(fromMember: Member, commentCard: CommentCard): NotificationHistory {
+        return notificationHistoryService.save(
+            NotificationHistory.ofCommentLike(fromMember, commentCard)
         )
     }
 
