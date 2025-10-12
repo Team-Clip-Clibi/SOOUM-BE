@@ -40,7 +40,6 @@ class CardLikeUseCase(
 
                     try {
                         like.create()
-                        sendNotification(card, likedMember)
                     } catch (e: OptimisticLockException) {
                         logger.debug(e) { "Concurrent update detected for card=${card.pk}, user=${likedMember.pk}" }
                     }
@@ -63,7 +62,6 @@ class CardLikeUseCase(
 
                     try {
                         like.create()
-                        sendNotification(card, likedMember)
                     } catch (e: OptimisticLockException) {
                         logger.debug(e) { "Concurrent update detected for card=${card.pk}, user=${likedMember.pk}" }
                     }
