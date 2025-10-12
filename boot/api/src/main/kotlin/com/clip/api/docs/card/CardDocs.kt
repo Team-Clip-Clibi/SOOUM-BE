@@ -49,4 +49,14 @@ interface CardDocs {
         cardId: Long,
         userId: Long,
     ): ResponseEntity<List<CommentCardResponse>>
+
+    @Operation(summary = "카드 삭제 API", description = """
+        - 카드 삭제 API
+        - 피드 카드는 작성자만 삭제할 수 있습니다.
+        - 답 카드는 답 카드 작성자만 삭제할 수 있습니다.
+    """)
+    fun deleteCard(
+        cardId: Long,
+        userId: Long,
+    ): ResponseEntity<Unit>
 }
