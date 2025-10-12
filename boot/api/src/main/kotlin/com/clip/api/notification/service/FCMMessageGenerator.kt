@@ -4,12 +4,7 @@ import com.clip.api.notification.event.NotificationFCMEvent
 import com.clip.api.notification.event.SystemFCMEvent
 import com.clip.data.member.entity.DeviceType
 import com.clip.data.notification.entity.notificationtype.NotificationType
-import com.google.firebase.messaging.AndroidConfig
-import com.google.firebase.messaging.AndroidNotification
-import com.google.firebase.messaging.ApnsConfig
-import com.google.firebase.messaging.Aps
-import com.google.firebase.messaging.Message
-import com.google.firebase.messaging.Notification
+import com.google.firebase.messaging.*
 import org.springframework.stereotype.Component
 
 @Component

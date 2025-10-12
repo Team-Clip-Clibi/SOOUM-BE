@@ -1,6 +1,9 @@
 package com.clip.api.card.controller
 
-import com.clip.api.card.controller.dto.*
+import com.clip.api.card.controller.dto.CardDetailResponse
+import com.clip.api.card.controller.dto.CommentCardResponse
+import com.clip.api.card.controller.dto.CreateCommentCardRequest
+import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import com.clip.api.card.service.CardUseCase
 import com.clip.api.docs.card.CardDocs
 import com.clip.global.security.annotation.AccessUser

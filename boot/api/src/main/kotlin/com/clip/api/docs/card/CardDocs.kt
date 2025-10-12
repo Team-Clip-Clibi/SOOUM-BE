@@ -1,6 +1,9 @@
 package com.clip.api.docs.card
 
-import com.clip.api.card.controller.dto.*
+import com.clip.api.card.controller.dto.CardDetailResponse
+import com.clip.api.card.controller.dto.CommentCardResponse
+import com.clip.api.card.controller.dto.CreateCommentCardRequest
+import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest

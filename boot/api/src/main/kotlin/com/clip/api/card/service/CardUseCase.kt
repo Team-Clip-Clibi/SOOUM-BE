@@ -1,6 +1,9 @@
 package com.clip.api.card.service
 
-import com.clip.api.card.controller.dto.*
+import com.clip.api.card.controller.dto.CardDetailResponse
+import com.clip.api.card.controller.dto.CommentCardResponse
+import com.clip.api.card.controller.dto.CreateCommentCardRequest
+import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.NotificationFCMEvent

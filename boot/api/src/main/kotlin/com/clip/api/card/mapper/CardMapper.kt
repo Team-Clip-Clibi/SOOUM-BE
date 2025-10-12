@@ -1,11 +1,7 @@
 package com.clip.api.card.mapper
 
 import com.clip.api.card.controller.dto.*
-import com.clip.data.card.entity.Card
-import com.clip.data.card.entity.CommentCard
-import com.clip.data.card.entity.CommentLike
-import com.clip.data.card.entity.FeedCard
-import com.clip.data.card.entity.FeedLike
+import com.clip.data.card.entity.*
 import com.clip.data.card.entity.imgtype.CardImgType
 import com.clip.data.card.entity.parenttype.CardType
 import com.clip.data.common.deactivatewords.DeactivateTagWords
