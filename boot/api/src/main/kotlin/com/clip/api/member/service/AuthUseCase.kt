@@ -45,6 +45,13 @@ class AuthUseCase(
         val refreshToken = jwtProvider.createRefreshToken(member.pk, member.role)
 
         refreshTokenService.findByMember(member.pk).update(refreshToken)
+        memberService.save(
+            member.updateDeviceInfo(
+                request.deviceType,
+                request.deviceModel,
+                request.deviceOsVersion
+            )
+        )
 
         return LoginResponse(
             accessToken = accessToken,
@@ -77,6 +84,8 @@ class AuthUseCase(
                 Member.builder()
                     .deviceId(deviceId)
                     .deviceType(request.memberInfo.deviceType)
+                    .deviceModel(request.memberInfo.deviceModel)
+                    .deviceOsVersion(request.memberInfo.deviceOsVersion)
                     .firebaseToken(request.memberInfo.fcmToken)
                     .nickname(request.memberInfo.nickname)
                     .profileImgName(request.memberInfo.profileImage)

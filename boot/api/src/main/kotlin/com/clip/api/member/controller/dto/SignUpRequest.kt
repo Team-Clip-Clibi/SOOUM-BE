@@ -10,6 +10,8 @@ data class SignUpRequest (
 data class MemberInfo(
     val encryptedDeviceId: String,
     val deviceType: DeviceType,
+    val deviceModel: String,
+    val deviceOsVersion: String,
     val fcmToken: String?,
     val isNotificationAgreed: Boolean,
     val nickname: String?,

@@ -24,6 +24,12 @@ public class Member extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private DeviceType deviceType;
 
+    @Column(name = "DEVICE_MODEL", nullable = false)
+    private String deviceModel;
+
+    @Column(name = "DEVICE_OS_VERSION", nullable = false)
+    private String deviceOsVersion;
+
     @Column(name = "FIREBASE_TOKEN", columnDefinition = "VARBINARY(400)")
     private String firebaseToken;
 
@@ -56,9 +62,11 @@ public class Member extends BaseEntity {
     private String profileImgName;
 
     @Builder
-    public Member(String deviceId, DeviceType deviceType, String firebaseToken, String nickname, String profileImgName, boolean isAllowNotify) {
+    public Member(String deviceId, DeviceType deviceType, String deviceModel, String deviceOsVersion, String firebaseToken, String nickname, String profileImgName, boolean isAllowNotify) {
         this.deviceId = deviceId;
         this.deviceType = deviceType;
+        this.deviceModel = deviceModel;
+        this.deviceOsVersion = deviceOsVersion;
         this.firebaseToken = firebaseToken;
         this.nickname = nickname;
         this.isAllowNotify = isAllowNotify;
@@ -109,5 +117,12 @@ public class Member extends BaseEntity {
 
     public boolean isAllowNotify() {
         return isAllowNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public Member updateDeviceInfo(DeviceType deviceType, String deviceModel, String deviceOsVersion) {
+        this.deviceType = deviceType;
+        this.deviceModel = deviceModel;
+        this.deviceOsVersion = deviceOsVersion;
+        return this;
     }
 }
