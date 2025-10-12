@@ -13,6 +13,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_comment_like_card_member",
+                columnNames = {"TARGET_CARD", "LIKED_MEMBER"}
+        )
+)
 public class CommentLike extends BaseEntity {
     @Id @Tsid
     private Long pk;
