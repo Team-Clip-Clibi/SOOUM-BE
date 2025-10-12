@@ -46,12 +46,8 @@ class CardLikeUseCase(
                     return
                 }
 
-                try {
-                    feedLikeService.save(FeedLike(card, likedMember))
-                    sendNotification(card, likedMember)
-                } catch (e: DataIntegrityViolationException) {
-                    logger.debug(e) { "Duplicate like attempt detected for card=${card.pk}, user=${likedMember.pk}" }
-                }
+                feedLikeService.save(FeedLike(card, likedMember))
+                sendNotification(card, likedMember)
             }
 
             is CommentCard -> {
@@ -68,12 +64,8 @@ class CardLikeUseCase(
                     return
                 }
 
-                try {
-                    commentLikeService.save(CommentLike(card, likedMember))
-                    sendNotification(card, likedMember)
-                } catch (e: DataIntegrityViolationException) {
-                    logger.debug(e) { "Duplicate like attempt detected for card=${card.pk}, user=${likedMember.pk}" }
-                }
+                commentLikeService.save(CommentLike(card, likedMember))
+                sendNotification(card, likedMember)
             }
 
             else -> throw IllegalArgumentException("지원하지 않는 카드 타입입니다.")

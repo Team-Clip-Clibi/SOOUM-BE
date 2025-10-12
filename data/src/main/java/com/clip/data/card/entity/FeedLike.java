@@ -36,9 +36,6 @@ public class FeedLike extends BaseEntity {
     @Column(name = "IS_DELETED")
     private boolean isDeleted;
 
-    @Version
-    private Long version;
-
     @Builder
     public FeedLike(FeedCard targetCard, Member likedMember) {
         this.targetCard = targetCard;
