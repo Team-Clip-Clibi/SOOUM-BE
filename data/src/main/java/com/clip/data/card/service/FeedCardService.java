@@ -40,8 +40,8 @@ public class FeedCardService {
                 .orElseThrow(() -> new EntityNotFoundException("카드를 찾을 수 없습니다."));
     }
 
-    public Optional<FeedCard> findOptFeedCard(Long commentCardPk) {
-        return feedCardRepository.findById(commentCardPk);
+    public FeedCard findFeedCardOrNull(Long commentCardPk) {
+        return feedCardRepository.findById(commentCardPk).orElse(null);
     }
 
     public boolean isExistFeedCard(Long feedCardPk) {

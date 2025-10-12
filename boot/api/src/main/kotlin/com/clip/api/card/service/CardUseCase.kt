@@ -108,7 +108,7 @@ class CardUseCase(
         if (isUserImgType(createCommentCardRequest.imgType))
             validUserCardImg(createCommentCardRequest.imgName)
 
-        val parentCard = getParentCard(cardId)
+        val parentCard = getCard(cardId)
         val parentCardType = getCardType(parentCard)
         val masterCardId = getMasterCardId(parentCard)
 
@@ -146,7 +146,7 @@ class CardUseCase(
     }
 
     fun getFeedCardDetail(latitude: Double?, longitude: Double?, cardId: Long, userId: Long): CardDetailResponse {
-        val card: Card = getParentCard(cardId)
+        val card: Card = getCard(cardId)
         val writer = card.writer
         val tags = tagService.getTagsByCard(card)
         val distance = DistanceDisplayUtil.calculateAndFormat(card.location, latitude, longitude)
@@ -160,7 +160,11 @@ class CardUseCase(
             }
             is CommentCard -> {
                 commentCardService.increaseViewCnt(card.pk, userId)
-                val parentCard = getParentCard(card.parentCardPk)
+                val parentCard = when (card.parentCardType) {
+                    CardType.FEED_CARD -> feedCardService.findFeedCardOrNull(card.parentCardPk)
+                    CardType.COMMENT_CARD -> commentCardService.findCommentCardOrNull(card.parentCardPk)
+                    else -> null
+                }
                 val commentLikes = commentLikeService.findByTargetCardIds(listOf(cardId))
                 val comments = commentCardService.findCommentCardsIn(listOf(cardId))
                 cardMapper.toCommentCardDetailResponse(card, writer, commentLikes, comments, distance, userId, tags, parentCard)
@@ -209,7 +213,7 @@ class CardUseCase(
 
     @Transactional
     fun deleteCard(cardId: Long, userId: Long) {
-        val card = getParentCard(cardId)
+        val card = getCard(cardId)
         if (card.writer.pk != userId)
             throw IllegalArgumentException("본인이 작성한 카드만 삭제할 수 있습니다.")
 
@@ -255,7 +259,7 @@ class CardUseCase(
         if (card is FeedCard) CardType.FEED_CARD else CardType.COMMENT_CARD
 
 
-    private fun getParentCard(cardId: Long): Card {
+    private fun getCard(cardId: Long): Card {
         if (feedCardService.isExistFeedCard(cardId))
             return feedCardService.findFeedCard(cardId)
         else if (commentCardService.isExistCommentCard(cardId))
