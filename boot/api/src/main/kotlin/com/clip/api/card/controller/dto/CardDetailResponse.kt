@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 sealed class CardDetailResponse(
-    val cardId: String,
+    val cardId: Long,
     val likeCnt: Int,
     val commentCardCnt: Int,
     val cardImgUrl: String,
@@ -19,7 +19,7 @@ sealed class CardDetailResponse(
 )
 
 class FeedCardDetailResponse(
-    cardId: String,
+    cardId: Long,
     likeCnt: Int,
     commentCardCnt: Int,
     cardImgUrl: String,
@@ -54,7 +54,7 @@ class FeedCardDetailResponse(
 )
 
 class CommentCardDetailResponse(
-    cardId: String,
+    cardId: Long,
     likeCnt: Int,
     commentCardCnt: Int,
     cardImgUrl: String,
@@ -67,7 +67,6 @@ class CommentCardDetailResponse(
     val memberId: Long,
     val nickname: String,
     val profileImgUrl: String?,
-    val profileImgName: String?,
     val isLike: Boolean,
     val isCommentWritten: Boolean,
     val tags: List<TagResponse>,
