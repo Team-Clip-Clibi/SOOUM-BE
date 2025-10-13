@@ -10,8 +10,8 @@ class NoticeUseCase(
     private val noticeService: NoticeService
 ) {
 
-    fun findNotices(lastId: Long?) =
-        noticeService.findNotices(lastId)
+    fun findNotices(lastId: Long?, pageSize: Int) =
+        noticeService.findNotices(lastId, pageSize)
             .map {
                 NoticeInfo(
                     id = it.pk,
