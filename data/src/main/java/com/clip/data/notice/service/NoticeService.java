@@ -14,7 +14,8 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
 
-    public List<Notice> findNotices(Long lastPk) {
-        return noticeRepository.findNotice(lastPk, PageRequest.ofSize(30));
+    public List<Notice> findNotices(Long lastPk, Integer pageSize) {
+        if (pageSize > 30) pageSize = 30;
+        return noticeRepository.findNotice(lastPk, PageRequest.ofSize(pageSize));
     }
 }
