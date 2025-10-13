@@ -1,5 +1,7 @@
 package com.clip.api.card.service
 
+import com.clip.api.card.controller.dto.CardContent
+import com.clip.api.card.controller.dto.CardContentsResponse
 import com.clip.api.card.controller.dto.CardDetailResponse
 import com.clip.api.card.controller.dto.CommentCardResponse
 import com.clip.api.card.controller.dto.CreateCommentCardRequest
@@ -284,4 +286,38 @@ class CardUseCase(
         if (rekognitionService.isModeratingCardImg(imgName))
             throw ImageException.InvalidImageException(imgName = imgName)
     }
+
+    @Transactional(readOnly = true)
+    fun getUserFeedCards(lastId: Long?, userId: Long): CardContentsResponse =
+        feedCardService.findFeedCardsByUser(userId, lastId)
+            .map { card ->
+                CardContent(
+                    card.pk,
+                    card.imgName,
+                    if (card.imgType.equals(CardImgType.USER)) {
+                        s3ImgService.generateUserCardImgUrl(card.imgName)
+                    } else {
+                        s3ImgService.generateDefaultCardImgUrl(card.imgName)
+                    },
+                    card.content
+                )
+            }.toList().let { CardContentsResponse(it) }
+
+
+    @Transactional(readOnly = true)
+    fun getMyCommentCards(lastId: Long?, userId: Long): CardContentsResponse =
+        commentCardService.findCommentCardsByUser(userId, lastId)
+            .map { card ->
+                CardContent(
+                    card.pk,
+                    card.imgName,
+                    if (card.imgType.equals(CardImgType.USER)) {
+                        s3ImgService.generateUserCardImgUrl(card.imgName)
+                    } else {
+                        s3ImgService.generateDefaultCardImgUrl(card.imgName)
+                    },
+                    card.content
+                )
+            }.toList().let { CardContentsResponse(it) }
+
 }

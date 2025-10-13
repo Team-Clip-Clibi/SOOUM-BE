@@ -1,9 +1,13 @@
 package com.clip.api.member.service
 
 import com.clip.api.member.controller.dto.*
+import com.clip.data.card.service.FeedCardService
+import com.clip.data.follow.service.FollowService
 import com.clip.data.img.service.ProfileImgService
+import com.clip.data.member.entity.Member
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
+import com.clip.data.visitor.service.VisitorService
 import com.clip.global.exception.ImageException
 import com.clip.global.util.BadWordFilter
 import com.clip.global.util.NicknameGenerator
@@ -24,6 +28,9 @@ class MemberUseCase(
     private val s3ImgPathProperties: S3ImgPathProperties,
     private val rekognitionService: RekognitionService,
     private val profileImgService: ProfileImgService,
+    private val visitorService: VisitorService,
+    private val feedCardService: FeedCardService,
+    private val followService: FollowService,
 ) {
     companion object {
         private val FORBIDDEN_NICKNAME = listOf("숨 운영자", "숨 운영진", "숨 관리자", "숨 관리진", "운영자", "운영진", "관리자", "관리진")
@@ -109,4 +116,60 @@ class MemberUseCase(
 
         return PostingPermissionDto(false, member.untilBan)
     }
+
+    @Transactional(readOnly = true)
+    fun getMyProfileSummaryInfo(userId: Long): MyProfileInfoResponse {
+        val member = memberService.findMember(userId)
+
+        val totalVisitCnt = memberService.findTotalVisitCnt(member)
+        val todayVisitCnt = visitorService.findCurrentDateVisitorCnt(member)
+        val feedCardCnt = feedCardService.findFeedCardCnt(member)
+        val followerCnt = followService.findFollowerCnt(member)
+        val followingCnt = followService.findFollowingCnt(member)
+
+        return MyProfileInfoResponse(
+            member.pk,
+            member.nickname,
+            member.profileImgName?.let { s3ImgService.generateProfileImgUrl(it) },
+            totalVisitCnt,
+            todayVisitCnt,
+            feedCardCnt,
+            followingCnt,
+            followerCnt
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserProfileSummaryInfo(profileOwnerId: Long, userId: Long): UserProfileInfoResponse {
+        val profileOwner = memberService.findMember(profileOwnerId)
+        val visitor = memberService.findMember(userId)
+        saveVisitor(visitor, profileOwner)
+
+        val totalVisitCnt = memberService.findTotalVisitCnt(profileOwner)
+        val todayVisitCnt = visitorService.findCurrentDateVisitorCnt(profileOwner)
+        val feedCardCnt = feedCardService.findFeedCardCnt(profileOwner)
+        val followerCnt = followService.findFollowerCnt(profileOwner)
+        val followingCnt = followService.findFollowingCnt(profileOwner)
+        val alreadyFollowing = followService.isAlreadyFollowing(visitor, profileOwner)
+
+        return UserProfileInfoResponse(
+            profileOwner.pk,
+            profileOwner.nickname,
+            profileOwner.profileImgName?.let { s3ImgService.generateProfileImgUrl(it) },
+            totalVisitCnt,
+            todayVisitCnt,
+            feedCardCnt,
+            followingCnt,
+            followerCnt,
+            alreadyFollowing
+        )
+    }
+
+    private fun saveVisitor(visitor: Member, profileOwner: Member) {
+        val isFirstVisitToday = visitorService.saveVisitorIfFirstVisitToday(profileOwner, visitor).isPresent
+        if (isFirstVisitToday) {
+            memberService.incrementTotalVisitorCnt(profileOwner)
+        }
+    }
+
 }

@@ -61,14 +61,9 @@ public class FeedCardService {
         return feedCardRepository.findFeedCardCnt(cardOwnerMember);
     }
 
-    public List<FeedCard> findMemberFeedCards(Long memberPk, Long lastPk) {
+    public List<FeedCard> findFeedCardsByUser(Long memberPk, Long lastPk) {
         PageRequest pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
         return feedCardRepository.findMemberFeedCards(memberPk, lastPk, pageRequest);
-    }
-
-    public List<FeedCard> findMyFeedCards(Long memberPk, Long lastPk) {
-        PageRequest pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
-        return feedCardRepository.findMyFeedCards(memberPk, lastPk, pageRequest);
     }
 
     public void deleteFeedCardByMemberPk(Long memberPk) {

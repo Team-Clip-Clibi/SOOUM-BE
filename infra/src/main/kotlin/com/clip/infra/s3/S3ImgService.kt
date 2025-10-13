@@ -21,6 +21,9 @@ class S3ImgService(
         private val EXPIRY_TIME: Duration = Duration.ofHours(24)
     }
 
+    fun generateProfileImgUrl(imgName: String): String =
+        generateGetPresignedUrl(S3ImgPathProperties.profileImg, imgName)
+
     fun generateDefaultCardImgUrl(imgName: String): String =
         generateGetPresignedUrl(S3ImgPathProperties.defaultCardImg, imgName)
 

@@ -36,4 +36,12 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
     }
+
+    public Long findTotalVisitCnt(Member member) {
+        return member.getTotalVisitorCnt();
+    }
+
+    public void incrementTotalVisitorCnt(Member profileOwnerMember) {
+        memberRepository.incrementTotalVisitorCnt(profileOwnerMember);
+    }
 }

@@ -1,7 +1,6 @@
 package com.clip.data.card.service;
 
 import com.clip.data.card.entity.CommentCard;
-import com.clip.data.card.entity.FeedCard;
 import com.clip.data.card.entity.parenttype.CardType;
 import com.clip.data.card.repository.CommentCardRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -77,9 +76,9 @@ public class CommentCardService {
         return commentCardRepository.save(commentCard);
     }
 
-    public List<CommentCard> findCommentList(Long memberPk, Optional<Long> lastPk) {
-        PageRequest pageRequest = PageRequest.ofSize(30);
-        return commentCardRepository.findCommentCards(memberPk, lastPk.orElse(null), pageRequest);
+    public List<CommentCard> findCommentCardsByUser(Long memberPk, Long lastPk) {
+        PageRequest pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
+        return commentCardRepository.findCommentCards(memberPk, lastPk, pageRequest);
     }
 
     public void deleteCommentCardByMemberPk(Long memberPk) {
