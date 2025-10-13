@@ -3,7 +3,10 @@ package com.clip.api.card.service
 import com.clip.api.notification.event.NotificationFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.data.card.entity.*
-import com.clip.data.card.service.*
+import com.clip.data.card.service.CommentCardService
+import com.clip.data.card.service.CommentLikeService
+import com.clip.data.card.service.FeedCardService
+import com.clip.data.card.service.FeedLikeService
 import com.clip.data.member.entity.Member
 import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.notificationtype.NotificationType
@@ -11,7 +14,6 @@ import com.clip.global.exception.IllegalArgumentException.ParameterNotFoundExcep
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.persistence.OptimisticLockException
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

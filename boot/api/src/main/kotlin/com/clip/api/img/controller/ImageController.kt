@@ -2,9 +2,9 @@ package com.clip.api.img.controller
 
 import com.clip.api.docs.img.ImageDocs
 import com.clip.api.img.controller.dto.DefaultImagesResponse
-import com.clip.api.img.service.ImageUseCase
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
 import com.clip.api.img.controller.dto.VerificationResultResponse
+import com.clip.api.img.service.ImageUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

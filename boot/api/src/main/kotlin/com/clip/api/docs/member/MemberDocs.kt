@@ -50,4 +50,14 @@ interface MemberDocs {
         - 차단되지 않은 유저의 expiredAt은 null 입니다.
     """)
     fun getPostingPermissions(userId: Long): ResponseEntity<PostingPermissionDto>
+
+    @Operation(summary = "나의 프로필 정보 조회 API", description = """
+        - 나의 프로필 정보(방문자, 게시글 수, 팔로워 수, 팔로잉 수, 닉네임, 프로필 이미지 등) 조회 API
+    """)
+    fun getMyProfileSummaryInfo(userId: Long): ResponseEntity<MyProfileInfoResponse>
+
+    @Operation(summary = "상대 프로필 정보 조회 API", description = """
+        - profileOwner의 프로필 정보(방문자, 게시글 수, 팔로워 수, 팔로잉 수, 닉네임, 프로필 이미지 등) 조회 API
+    """)
+    fun getUserProfileSummaryInfo(profileOwnerId: Long, userId: Long): ResponseEntity<UserProfileInfoResponse>
 }

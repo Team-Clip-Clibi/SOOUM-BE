@@ -55,4 +55,17 @@ class MemberController(
         @AccessUser userId: Long
     ): ResponseEntity<PostingPermissionDto> =
         ResponseEntity.ok(memberUseCase.getPostingPermissions(userId))
+
+    @GetMapping("/profile/info/my")
+    override fun getMyProfileSummaryInfo(
+        @AccessUser userId: Long
+    ): ResponseEntity<MyProfileInfoResponse> =
+        ResponseEntity.ok(memberUseCase.getMyProfileSummaryInfo(userId))
+
+    @GetMapping("/profile/info/{profileOwnerId}")
+    override fun getUserProfileSummaryInfo(
+        @PathVariable profileOwnerId: Long,
+        @AccessUser userId: Long
+    ): ResponseEntity<UserProfileInfoResponse> =
+        ResponseEntity.ok(memberUseCase.getUserProfileSummaryInfo(profileOwnerId, userId))
 }

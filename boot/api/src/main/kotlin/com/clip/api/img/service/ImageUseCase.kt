@@ -1,10 +1,6 @@
 package com.clip.api.img.service
 
-import com.clip.api.img.controller.dto.DefaultImagesResponse
-import com.clip.api.img.controller.dto.DefaultImgCategory
-import com.clip.api.img.controller.dto.ImageUrlInfoResponse
-import com.clip.api.img.controller.dto.ImgInfo
-import com.clip.api.img.controller.dto.VerificationResultResponse
+import com.clip.api.img.controller.dto.*
 import com.clip.data.img.service.CardImgService
 import com.clip.data.img.service.ProfileImgService
 import com.clip.global.exception.ImageException
@@ -12,7 +8,7 @@ import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class ImageUseCase(

@@ -1,19 +1,11 @@
 package com.clip.api.member.controller
 
 import com.clip.api.docs.member.AuthDocs
-import com.clip.api.member.controller.dto.LoginRequest
-import com.clip.api.member.controller.dto.LoginResponse
-import com.clip.api.member.controller.dto.SignUpRequest
-import com.clip.api.member.controller.dto.SignUpResponse
-import com.clip.api.member.controller.dto.TokenDto
+import com.clip.api.member.controller.dto.*
 import com.clip.api.member.service.AuthUseCase
 import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/auth")

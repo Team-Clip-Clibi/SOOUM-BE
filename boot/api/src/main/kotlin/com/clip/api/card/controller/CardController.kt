@@ -1,6 +1,10 @@
 package com.clip.api.card.controller
 
-import com.clip.api.card.controller.dto.*
+import com.clip.api.card.controller.dto.CardContentsResponse
+import com.clip.api.card.controller.dto.CardDetailResponse
+import com.clip.api.card.controller.dto.CommentCardResponse
+import com.clip.api.card.controller.dto.CreateCommentCardRequest
+import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import com.clip.api.card.service.CardUseCase
 import com.clip.api.docs.card.CardDocs
 import com.clip.global.security.annotation.AccessUser
@@ -61,5 +65,27 @@ class CardController(
     override fun deleteCard(@PathVariable cardId: Long, @AccessUser userId: Long): ResponseEntity<Unit> =
         cardUseCase.deleteCard(cardId, userId)
             .let { ResponseEntity.ok().build() }
+
+    @GetMapping("/feeds/{userId}", "/feeds/{userId}/{lastId}")
+    override fun getUserFeedCards(
+        @PathVariable userId: Long,
+        @PathVariable(required = false) lastId: Long?,
+    ): ResponseEntity<CardContentsResponse> =
+        cardUseCase.getUserFeedCards(lastId, userId)
+            .takeIf { it.cardContents.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
+
+
+
+    @GetMapping("/comments", "/comments/{lastId}")
+    override fun getMyCommentCards(
+        @PathVariable(required = false) lastId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<CardContentsResponse> =
+        cardUseCase.getMyCommentCards(lastId, userId)
+            .takeIf { it.cardContents.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
 
 }

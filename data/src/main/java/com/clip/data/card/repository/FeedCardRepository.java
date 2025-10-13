@@ -63,16 +63,6 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
     @Query("select count(f) from FeedCard f where f.writer = :cardOwnerMember")
     Long findFeedCardCnt(@Param("cardOwnerMember") Member cardOwnerMember);
 
-
-    @Query("select fc from FeedCard fc " +
-            "where (fc.isStory=false or (fc.isStory = true and fc.createdAt > (current_timestamp - 1 day))) " +
-                "and fc.writer.pk = :memberPk " +
-                "and (:lastPk is null or fc.pk < :lastPk) " +
-            "order by fc.pk desc ")
-    List<FeedCard> findMyFeedCards(@Param("memberPk") Long memberPk,
-                                   @Param("lastPk") Long lastPk,
-                                   PageRequest pageRequest);
-
     @Query("select fc from FeedCard fc " +
             "where (fc.isStory=false or (fc.isStory = true and fc.createdAt > (current_timestamp - 1 day))) " +
                 "and fc.writer.pk = :memberPk " +
