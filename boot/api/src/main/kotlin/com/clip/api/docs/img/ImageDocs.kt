@@ -2,7 +2,6 @@ package com.clip.api.docs.img
 
 import com.clip.api.img.controller.dto.DefaultImagesResponse
 import com.clip.api.img.controller.dto.ImageUrlInfoResponse
-import com.clip.api.img.controller.dto.VerificationResultResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -29,10 +28,4 @@ interface ImageDocs {
     """)
     fun getUploadCardImgUrl(): ResponseEntity<ImageUrlInfoResponse>
 
-    @Operation(summary = "배경 이미지 사용 가능 여부 조회 API", description = """
-        - 업로드된 카드 배경 이미지의 부적절 여부를 검사하고, 그 결과를 반환합니다.
-        - isAvailableImg 값이 true이면 해당 이미지를 카드 배경으로 사용할 수 있습니다.
-        - S3에서 해당 이미지를 찾을 수 없는 경우 404 NOT FOUND 응답을 반환합니다.
-    """)
-    fun getVerificationImagResult(imgName: String): ResponseEntity<VerificationResultResponse>
 }

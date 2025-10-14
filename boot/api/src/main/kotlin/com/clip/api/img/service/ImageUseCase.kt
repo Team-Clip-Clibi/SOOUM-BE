@@ -1,9 +1,11 @@
 package com.clip.api.img.service
 
-import com.clip.api.img.controller.dto.*
+import com.clip.api.img.controller.dto.DefaultImagesResponse
+import com.clip.api.img.controller.dto.DefaultImgCategory
+import com.clip.api.img.controller.dto.ImageUrlInfoResponse
+import com.clip.api.img.controller.dto.ImgInfo
 import com.clip.data.img.service.CardImgService
 import com.clip.data.img.service.ProfileImgService
-import com.clip.global.exception.ImageException
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgPathProperties
 import com.clip.infra.s3.S3ImgService
@@ -92,14 +94,6 @@ class ImageUseCase(
                 }
             )
         )
-    }
-
-    fun getVerificationCardImgResult(imgName: String): VerificationResultResponse {
-        if (!s3ImgService.isCardImgSaved(imgName))
-            throw ImageException.ImageNotFoundException(imgName = imgName)
-        if (rekognitionService.isModeratingCardImg(imgName))
-            return VerificationResultResponse(false)
-        return VerificationResultResponse(true)
     }
 
 }
