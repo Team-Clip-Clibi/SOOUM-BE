@@ -29,7 +29,7 @@ default-img:
   sensitivity:
     - Bed.jpeg
     - Shadow.jpeg
-    - Aireplane.jpeg
+    - Airplane.jpeg
     - Cat.jpeg
     - Window.jpeg
     - Light.jpeg
