@@ -14,4 +14,12 @@ sealed class IllegalArgumentException(
         HttpStatus.BAD_REQUEST,
         message,
     )
+
+    class NicknameInvalidException(
+        message: String = "사용할 수 없는 닉네임입니다.",
+        vararg parameters: Any?
+    ): IllegalArgumentException(
+        HttpStatus.BAD_REQUEST,
+        message,
+    )
 }

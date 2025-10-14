@@ -8,6 +8,7 @@ import com.clip.data.member.entity.Member
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
 import com.clip.data.visitor.service.VisitorService
+import com.clip.global.exception.IllegalArgumentException
 import com.clip.global.exception.ImageException
 import com.clip.global.util.BadWordFilter
 import com.clip.global.util.NicknameGenerator
@@ -56,22 +57,34 @@ class MemberUseCase(
         )
     }
 
-    fun validateNickname(nicknameDto: NicknameDto) : NicknameValidateResponse {
-        return NicknameValidateResponse(
-            nicknameDto.nickname.isNotBlank() && !BadWordFilter.isBadWord(nicknameDto.nickname) && nicknameDto.nickname !in FORBIDDEN_NICKNAME
-        )
+    @Transactional
+    fun updateNicknameAndProfileImg(profileInfoRequest: ProfileInfoRequest, userId: Long) {
+        profileInfoRequest.nickname?.let { updateNickname(it, userId) }
+        updateProfileImage(profileInfoRequest.profileImgName, userId)
+    }
+
+    fun validateNickname(nicknameDto: NicknameDto) : NicknameValidateResponse =
+        NicknameValidateResponse(isAvailableNickname(nicknameDto.nickname))
+
+    @Transactional
+    fun updateNickname(nickname: String, id: Long) {
+        if (isAvailableNickname(nickname))
+            throw IllegalArgumentException.NicknameInvalidException()
+        memberService.findMember(id)
+            .takeIf { it.nickname != nickname }
+            ?.updateNickname(nickname)
     }
 
     @Transactional
-    fun updateNickname(nicknameDto: NicknameDto, id: Long) {
-        memberService.findMember(id).updateNickname(nicknameDto.nickname)
-    }
-
-    @Transactional
-    fun updateProfileImage(profileImageDto: ProfileImageDto, id: Long) {
+    fun updateProfileImage(imageName: String?, id: Long) {
         val member = memberService.findMember(id)
-        // 프로필 이미지가 null이거나 빈 문자열이면 함수 종료
-        profileImageDto.imageName?.takeIf { it.isNotBlank() }?.let { imgName ->
+
+        // 프로필 이미지가 null 또는 공백이 아닐 때
+        imageName?.takeIf { it.isNotBlank() }?.let { imgName ->
+            // 기존 프로필 이미지와 동일하면 함수 종료
+            if (member.profileImgName == imageName) {
+                return
+            }
             // 이미지 저장 여부 확인
             if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
                 throw ImageException.ImageNotFoundException(imgName = imgName)
@@ -80,14 +93,13 @@ class MemberUseCase(
             if (rekognitionService.isModeratingImg(s3ImgPathProperties.profileImg, imgName)) {
                 throw ImageException.InvalidImageException(imgName = imgName)
             }
-
             // 프로필 이미지 업데이트 처리
             val profileImg = profileImgService.findProfileImg(imgName)
             profileImg.updateProfileOwner(member)
-
-            // 멤버 프로필 이미지 이름 업데이트
-            member.updateProfileImgName(imgName)
         }
+
+        // 멤버 프로필 이미지 이름 업데이트
+        member.updateProfileImgName(imageName)
     }
 
     @Transactional
@@ -130,6 +142,7 @@ class MemberUseCase(
         return MyProfileInfoResponse(
             member.pk,
             member.nickname,
+            member.profileImgName,
             member.profileImgName?.let { s3ImgService.generateProfileImgUrl(it) },
             totalVisitCnt,
             todayVisitCnt,
@@ -172,4 +185,7 @@ class MemberUseCase(
         }
     }
 
+    private fun isAvailableNickname(nickname: String): Boolean =
+        !(nickname.isBlank() || BadWordFilter.isBadWord(nickname) ||
+                nickname in FORBIDDEN_NICKNAME || nickname.length > 8)
 }

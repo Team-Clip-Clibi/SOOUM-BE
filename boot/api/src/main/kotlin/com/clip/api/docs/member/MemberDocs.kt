@@ -60,4 +60,13 @@ interface MemberDocs {
         - profileOwner의 프로필 정보(방문자, 게시글 수, 팔로워 수, 팔로잉 수, 닉네임, 프로필 이미지 등) 조회 API
     """)
     fun getUserProfileSummaryInfo(profileOwnerId: Long, userId: Long): ResponseEntity<UserProfileInfoResponse>
+
+    @Operation(summary = "프로필 업데이트 API", description = """
+        - 프로필 화면에서의 프로필 업데이트 시 사용되는 API입니다.
+        - 닉네임과 프로필 이미지를 업데이트 할 수 있습니다.
+        - 닉네임은 null일 경우 변경하지 않는 것으로 간주합니다.
+        - 프로필 이미지는 null일 경우 기존 이미지는 삭제되며 기본 이미지로 변경됩니다.
+        - 닉네임만 변경하고 프로필 이미지는 기존과 동일한 이미지 사용을 원하면 이전 화면(프로필 화면)을 조회할 때 사용되는 API의 응답에서 profileImgName 값을 가져와서 요청 바디에 담아 보내면 됩니다.
+    """)
+    fun updateMyProfileInfo(profileInfoRequest: ProfileInfoRequest, userId: Long): ResponseEntity<Void>
 }
