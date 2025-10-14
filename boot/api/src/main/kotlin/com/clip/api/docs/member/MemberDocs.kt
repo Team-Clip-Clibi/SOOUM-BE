@@ -69,4 +69,10 @@ interface MemberDocs {
         - 닉네임만 변경하고 프로필 이미지는 기존과 동일한 이미지 사용을 원하면 이전 화면(프로필 화면)을 조회할 때 사용되는 API의 응답에서 profileImgName 값을 가져와서 요청 바디에 담아 보내면 됩니다.
     """)
     fun updateMyProfileInfo(profileInfoRequest: ProfileInfoRequest, userId: Long): ResponseEntity<Void>
+
+    @Operation(summary = "푸시알림 ON/OFF API", description = """
+        - 푸시알림 수신 여부를 설정하는 API입니다.
+        - allowNotify가 true이면 푸시알림을 수신하고, false이면 수신하지 않습니다.
+    """)
+    fun updateNotifyAllow(allowNotifyRequest: AllowNotifyRequest, userId: Long): ResponseEntity<Void>
 }
