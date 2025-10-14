@@ -50,6 +50,12 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
 
+    @ExceptionHandler(IllegalArgumentException.NicknameInvalidException::class)
+    fun nicknameInvalidException(e: IllegalArgumentException.NicknameInvalidException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
 
     @ExceptionHandler(BaseException::class)
     fun baseException(e: BaseException): ResponseEntity<ErrorResponse> {
