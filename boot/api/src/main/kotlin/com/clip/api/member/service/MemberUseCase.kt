@@ -130,6 +130,7 @@ class MemberUseCase(
         return MyProfileInfoResponse(
             member.pk,
             member.nickname,
+            member.profileImgName,
             member.profileImgName?.let { s3ImgService.generateProfileImgUrl(it) },
             totalVisitCnt,
             todayVisitCnt,

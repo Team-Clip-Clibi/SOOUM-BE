@@ -3,6 +3,7 @@ package com.clip.api.member.controller.dto
 data class MyProfileInfoResponse(
     val userId: Long,
     val nickname: String,
+    val profileImgName: String?,
     val profileImageUrl: String?,
     val totalVisitCnt: Long,
     val todayVisitCnt: Long,
