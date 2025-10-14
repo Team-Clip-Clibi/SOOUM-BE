@@ -188,4 +188,11 @@ class MemberUseCase(
     private fun isAvailableNickname(nickname: String): Boolean =
         !(nickname.isBlank() || BadWordFilter.isBadWord(nickname) ||
                 nickname in FORBIDDEN_NICKNAME || nickname.length > 8)
+
+    @Transactional
+    fun updateAllowNotify(allowNotify: Boolean, userId: Long) {
+        memberService.findMember(userId)
+            .takeIf { it.isAllowNotify == allowNotify }
+            ?.updateNotifyAllow(allowNotify)
+    }
 }

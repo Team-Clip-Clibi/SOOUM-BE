@@ -21,6 +21,14 @@ class MemberController(
         memberUseCase.updateFCMToken(fcmRequest.fcmToken, userId)
             .let { ResponseEntity.ok().build() }
 
+    @PatchMapping("/notify")
+    override fun updateNotifyAllow(
+        @RequestBody allowNotifyRequest: AllowNotifyRequest,
+        @AccessUser userId: Long
+    ): ResponseEntity<Void> =
+        memberUseCase.updateAllowNotify(allowNotifyRequest.isAllowNotify, userId)
+            .let { ResponseEntity.ok().build() }
+
 
     @PostMapping("/check-available")
     override fun checkAvailableSignUp(@RequestBody checkAvailableRequest: CheckAvailableRequest): ResponseEntity<CheckAvailableResponse> {
