@@ -9,13 +9,13 @@ default-img:
     - Abstract7.jpeg
 
   color:
-    - Blue
-    - Green
-    - Yellow
-    - Orange
-    - Red
-    - Purple
-    - Pink
+    - Blue.jpeg
+    - Green.jpeg
+    - Yellow.jpeg
+    - Orange.jpeg
+    - Red.jpeg
+    - Purple.jpeg
+    - Pink.jpeg
 
   nature:
     - Leaf.jpeg
