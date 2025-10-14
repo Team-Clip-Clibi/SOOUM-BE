@@ -36,13 +36,13 @@ class MemberController(
 
     @PatchMapping("/nickname")
     override fun updateNickname(@RequestBody nicknameDto: NicknameDto, @AccessUser id: Long): ResponseEntity<Void> {
-        memberUseCase.updateNickname(nicknameDto, id)
+        memberUseCase.updateNickname(nicknameDto.nickname, id)
         return ResponseEntity.noContent().build()
     }
 
     @PatchMapping("/profile-img")
     override fun updateProfileImage(@RequestBody profileImageDto: ProfileImageDto, @AccessUser id: Long): ResponseEntity<Void> {
-        memberUseCase.updateProfileImage(profileImageDto, id)
+        memberUseCase.updateProfileImage(profileImageDto.imageName, id)
         return ResponseEntity.noContent().build()
     }
 
@@ -56,7 +56,7 @@ class MemberController(
     ): ResponseEntity<PostingPermissionDto> =
         ResponseEntity.ok(memberUseCase.getPostingPermissions(userId))
 
-    @GetMapping("/profile/info/my")
+    @GetMapping("/profile/info/me")
     override fun getMyProfileSummaryInfo(
         @AccessUser userId: Long
     ): ResponseEntity<MyProfileInfoResponse> =
@@ -68,4 +68,13 @@ class MemberController(
         @AccessUser userId: Long
     ): ResponseEntity<UserProfileInfoResponse> =
         ResponseEntity.ok(memberUseCase.getUserProfileSummaryInfo(profileOwnerId, userId))
+
+    @PatchMapping("/profile/info/me")
+    override fun updateMyProfileInfo(
+        @RequestBody profileInfoRequest: ProfileInfoRequest,
+        @AccessUser userId: Long
+    ): ResponseEntity<Void> {
+        memberUseCase.updateNicknameAndProfileImg(profileInfoRequest, userId)
+        return ResponseEntity.ok().build()
+    }
 }
