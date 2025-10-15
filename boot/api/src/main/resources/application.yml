@@ -54,7 +54,7 @@ exclude-auth-path-patterns:
     - path-pattern: /api/members/validate-nickname
       method: POST
     - path-pattern: /api/images/profile
-      method: POST
+      method: GET
     - path-pattern: /api/images/defaults
       method: GET
     - path-pattern: /api/auth/token/reissue
