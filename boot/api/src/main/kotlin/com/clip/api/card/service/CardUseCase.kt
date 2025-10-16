@@ -1,19 +1,12 @@
 package com.clip.api.card.service
 
-import com.clip.api.card.controller.dto.CardContent
-import com.clip.api.card.controller.dto.CardContentsResponse
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CommentCardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.NotificationFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.data.block.service.BlockMemberService
-import com.clip.data.card.entity.Card
-import com.clip.data.card.entity.CommentCard
-import com.clip.data.card.entity.FeedCard
+import com.clip.data.card.entity.*
 import com.clip.data.card.entity.imgtype.CardImgType
 import com.clip.data.card.entity.parenttype.CardType
 import com.clip.data.card.service.*
@@ -61,8 +54,9 @@ class CardUseCase(
     private val commentReportService: CommentReportService,
     private val popularFeedService: PopularFeedService,
     private val notificationHistoryService: NotificationHistoryService,
-
-    ) {
+    private val commentViewService: CommentViewService,
+    private val feedViewService: FeedViewService
+) {
 
     companion object {
         fun getIp(request: HttpServletRequest): String =
@@ -135,7 +129,8 @@ class CardUseCase(
         commentTagService.saveAll(commentCard, savedTags)
 
         if (parentCard.writer.pk != userId) {
-            val commentWriteNotification = notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
+            val commentWriteNotification =
+                notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
             if (parentCard.writer.isAllowNotify)
                 applicationEventPublisher.publishEvent(
                     NotificationFCMEvent(
@@ -150,21 +145,48 @@ class CardUseCase(
         }
     }
 
+    @Transactional
     fun getFeedCardDetail(latitude: Double?, longitude: Double?, cardId: Long, userId: Long): CardDetailResponse {
         val card: Card = getCard(cardId)
         val writer = card.writer
         val tags = tagService.getTagsByCard(card)
         val distance = DistanceDisplayUtil.calculateAndFormat(card.location, latitude, longitude)
+        val requester = memberService.findMember(userId)
 
         return when (card) {
             is FeedCard -> {
-                feedCardService.increaseViewCnt(card.pk, userId)
+                if (card.writer.pk != userId)
+                    feedViewService.save(
+                        FeedView(
+                            card,
+                            requester
+                        )
+                    )
+
                 val feedLikes = feedLikeService.findByTargetCardIds(listOf(cardId))
                 val comments = commentCardService.findCommentCardsIn(listOf(cardId))
-                cardMapper.toFeedCardDetailResponse(card, writer, feedLikes, comments, distance, userId, tags)
+                val feedViews = feedViewService.countView(card)
+                cardMapper.toFeedCardDetailResponse(
+                    card,
+                    writer,
+                    feedLikes,
+                    comments,
+                    distance,
+                    userId,
+                    tags,
+                    feedViews
+                )
             }
+
             is CommentCard -> {
-                commentCardService.increaseViewCnt(card.pk, userId)
+                if (card.writer.pk != userId)
+                    commentViewService.save(
+                        CommentView(
+                            card,
+                            requester
+                        )
+                    )
+
                 val parentCard = when (card.parentCardType) {
                     CardType.FEED_CARD -> feedCardService.findFeedCardOrNull(card.parentCardPk)
                     CardType.COMMENT_CARD -> commentCardService.findCommentCardOrNull(card.parentCardPk)
@@ -172,8 +194,20 @@ class CardUseCase(
                 }
                 val commentLikes = commentLikeService.findByTargetCardIds(listOf(cardId))
                 val comments = commentCardService.findCommentCardsIn(listOf(cardId))
-                cardMapper.toCommentCardDetailResponse(card, writer, commentLikes, comments, distance, userId, tags, parentCard)
+                val commentViews = commentViewService.countView(card)
+                cardMapper.toCommentCardDetailResponse(
+                    card,
+                    writer,
+                    commentLikes,
+                    comments,
+                    distance,
+                    userId,
+                    tags,
+                    parentCard,
+                    commentViews
+                )
             }
+
             else -> throw IllegalArgumentException()
 
         }
@@ -227,10 +261,12 @@ class CardUseCase(
                 deleteFeedCardDependencies(card)
                 feedCardService.deleteFeedCard(card.pk)
             }
+
             is CommentCard -> {
                 deleteCommentCardDependencies(card)
                 commentCardService.deleteCommentCard(card.pk)
             }
+
             else -> throw IllegalArgumentException()
         }
     }

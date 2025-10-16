@@ -80,7 +80,8 @@ class CardMapper(
         comments: List<CommentCard>,
         distance: String?,
         userId: Long,
-        tags: List<Tag>
+        tags: List<Tag>,
+        feedViews: Long
     ): FeedCardDetailResponse =
         FeedCardDetailResponse(
             cardId = card.pk,
@@ -105,7 +106,7 @@ class CardMapper(
             tags = tags.map { TagResponse(it.pk, it.content) },
             isOwnCard = writer.pk == userId,
             isFeedCard = true,
-            visitedCnt = card.viewCnt
+            visitedCnt = feedViews
         )
 
     fun toCommentCardDetailResponse(
@@ -116,7 +117,8 @@ class CardMapper(
         distance: String?,
         userId: Long,
         tags: List<Tag>,
-        parentCard: Card?
+        parentCard: Card?,
+        commentView: Long
     ) : CommentCardDetailResponse =
         CommentCardDetailResponse (
             cardId = card.pk,
@@ -147,7 +149,7 @@ class CardMapper(
                     CardImgType.USER -> s3ImgService.generateUserCardImgUrl(it.imgName)
                 }
             },
-            visitedCnt = card.viewCnt
+            visitedCnt = commentView
         )
 
     fun toCommentResponse(

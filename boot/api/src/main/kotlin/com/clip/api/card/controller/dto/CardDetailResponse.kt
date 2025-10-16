@@ -39,7 +39,7 @@ class FeedCardDetailResponse(
     val tags: List<TagResponse>,
     val isOwnCard: Boolean,
     val isFeedCard: Boolean,
-    val visitedCnt: Int,
+    val visitedCnt: Long,
 ) : CardDetailResponse(
     cardId = cardId,
     likeCnt = likeCnt,
@@ -74,7 +74,7 @@ class CommentCardDetailResponse(
     val previousCardId: String,
     val isPreviousCardDeleted: Boolean,
     val previousCardImgUrl: String?,
-    val visitedCnt: Int,
+    val visitedCnt: Long,
 ) : CardDetailResponse(
     cardId = cardId,
     likeCnt = likeCnt,
