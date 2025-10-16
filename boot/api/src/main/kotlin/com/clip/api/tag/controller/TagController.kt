@@ -13,7 +13,7 @@ class TagController(
     private val tagUseCase: TagUseCase,
 ): TagDocs {
 
-    @GetMapping("/related/{resultCnt}")
+    @PostMapping("/related/{resultCnt}")
     override fun getRelatedTags(
         @RequestBody relatedTagRequest: RelatedTagRequest,
         @PathVariable resultCnt: Int
