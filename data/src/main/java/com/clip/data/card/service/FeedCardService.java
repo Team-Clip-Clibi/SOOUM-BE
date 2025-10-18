@@ -70,8 +70,4 @@ public class FeedCardService {
         feedCardRepository.deleteFeedCardByMemberPk(memberPk);
     }
 
-    public void increaseViewCnt(Long feedCardPk, Long viewerMemberPk) {
-        feedCardRepository.increaseViewCnt(feedCardPk, viewerMemberPk);
-    }
-
 }

@@ -77,11 +77,6 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
     @Query("delete from FeedCard fc WHERE fc.writer.pk = :memberPk")
     void deleteFeedCardByMemberPk(@Param("memberPk") Long memberPk);
 
-    @Modifying(clearAutomatically = true)
-    @Transactional
-    @Query("update FeedCard fc set fc.viewCnt = fc.viewCnt + 1 where fc.pk = :feedCardPk and fc.writer.pk <> :viewerMemberPk")
-    void increaseViewCnt(@Param("feedCardPk") Long feedCardPk, @Param("viewerMemberPk") Long viewerMemberPk);
-
     @Query("select f from FeedCard f join fetch f.writer where f.pk = :feedCardPk")
     Optional<FeedCard> findWithMember(@Param("feedCardPk") Long feedCardPk);
 }
