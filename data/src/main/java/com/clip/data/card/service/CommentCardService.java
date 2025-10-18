@@ -89,7 +89,4 @@ public class CommentCardService {
         commentCardRepository.deleteAllInBatch(comments);
     }
 
-    public void increaseViewCnt(Long commentCardPk, Long viewerMemberPk) {
-        commentCardRepository.increaseViewCnt(commentCardPk, viewerMemberPk);
-    }
 }

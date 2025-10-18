@@ -52,8 +52,4 @@ public interface CommentCardRepository extends JpaRepository<CommentCard, Long> 
     @Query("delete from CommentCard cc WHERE cc.writer.pk = :memberPk")
     void deleteCommentCardByMemberPk(@Param("memberPk") Long memberPk);
 
-    @Modifying(clearAutomatically = true)
-    @Transactional
-    @Query("update CommentCard cc set cc.viewCnt = cc.viewCnt + 1 where cc.pk = :commentCardPk and cc.writer.pk <> :viewerMemberPk")
-    void increaseViewCnt(@Param("commentCardPk") Long commentCardPk, @Param("viewerMemberPk") Long viewerMemberPk);
 }
