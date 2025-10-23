@@ -136,7 +136,7 @@ class CreatePopularCardScheduler(
                 WHERE top200.pk IS NULL
                 """)
             .sortKeys(mapOf("pf.pk" to Order.DESCENDING))
-            .beanRowMapper(PopularFeedCardId::class.java)
+            .dataRowMapper(PopularFeedCardId::class.java)
             .build()
 
     @Bean
