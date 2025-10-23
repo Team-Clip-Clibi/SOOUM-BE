@@ -1,4 +1,4 @@
-package com.clip.api.notification.service
+package com.clip.api.notification.event.fcmsender
 
 import com.clip.global.exception.FCMException
 import com.google.firebase.messaging.FirebaseMessaging
@@ -11,9 +11,9 @@ import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 
 @Component
-class FCMSender {
+class FcmSender {
     companion object {
-        private val log = LoggerFactory.getLogger(FCMSender::class.java)
+        private val log = LoggerFactory.getLogger(FcmSender::class.java)
     }
     @Retryable(retryFor = [FCMException::class], maxAttempts = 3, backoff = Backoff(delay = 1000, multiplier = 2.0))
     fun send(message: Message) {
