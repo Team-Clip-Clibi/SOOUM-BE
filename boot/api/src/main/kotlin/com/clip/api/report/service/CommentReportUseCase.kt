@@ -51,6 +51,7 @@ class CommentReportUseCase(
         if (writer.isAllowNotify) {
             eventPublisher.publishEvent(
                 SystemFCMEvent(
+                    null,
                     notificationHistory.pk,
                     writer.deviceType,
                     writer.firebaseToken,
@@ -67,6 +68,7 @@ class CommentReportUseCase(
         if (member.isAllowNotify) {
             eventPublisher.publishEvent(
                 SystemFCMEvent(
+                    member.untilBan,
                     member.pk,
                     member.deviceType,
                     member.firebaseToken,

@@ -3,7 +3,7 @@ package com.clip.api.card.service
 import com.clip.api.card.controller.dto.*
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
-import com.clip.api.notification.event.NotificationFCMEvent
+import com.clip.api.notification.event.CardFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.entity.*
@@ -133,7 +133,7 @@ class CardUseCase(
                 notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
             if (parentCard.writer.isAllowNotify)
                 applicationEventPublisher.publishEvent(
-                    NotificationFCMEvent(
+                    CardFCMEvent(
                         member.nickname,
                         commentCard.pk,
                         commentWriteNotification.pk,
