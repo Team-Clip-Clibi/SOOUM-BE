@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PopularFeedRepository extends JpaRepository<PopularFeed, Long> {
 
@@ -18,13 +17,8 @@ public interface PopularFeedRepository extends JpaRepository<PopularFeed, Long> 
                 "join fetch pc.popularCard fc " +
                 "join fetch fc.writer " +
             "where f.writer.pk not in :blockedMembers " +
-            "and ((pc.version = :likeVersion and pc.popularityType = 'LIKE') " +
-                "or (pc.version = :commentVersion and pc.popularityType = 'COMMENT'))" +
             "order by pc.pk asc")
-    List<PopularFeed> findPopularFeeds(@Param("blockedMembers") List<Long> blockedMembers,
-                                    @Param("likeVersion") int likeVersion,
-                                    @Param("commentVersion") int commentVersion,
-                                    Pageable pageable);
+    List<PopularFeed> findPopularFeeds(@Param("blockedMembers") List<Long> blockedMembers, Pageable pageable);
 
     @Modifying
     @Transactional
@@ -35,10 +29,4 @@ public interface PopularFeedRepository extends JpaRepository<PopularFeed, Long> 
     @Transactional
     @Query("delete from PopularFeed pf where pf.popularCard.writer.pk = :memberPk")
     void deletePopularCardByMemberPk(@Param("memberPk") Long memberPk);
-
-    @Query("select max(pf.version) from PopularFeed pf where pf.popularityType = 'LIKE'")
-    Optional<Integer> findLatestVersionByLike();
-
-    @Query("select max(pf.version) from PopularFeed pf where pf.popularityType = 'COMMENT'")
-    Optional<Integer> findLatestVersionByComment();
 }
