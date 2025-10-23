@@ -1,6 +1,5 @@
 package com.clip.data.card.entity;
 
-import com.clip.data.card.entity.popularitytype.PopularityType;
 import com.clip.data.common.entity.BaseEntity;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
@@ -22,17 +21,8 @@ public class PopularFeed extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private FeedCard popularCard;
 
-    @NotNull
-    @Enumerated(value = EnumType.STRING)
-    private PopularityType popularityType;
-
-    @Column(name = "version")
-    private int version;
-
     @Builder
-    public PopularFeed(FeedCard popularCard, PopularityType popularityType, int version) {
+    public PopularFeed(FeedCard popularCard) {
         this.popularCard = popularCard;
-        this.popularityType = popularityType;
-        this.version = version;
     }
 }

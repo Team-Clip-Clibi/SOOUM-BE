@@ -31,6 +31,9 @@ dependencies {
     implementation(("org.springframework.boot:spring-boot-starter-data-redis"))
     //firebase
     implementation("com.google.firebase:firebase-admin:9.4.1")
+
+    //tsid generator
+    implementation("com.github.f4b6a3:tsid-creator:5.2.6")
 }
 
 kotlin {
