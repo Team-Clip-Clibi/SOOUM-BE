@@ -1,6 +1,6 @@
 package com.clip.api.card.service
 
-import com.clip.api.notification.event.NotificationFCMEvent
+import com.clip.api.notification.event.CardFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.data.card.entity.*
 import com.clip.data.card.service.CommentCardService
@@ -90,7 +90,7 @@ class CardLikeUseCase(
 
         if (card.writer.isAllowNotify) {
             applicationEventPublisher.publishEvent(
-                NotificationFCMEvent(
+                CardFCMEvent(
                     member.nickname,
                     card.pk,
                     notificationPk,

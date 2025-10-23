@@ -54,6 +54,7 @@ class FeedReportUseCase(
         if (writer.isAllowNotify) {
             eventPublisher.publishEvent(
                 SystemFCMEvent(
+                    null,
                     notificationHistory.pk,
                     writer.deviceType,
                     writer.firebaseToken,
@@ -70,6 +71,7 @@ class FeedReportUseCase(
         if (member.isAllowNotify) {
             eventPublisher.publishEvent(
                 SystemFCMEvent(
+                    member.untilBan,
                     0L,
                     member.deviceType,
                     member.firebaseToken,
