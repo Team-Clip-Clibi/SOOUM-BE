@@ -97,4 +97,19 @@ class NotificationUseCase(
         )
     }
 
+    @Transactional
+    fun saveFollowHistory(fromMember: Member, toMember: Member): NotificationHistory {
+        return notificationHistoryService.save(
+            NotificationHistory.ofFollow(fromMember, toMember)
+        )
+    }
+
+    fun findNotificationHistoryByMemberAndType(fromMemberId: Long, toMemberId: Long, notificationType: NotificationType): NotificationHistory? {
+        return notificationHistoryService.findNotificationHistoryByMemberAndType(fromMemberId, toMemberId, notificationType)
+    }
+
+    @Transactional
+    fun deleteNotificationHistory(notificationHistory: NotificationHistory) {
+        notificationHistoryService.delete(notificationHistory)
+    }
 }

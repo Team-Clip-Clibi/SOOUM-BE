@@ -93,6 +93,14 @@ public class NotificationHistory extends BaseEntity {
         return ofSystem(toMember, NotificationType.DELETED);
     }
 
+    public static NotificationHistory ofFollow(Member fromMember, Member toMember) {
+        return NotificationHistory.builder()
+                .fromMember(fromMember)
+                .toMember(toMember)
+                .notificationType(NotificationType.FOLLOW)
+                .build();
+    }
+
     private static NotificationHistory ofSystem(Member toMember, NotificationType notificationType) {
         return NotificationHistory.builder()
                 .toMember(toMember)

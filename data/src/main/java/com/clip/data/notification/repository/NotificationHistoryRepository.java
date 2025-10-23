@@ -2,6 +2,7 @@ package com.clip.data.notification.repository;
 
 import com.clip.data.member.entity.Member;
 import com.clip.data.notification.entity.NotificationHistory;
+import com.clip.data.notification.entity.notificationtype.NotificationType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface NotificationHistoryRepository extends JpaRepository<NotificationHistory, Long> {
 
@@ -55,4 +57,11 @@ public interface NotificationHistoryRepository extends JpaRepository<Notificatio
     @Modifying
     @Query("delete from NotificationHistory n where n.targetCardPk = :targetCardPk")
     void deleteNotification(@Param("targetCardPk") Long targetCardPk);
+
+    @Query("select n from NotificationHistory n " +
+           "where n.fromMember.pk = :fromMemberPk " +
+           "and n.toMember.pk = :toMemberPk " +
+           "and n.notificationType = :notificationType ")
+    Optional<NotificationHistory> findNotificationHistoryByMemberAndType(Long fromMemberPk, Long toMemberPk, NotificationType notificationType);
+
 }
