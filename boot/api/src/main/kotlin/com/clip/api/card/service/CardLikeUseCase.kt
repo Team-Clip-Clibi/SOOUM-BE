@@ -14,6 +14,7 @@ import com.clip.global.exception.IllegalArgumentException.ParameterNotFoundExcep
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.persistence.OptimisticLockException
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -40,16 +41,16 @@ class CardLikeUseCase(
                 existingLike.orElse(null)?.let { like ->
                     if (!like.isDeleted) return
 
-                    try {
-                        like.create()
-                    } catch (e: OptimisticLockException) {
-                        logger.debug(e) { "Concurrent update detected for card=${card.pk}, user=${likedMember.pk}" }
-                    }
+                    like.create()
                     return
                 }
 
-                feedLikeService.save(FeedLike(card, likedMember))
-                sendNotification(card, likedMember)
+                try {
+                    feedLikeService.save(FeedLike(card, likedMember))
+                    sendNotification(card, likedMember)
+                } catch (e: DataIntegrityViolationException) {
+                    logger.debug(e) { "Duplicate like attempt detected for card=${card.pk}, user=${likedMember.pk}" }
+                }
             }
 
             is CommentCard -> {
@@ -58,16 +59,16 @@ class CardLikeUseCase(
                 existingLike.orElse(null)?.let { like ->
                     if (!like.isDeleted) return
 
-                    try {
-                        like.create()
-                    } catch (e: OptimisticLockException) {
-                        logger.debug(e) { "Concurrent update detected for card=${card.pk}, user=${likedMember.pk}" }
-                    }
+                    like.create()
                     return
                 }
 
-                commentLikeService.save(CommentLike(card, likedMember))
-                sendNotification(card, likedMember)
+                try {
+                    commentLikeService.save(CommentLike(card, likedMember))
+                    sendNotification(card, likedMember)
+                } catch (e: DataIntegrityViolationException) {
+                    logger.debug(e) { "Duplicate like attempt detected for card=${card.pk}, user=${likedMember.pk}" }
+                }
             }
 
             else -> throw IllegalArgumentException("지원하지 않는 카드 타입입니다.")

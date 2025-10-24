@@ -2,6 +2,7 @@ package com.clip.data.notification.service;
 
 import com.clip.data.member.entity.Member;
 import com.clip.data.notification.entity.NotificationHistory;
+import com.clip.data.notification.entity.notificationtype.NotificationType;
 import com.clip.data.notification.repository.NotificationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,5 +65,14 @@ public class NotificationHistoryService {
 
     public void deleteNotification(Long targetCardPk) {
         notificationHistoryRepository.deleteNotification(targetCardPk);
+    }
+
+    public NotificationHistory findNotificationHistoryByMemberAndType(Long fromMemberPk, Long toMemberPk, NotificationType notificationType) {
+        return notificationHistoryRepository.findNotificationHistoryByMemberAndType(fromMemberPk, toMemberPk, notificationType).orElse(null);
+    }
+
+    @Transactional
+    public void delete(NotificationHistory notificationHistory) {
+        notificationHistoryRepository.delete(notificationHistory);
     }
 }
