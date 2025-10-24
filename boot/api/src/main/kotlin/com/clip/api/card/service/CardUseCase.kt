@@ -122,7 +122,7 @@ class CardUseCase(
             )
         )
 
-        if (isUserImgType(CardImgType.USER))
+        if (isUserImgType(createCommentCardRequest.imgType))
             cardImgService.updateCardImg(commentCard, createCommentCardRequest.imgName)
 
         val savedTags = tagService.saveAllAndNoIncrementTagCnt(createCommentCardRequest.tags)
