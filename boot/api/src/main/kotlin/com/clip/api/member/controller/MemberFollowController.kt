@@ -1,6 +1,7 @@
 package com.clip.api.member.controller
 
 import com.clip.api.docs.member.MemberFollowDocs
+import com.clip.api.member.controller.dto.FollowCountDto
 import com.clip.api.member.controller.dto.FollowDto
 import com.clip.api.member.controller.dto.FollowInfoDto
 import com.clip.api.member.service.MemberFollowUseCase
@@ -22,7 +23,12 @@ class MemberFollowController(
     override fun unfollowMember(@PathVariable toMemberId: Long, @AccessUser userId: Long): ResponseEntity<Void> =
         memberFollowUseCase.unfollowMember(toMemberId, userId).let { ResponseEntity.ok().build() }
 
-    @GetMapping("/{profileOwnerId}/following", "/{profileOwnerId}/following/{lastId}", "following", "/following/{lastId}")
+    @GetMapping(
+        "/{profileOwnerId}/following",
+        "/{profileOwnerId}/following/{lastId}",
+        "following",
+        "/following/{lastId}"
+    )
     override fun getFollowingList(
         @PathVariable profileOwnerId: Long?,
         @AccessUser userId: Long,
@@ -34,7 +40,12 @@ class MemberFollowController(
         ?: ResponseEntity.noContent().build()
 
 
-    @GetMapping("/{profileOwnerId}/followers", "/{profileOwnerId}/followers/{lastId}", "followers", "/followers/{lastId}")
+    @GetMapping(
+        "/{profileOwnerId}/followers",
+        "/{profileOwnerId}/followers/{lastId}",
+        "followers",
+        "/followers/{lastId}"
+    )
     override fun getFollowerList(
         @PathVariable(required = false) profileOwnerId: Long?,
         @AccessUser userId: Long,
@@ -44,4 +55,15 @@ class MemberFollowController(
         .takeIf { it.isNotEmpty() }
         ?.let { ResponseEntity.ok(it) }
         ?: ResponseEntity.noContent().build()
+
+    @GetMapping(
+        "/{profileOwnerId}/follow-counts",
+        "/follow-counts"
+    )
+    override fun getFollowCounts(
+        @PathVariable(required = false) profileOwnerId: Long?,
+        @AccessUser userId: Long
+    ): ResponseEntity<FollowCountDto> = memberFollowUseCase
+        .getFollowCounts(profileOwnerId, userId)
+        .let { ResponseEntity.ok(it) }
 }

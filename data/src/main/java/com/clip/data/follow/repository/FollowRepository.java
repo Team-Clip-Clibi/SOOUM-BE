@@ -66,4 +66,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Transactional
     @Query("delete from Follow f where f.fromMember.pk = :memberPk or f.toMember.pk = :memberPk")
     void deleteAllFollow(@Param("memberPk") Long memberPk);
+
+    @Query("select count(f) from Follow f where f.toMember.pk = :requesterPk and f.fromMember.pk not in :blockMembers")
+    Long countFollowers(@Param("requesterPk") Long requesterPk, @Param("blockMembers") List<Long> blockMembers);
+
+    @Query("select count(f) from Follow f where f.fromMember.pk = :requesterPk and f.toMember.pk not in :blockMembers")
+    Long countFollowings(@Param("requesterPk") Long requesterPk, @Param("blockMembers") List<Long> blockMembers);
 }

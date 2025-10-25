@@ -1,5 +1,6 @@
 package com.clip.api.member.service
 
+import com.clip.api.member.controller.dto.FollowCountDto
 import com.clip.api.member.controller.dto.FollowDto
 import com.clip.api.member.controller.dto.FollowInfoDto
 import com.clip.api.notification.event.FollowFCMEvent
@@ -90,7 +91,17 @@ class MemberFollowUseCase(
                 isRequester = it.pk == userId
             )
         }
+    }
 
+    fun getFollowCounts(profileOwnerId: Long?, userId: Long) : FollowCountDto {
+        val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
+        val followerCount = followService.countFollowers(profileOwnerId ?: userId, blockedMemberIds)
+        val followingCount = followService.countFollowings(profileOwnerId ?: userId, blockedMemberIds)
+
+        return FollowCountDto(
+            followerCount = followerCount,
+            followingCount = followingCount
+        )
     }
 
 }

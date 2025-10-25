@@ -1,5 +1,6 @@
 package com.clip.api.docs.member
 
+import com.clip.api.member.controller.dto.FollowCountDto
 import com.clip.api.member.controller.dto.FollowDto
 import com.clip.api.member.controller.dto.FollowInfoDto
 import io.swagger.v3.oas.annotations.Operation
@@ -28,4 +29,10 @@ interface MemberFollowDocs {
         - 사용자의 팔로워 목록을 조회합니다.
     """)
     fun getFollowerList(profileOwnerId: Long?, userId: Long, lastId: Long?): ResponseEntity<List<FollowInfoDto>>
+
+    @Operation(summary = "팔로우/팔로워 수 조회 API", description = """
+    - 사용자의 팔로우 수와 팔로워 수를 조회합니다.
+""")
+    fun getFollowCounts(profileOwnerId: Long?, userId: Long): ResponseEntity<FollowCountDto>
+
 }
