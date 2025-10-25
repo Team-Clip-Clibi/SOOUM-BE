@@ -21,6 +21,10 @@ public class PopularFeed extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private FeedCard popularCard;
 
+
+    @Column(name = "CREATE_VERSION", nullable = false)
+    private String createVersion;
+
     @Builder
     public PopularFeed(FeedCard popularCard) {
         this.popularCard = popularCard;
