@@ -4,6 +4,7 @@ import com.github.f4b6a3.tsid.TsidCreator
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.Step
+import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.explore.JobExplorer
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.launch.JobLauncher
@@ -16,11 +17,13 @@ import org.springframework.batch.item.database.Order
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.PlatformTransactionManager
+import java.util.*
 import javax.sql.DataSource
 
 @Configuration
@@ -40,6 +43,7 @@ class CreatePopularCardScheduler(
     fun runCreatePopularCardJob() {
         val jobParameters = JobParametersBuilder(jobExplorer)
             .getNextJobParameters(createPopularCardJob())
+            .addString("createVersion", UUID.randomUUID().toString(), false)
             .toJobParameters()
         jobLauncher.run(createPopularCardJob(), jobParameters)
     }
@@ -59,14 +63,14 @@ class CreatePopularCardScheduler(
         StepBuilder("createNewPopularCardStep", jobRepository)
             .chunk<PopularFeedCardId, PopularFeedCardId>(CHUNK_SIZE, transactionManager)
             .reader(newPopularCardReader())
-            .writer(newPopularCardWriter())
+            .writer(newPopularCardWriter(null))
             .build()
 
     @Bean
     fun deletePreviousPopularCardStep(): Step =
         StepBuilder("deletePreviousPopularCardStep", jobRepository)
             .chunk<PopularFeedCardId, PopularFeedCardId>(CHUNK_SIZE, transactionManager)
-            .reader(deletePreviousPopularCardReader())
+            .reader(deletePreviousPopularCardReader(null))
             .writer(deletePreviousPopularCardWriter())
             .build()
 
@@ -101,41 +105,39 @@ class CreatePopularCardScheduler(
             .build()
 
     @Bean
-    fun newPopularCardWriter() =
+    @StepScope
+    fun newPopularCardWriter(@Value("#{jobParameters['createVersion']}")  createVersion: String?) =
         JdbcBatchItemWriterBuilder<PopularFeedCardId>()
             .dataSource(dataSource)
             .sql("""
-                INSERT INTO popular_feed (pk, POPULAR_CARD, created_at, updated_at)
-                VALUES (:pk, :id, NOW(), NOW())
+                INSERT INTO popular_feed (pk, POPULAR_CARD, CREATE_VERSION, created_at, updated_at)
+                VALUES (:pk, :id, :createVersion, NOW(), NOW())
                 """)
             .itemSqlParameterSourceProvider { item ->
                 MapSqlParameterSource()
                     .addValue("pk", TsidCreator.getTsid1024().toLong())
                     .addValue("id", item.id)
+                    .addValue("createVersion", createVersion)
             }
             .assertUpdates(true)
             .build()
 
     @Bean
-    fun deletePreviousPopularCardReader(): JdbcPagingItemReader<PopularFeedCardId> =
+    @StepScope
+    fun deletePreviousPopularCardReader(
+        @Value("#{jobParameters['createVersion']}") createVersion: String?
+    ): JdbcPagingItemReader<PopularFeedCardId> =
         JdbcPagingItemReaderBuilder<PopularFeedCardId>()
             .name("deletePreviousPopularCardReader")
             .dataSource(dataSource)
             .pageSize(CHUNK_SIZE)
-            .selectClause("SELECT pf.pk AS id")
-            .fromClause("""
-                |FROM popular_feed pf
-                |LEFT JOIN (
-                |    SELECT sub.pk
-                |    FROM popular_feed sub
-                |    ORDER BY sub.pk DESC
-                |    LIMIT 200
-                |) top200 ON top200.pk = pf.pk
-                |""".trimMargin())
+            .selectClause("SELECT pk AS id")
+            .fromClause("FROM popular_feed")
             .whereClause("""
-                WHERE top200.pk IS NULL
+                WHERE CREATE_VERSION != :createVersion
                 """)
-            .sortKeys(mapOf("pf.pk" to Order.DESCENDING))
+            .parameterValues(mapOf("createVersion" to createVersion))
+            .sortKeys(mapOf("id" to Order.DESCENDING))
             .dataRowMapper(PopularFeedCardId::class.java)
             .build()
 
