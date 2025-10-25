@@ -93,15 +93,4 @@ class MemberFollowUseCase(
         }
     }
 
-    fun getFollowCounts(profileOwnerId: Long?, userId: Long) : FollowCountDto {
-        val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
-        val followerCount = followService.countFollowers(profileOwnerId ?: userId, blockedMemberIds)
-        val followingCount = followService.countFollowings(profileOwnerId ?: userId, blockedMemberIds)
-
-        return FollowCountDto(
-            followerCount = followerCount,
-            followingCount = followingCount
-        )
-    }
-
 }

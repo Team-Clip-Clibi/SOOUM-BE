@@ -30,9 +30,4 @@ interface MemberFollowDocs {
     """)
     fun getFollowerList(profileOwnerId: Long, userId: Long, lastId: Long?): ResponseEntity<List<FollowInfoDto>>
 
-    @Operation(summary = "팔로우/팔로워 수 조회 API", description = """
-    - 사용자의 팔로우 수와 팔로워 수를 조회합니다.
-""")
-    fun getFollowCounts(profileOwnerId: Long?, userId: Long): ResponseEntity<FollowCountDto>
-
 }

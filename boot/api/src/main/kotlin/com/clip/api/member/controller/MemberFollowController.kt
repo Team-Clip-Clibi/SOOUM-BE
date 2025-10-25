@@ -51,15 +51,4 @@ class MemberFollowController(
         .takeIf { it.isNotEmpty() }
         ?.let { ResponseEntity.ok(it) }
         ?: ResponseEntity.noContent().build()
-
-    @GetMapping(
-        "/{profileOwnerId}/follow-counts",
-        "/follow-counts"
-    )
-    override fun getFollowCounts(
-        @PathVariable(required = false) profileOwnerId: Long?,
-        @AccessUser userId: Long
-    ): ResponseEntity<FollowCountDto> = memberFollowUseCase
-        .getFollowCounts(profileOwnerId, userId)
-        .let { ResponseEntity.ok(it) }
 }
