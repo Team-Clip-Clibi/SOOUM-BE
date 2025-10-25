@@ -22,9 +22,12 @@ class MemberFollowController(
     override fun unfollowMember(@PathVariable toMemberId: Long, @AccessUser userId: Long): ResponseEntity<Void> =
         memberFollowUseCase.unfollowMember(toMemberId, userId).let { ResponseEntity.ok().build() }
 
-    @GetMapping("/{profileOwnerId}/following", "/{profileOwnerId}/following/{lastId}", "following", "/following/{lastId}")
+    @GetMapping(
+        "/{profileOwnerId}/following",
+        "/{profileOwnerId}/following/{lastId}",
+    )
     override fun getFollowingList(
-        @PathVariable profileOwnerId: Long?,
+        @PathVariable profileOwnerId: Long,
         @AccessUser userId: Long,
         @PathVariable(required = false) lastId: Long?
     ): ResponseEntity<List<FollowInfoDto>> = memberFollowUseCase
@@ -34,9 +37,12 @@ class MemberFollowController(
         ?: ResponseEntity.noContent().build()
 
 
-    @GetMapping("/{profileOwnerId}/followers", "/{profileOwnerId}/followers/{lastId}", "followers", "/followers/{lastId}")
+    @GetMapping(
+        "/{profileOwnerId}/followers",
+        "/{profileOwnerId}/followers/{lastId}"
+    )
     override fun getFollowerList(
-        @PathVariable(required = false) profileOwnerId: Long?,
+        @PathVariable(required = false) profileOwnerId: Long,
         @AccessUser userId: Long,
         @PathVariable(required = false) lastId: Long?
     ): ResponseEntity<List<FollowInfoDto>> = memberFollowUseCase
