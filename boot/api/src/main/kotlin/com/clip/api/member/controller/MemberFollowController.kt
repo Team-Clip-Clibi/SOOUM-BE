@@ -1,7 +1,6 @@
 package com.clip.api.member.controller
 
 import com.clip.api.docs.member.MemberFollowDocs
-import com.clip.api.member.controller.dto.FollowCountDto
 import com.clip.api.member.controller.dto.FollowDto
 import com.clip.api.member.controller.dto.FollowInfoDto
 import com.clip.api.member.service.MemberFollowUseCase
@@ -26,11 +25,9 @@ class MemberFollowController(
     @GetMapping(
         "/{profileOwnerId}/following",
         "/{profileOwnerId}/following/{lastId}",
-        "following",
-        "/following/{lastId}"
     )
     override fun getFollowingList(
-        @PathVariable profileOwnerId: Long?,
+        @PathVariable profileOwnerId: Long,
         @AccessUser userId: Long,
         @PathVariable(required = false) lastId: Long?
     ): ResponseEntity<List<FollowInfoDto>> = memberFollowUseCase
@@ -42,12 +39,10 @@ class MemberFollowController(
 
     @GetMapping(
         "/{profileOwnerId}/followers",
-        "/{profileOwnerId}/followers/{lastId}",
-        "followers",
-        "/followers/{lastId}"
+        "/{profileOwnerId}/followers/{lastId}"
     )
     override fun getFollowerList(
-        @PathVariable(required = false) profileOwnerId: Long?,
+        @PathVariable(required = false) profileOwnerId: Long,
         @AccessUser userId: Long,
         @PathVariable(required = false) lastId: Long?
     ): ResponseEntity<List<FollowInfoDto>> = memberFollowUseCase
@@ -55,15 +50,4 @@ class MemberFollowController(
         .takeIf { it.isNotEmpty() }
         ?.let { ResponseEntity.ok(it) }
         ?: ResponseEntity.noContent().build()
-
-    @GetMapping(
-        "/{profileOwnerId}/follow-counts",
-        "/follow-counts"
-    )
-    override fun getFollowCounts(
-        @PathVariable(required = false) profileOwnerId: Long?,
-        @AccessUser userId: Long
-    ): ResponseEntity<FollowCountDto> = memberFollowUseCase
-        .getFollowCounts(profileOwnerId, userId)
-        .let { ResponseEntity.ok(it) }
 }

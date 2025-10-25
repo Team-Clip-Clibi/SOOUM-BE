@@ -1,6 +1,5 @@
 package com.clip.api.member.service
 
-import com.clip.api.member.controller.dto.FollowCountDto
 import com.clip.api.member.controller.dto.FollowDto
 import com.clip.api.member.controller.dto.FollowInfoDto
 import com.clip.api.notification.event.FollowFCMEvent
@@ -61,9 +60,9 @@ class MemberFollowUseCase(
         followService.deleteFollower(fromMember, toMember)
     }
 
-    fun getFollowingList(profileOwnerId: Long?, userId: Long, lastId: Long?) : List<FollowInfoDto> {
+    fun getFollowingList(profileOwnerId: Long, userId: Long, lastId: Long?) : List<FollowInfoDto> {
         val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
-        val followings = followService.findFollowingWithoutBlockedMembers(Optional.ofNullable(lastId), profileOwnerId ?: userId, blockedMemberIds)
+        val followings = followService.findFollowingWithoutBlockedMembers(Optional.ofNullable(lastId), profileOwnerId, blockedMemberIds)
         val followedFollowingsPk = followService.findFollowedFollowingsPk(userId, followings)
 
         return followings.map {
@@ -77,9 +76,9 @@ class MemberFollowUseCase(
         }
     }
 
-    fun getFollowerList(profileOwnerId: Long?, userId: Long, lastId: Long?) : List<FollowInfoDto> {
+    fun getFollowerList(profileOwnerId: Long, userId: Long, lastId: Long?) : List<FollowInfoDto> {
         val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
-        val followers = followService.findFollowerWithoutBlockedMembers(Optional.ofNullable(lastId), profileOwnerId ?: userId, blockedMemberIds)
+        val followers = followService.findFollowerWithoutBlockedMembers(Optional.ofNullable(lastId), profileOwnerId, blockedMemberIds)
         val followedFollowersPk = followService.findFollowedFollowersPk(userId, followers)
 
         return followers.map {
@@ -91,17 +90,6 @@ class MemberFollowUseCase(
                 isRequester = it.pk == userId
             )
         }
-    }
-
-    fun getFollowCounts(profileOwnerId: Long?, userId: Long) : FollowCountDto {
-        val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
-        val followerCount = followService.countFollowers(profileOwnerId ?: userId, blockedMemberIds)
-        val followingCount = followService.countFollowings(profileOwnerId ?: userId, blockedMemberIds)
-
-        return FollowCountDto(
-            followerCount = followerCount,
-            followingCount = followingCount
-        )
     }
 
 }

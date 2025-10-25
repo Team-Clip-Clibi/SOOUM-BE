@@ -11,8 +11,3 @@ data class FollowInfoDto(
     val isFollowing: Boolean,
     val isRequester: Boolean
 )
-
-data class FollowCountDto(
-    val followerCount: Long,
-    val followingCount: Long
-)

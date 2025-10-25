@@ -69,16 +69,6 @@ public class FollowService {
         return followRepository.findFollowedFollowings(requesterPk, followings);
     }
 
-    @Transactional(readOnly = true)
-    public Long countFollowers(Long requesterPk, List<Long> blockMembersPk) {
-        return followRepository.countFollowers(requesterPk, blockMembersPk);
-    }
-
-    @Transactional(readOnly = true)
-    public Long countFollowings(Long requesterPk, List<Long> blockMembersPk) {
-        return followRepository.countFollowings(requesterPk, blockMembersPk);
-    }
-
     public void deleteAllFollow(Long memberPk) {
         followRepository.deleteAllFollow(memberPk);
     }
