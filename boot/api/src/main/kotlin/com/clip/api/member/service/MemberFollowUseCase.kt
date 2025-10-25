@@ -1,6 +1,6 @@
-package com.clip.api.follow.service
+package com.clip.api.member.service
 
-import com.clip.api.follow.controller.dto.FollowDto
+import com.clip.api.member.controller.dto.FollowDto
 import com.clip.api.notification.event.FollowFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.data.follow.service.FollowService
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class FollowUseCase(
+class MemberFollowUseCase(
     private val memberService: MemberService,
     private val followService: FollowService,
     private val notificationUseCase: NotificationUseCase,
@@ -19,8 +19,8 @@ class FollowUseCase(
 ) {
 
     fun followMember(followRequest: FollowDto, userId: Long) {
-        val fromMember = memberService.findMember(followRequest.userId)
-        val toMember = memberService.findMember(userId)
+        val fromMember = memberService.findMember(userId)
+        val toMember = memberService.findMember(followRequest.userId)
 
         if (followService.isAlreadyFollowing(fromMember, toMember)) {
             throw IllegalStateException("이미 팔로우한 회원입니다.")
@@ -47,9 +47,9 @@ class FollowUseCase(
 
     }
 
-    fun unfollowMember(followRequest: FollowDto, userId: Long) {
-        val fromMember = memberService.findMember(followRequest.userId)
-        val toMember = memberService.findMember(userId)
+    fun unfollowMember(toMemberId: Long, userId: Long) {
+        val fromMember = memberService.findMember(userId)
+        val toMember = memberService.findMember(toMemberId)
 
         followService.deleteFollower(fromMember, toMember)
     }

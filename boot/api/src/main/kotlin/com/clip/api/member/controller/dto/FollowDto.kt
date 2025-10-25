@@ -1,4 +1,4 @@
-package com.clip.api.follow.controller.dto
+package com.clip.api.member.controller.dto
 
 data class FollowDto(
     val userId: Long
