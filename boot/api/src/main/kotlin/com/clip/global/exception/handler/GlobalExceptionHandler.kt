@@ -1,9 +1,6 @@
 package com.clip.global.exception.handler
 
-import com.clip.global.exception.BaseException
-import com.clip.global.exception.IllegalArgumentException
-import com.clip.global.exception.ImageException
-import com.clip.global.exception.TokenException
+import com.clip.global.exception.*
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -56,6 +53,17 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
 
+    @ExceptionHandler(IllegalStateException.IllegalStatementException::class)
+    fun illegalStatementException(e: IllegalStateException.IllegalStatementException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, HttpStatus.CONFLICT, e.message)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse)
+    }
+
+    @ExceptionHandler(IllegalArgumentException.CardNotFoundException::class)
+    fun cardNotFoundException(e: IllegalArgumentException.CardNotFoundException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, HttpStatus.GONE, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
 
     @ExceptionHandler(BaseException::class)
     fun baseException(e: BaseException): ResponseEntity<ErrorResponse> {

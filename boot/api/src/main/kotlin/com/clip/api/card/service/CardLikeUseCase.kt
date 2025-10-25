@@ -10,7 +10,7 @@ import com.clip.data.card.service.FeedLikeService
 import com.clip.data.member.entity.Member
 import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.notificationtype.NotificationType
-import com.clip.global.exception.IllegalArgumentException.ParameterNotFoundException
+import com.clip.global.exception.IllegalArgumentException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.persistence.OptimisticLockException
 import org.springframework.context.ApplicationEventPublisher
@@ -71,7 +71,7 @@ class CardLikeUseCase(
                 }
             }
 
-            else -> throw IllegalArgumentException("지원하지 않는 카드 타입입니다.")
+            else -> throw RuntimeException("지원하지 않는 카드 타입입니다.")
         }
     }
 
@@ -125,7 +125,7 @@ class CardLikeUseCase(
                 }
             }
 
-            else -> throw IllegalArgumentException("지원하지 않는 카드 타입입니다.")
+            else -> throw RuntimeException("지원하지 않는 카드 타입입니다.")
         }
     }
 
@@ -133,7 +133,7 @@ class CardLikeUseCase(
         when {
             feedCardService.isExistFeedCard(cardId) -> feedCardService.findFeedCard(cardId)
             commentCardService.isExistCommentCard(cardId) -> commentCardService.findCommentCard(cardId)
-            else -> throw ParameterNotFoundException("카드(id: $cardId)를 찾을 수 없습니다.", cardId)
+            else -> throw IllegalArgumentException.CardNotFoundException("카드(id: $cardId)를 찾을 수 없습니다.", cardId)
         }
 }
 
