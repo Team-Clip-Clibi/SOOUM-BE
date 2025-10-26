@@ -21,7 +21,8 @@ import com.clip.data.report.service.FeedReportService
 import com.clip.data.tag.service.CommentTagService
 import com.clip.data.tag.service.FeedTagService
 import com.clip.data.tag.service.TagService
-import com.clip.global.exception.IllegalArgumentException.ParameterNotFoundException
+import com.clip.global.exception.IllegalArgumentException
+import com.clip.global.exception.IllegalStateException
 import com.clip.global.exception.ImageException
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgService
@@ -73,8 +74,12 @@ class CardUseCase(
     ) {
         val member = memberService.findMember(userId)
 
-        if (isBanPeriodExpired(member))
+        if (isBanPeriodExpired(member)){
             member.unban()
+        } else {
+            throw IllegalStateException.IllegalStatementException("글 작성이 차단된 사용자입니다.")
+        }
+
 
         if (isUserImgType(createFeedCardRequest.imgType))
             validUserCardImg(createFeedCardRequest.imgName)
@@ -101,8 +106,11 @@ class CardUseCase(
     ) {
         val member = memberService.findMember(userId)
 
-        if (isBanPeriodExpired(member))
+        if (isBanPeriodExpired(member)) {
             member.unban()
+        } else {
+            throw IllegalStateException.IllegalStatementException("글 작성이 차단된 사용자입니다.")
+        }
 
         if (isUserImgType(createCommentCardRequest.imgType))
             validUserCardImg(createCommentCardRequest.imgName)
@@ -208,7 +216,7 @@ class CardUseCase(
                 )
             }
 
-            else -> throw IllegalArgumentException()
+            else -> throw RuntimeException()
 
         }
     }
@@ -254,7 +262,7 @@ class CardUseCase(
     fun deleteCard(cardId: Long, userId: Long) {
         val card = getCard(cardId)
         if (card.writer.pk != userId)
-            throw IllegalArgumentException("본인이 작성한 카드만 삭제할 수 있습니다.")
+            throw com.clip.global.exception.IllegalArgumentException.NotResourceOwnerException("본인이 작성한 카드만 삭제할 수 있습니다.")
 
         when (card) {
             is FeedCard -> {
@@ -267,7 +275,7 @@ class CardUseCase(
                 commentCardService.deleteCommentCard(card.pk)
             }
 
-            else -> throw IllegalArgumentException()
+            else -> throw RuntimeException()
         }
     }
 
@@ -292,7 +300,7 @@ class CardUseCase(
         return when (card) {
             is FeedCard -> card.pk
             is CommentCard -> card.masterCard
-            else -> throw IllegalArgumentException()
+            else -> throw RuntimeException()
         }
     }
 
@@ -305,7 +313,7 @@ class CardUseCase(
             return feedCardService.findFeedCard(cardId)
         else if (commentCardService.isExistCommentCard(cardId))
             return commentCardService.findCommentCard(cardId)
-        else throw ParameterNotFoundException("카드(id: $cardId)를 찾을 수 없습니다.", cardId)
+        else throw IllegalArgumentException.CardNotFoundException()
     }
 
     private fun isBanPeriodExpired(member: Member): Boolean =

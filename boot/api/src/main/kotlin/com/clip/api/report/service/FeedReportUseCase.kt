@@ -9,6 +9,8 @@ import com.clip.data.member.entity.Member
 import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.data.report.entity.reporttype.ReportType
 import com.clip.data.report.service.FeedReportService
+import com.clip.global.exception.IllegalArgumentException
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,10 +32,17 @@ class FeedReportUseCase(
 
     @Transactional
     fun saveReport(cardId: Long, reportType: ReportType, requester: Member) {
-        val feedCard = feedCardService.findFeedCard(cardId)
-        feedReportService.save(requester, feedCard, reportType)
-
-        deleteFeedCardIfReportLimitExceeded(feedCard)
+        runCatching {
+            feedCardService.findFeedCard(cardId)
+        }.onFailure { ex ->
+            when (ex) {
+                is EntityNotFoundException -> throw IllegalArgumentException.CardNotFoundException()
+                else -> throw ex
+            }
+        }.onSuccess { feedCard ->
+            feedReportService.save(requester, feedCard, reportType)
+            deleteFeedCardIfReportLimitExceeded(feedCard)
+        }
     }
 
     private fun deleteFeedCardIfReportLimitExceeded(feedCard: FeedCard) {

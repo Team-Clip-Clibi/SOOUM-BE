@@ -22,4 +22,20 @@ sealed class IllegalArgumentException(
         HttpStatus.BAD_REQUEST,
         message,
     )
+
+    class CardNotFoundException(
+        message: String = "카드가 존재하지 않습니다.",
+        vararg parameters: Any?
+    ): IllegalArgumentException(
+        HttpStatus.GONE,
+        message,
+    )
+
+    class NotResourceOwnerException(
+        message: String = "리소스 오너가 아닙니다.",
+        vararg parameters: Any?
+    ): IllegalArgumentException(
+        HttpStatus.GONE,
+        message,
+    )
 }

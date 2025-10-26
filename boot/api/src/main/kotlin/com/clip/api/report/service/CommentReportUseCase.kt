@@ -9,6 +9,8 @@ import com.clip.data.member.entity.Member
 import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.data.report.entity.reporttype.ReportType
 import com.clip.data.report.service.CommentReportService
+import com.clip.global.exception.IllegalArgumentException
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,10 +32,17 @@ class CommentReportUseCase(
 
     @Transactional
     fun saveReport(cardId: Long, reportType: ReportType, requester: Member) {
-        val commentCard = commentCardService.findCommentCard(cardId)
-        commentReportService.save(requester, commentCard, reportType)
-
-        deleteCommentCardIfReportLimitExceeded(commentCard)
+        runCatching {
+            commentCardService.findCommentCard(cardId)
+        }.onFailure { ex ->
+            when(ex) {
+                is EntityNotFoundException -> throw IllegalArgumentException.CardNotFoundException()
+                else -> throw ex
+            }
+        }.onSuccess { commentCard ->
+            commentReportService.save(requester, commentCard, reportType)
+            deleteCommentCardIfReportLimitExceeded(commentCard)
+        }
     }
 
     private fun deleteCommentCardIfReportLimitExceeded(commentCard: CommentCard) {
