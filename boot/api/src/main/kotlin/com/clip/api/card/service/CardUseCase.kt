@@ -72,14 +72,7 @@ class CardUseCase(
         createFeedCardRequest: CreateFeedCardRequest,
         userId: Long
     ) {
-        val member = memberService.findMember(userId)
-
-        if (isBanPeriodExpired(member)){
-            member.unban()
-        } else {
-            throw IllegalStateException.CardWriteNotAllowedException()
-        }
-
+        val member = handleBanStatus(memberService.findMember(userId))
 
         if (isUserImgType(createFeedCardRequest.imgType))
             validUserCardImg(createFeedCardRequest.imgName)
@@ -104,13 +97,7 @@ class CardUseCase(
         cardId: Long,
         userId: Long
     ) {
-        val member = memberService.findMember(userId)
-
-        if (isBanPeriodExpired(member)) {
-            member.unban()
-        } else {
-            throw IllegalStateException.CardWriteNotAllowedException()
-        }
+        val member = handleBanStatus(memberService.findMember(userId))
 
         if (isUserImgType(createCommentCardRequest.imgType))
             validUserCardImg(createCommentCardRequest.imgName)
@@ -316,9 +303,19 @@ class CardUseCase(
         else throw IllegalArgumentException.CardNotFoundException()
     }
 
+    private fun handleBanStatus(member: Member): Member {
+        if (member.role == Role.BANNED) {
+            if (isBanPeriodExpired(member)){
+                member.unban()
+            }else {
+                throw IllegalStateException.CardWriteNotAllowedException()
+            }
+        }
+        return member
+    }
+
     private fun isBanPeriodExpired(member: Member): Boolean =
-        (member.untilBan == null ||
-                member.untilBan?.isBefore(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) == true)
+        (member.untilBan?.isBefore(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) == true)
                 && member.role == Role.BANNED
 
     private fun isUserImgType(cardImgType: CardImgType) =
