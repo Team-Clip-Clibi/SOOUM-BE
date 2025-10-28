@@ -31,7 +31,7 @@ class ReportFacade(
 
     private fun hasAlreadyReported(cardId: Long, userId: Long) {
         if (feedReportUseCase.hasAlreadyReported(cardId, userId) || commentReportUseCase.hasAlreadyReported(cardId, userId))
-            throw IllegalStateException.IllegalStatementException("이미 처리된 신고입니다.")
+            throw IllegalStateException.AlreadyCompletedException()
     }
 
 }

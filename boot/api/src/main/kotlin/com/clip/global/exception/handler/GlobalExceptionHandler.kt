@@ -53,10 +53,18 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
 
-    @ExceptionHandler(IllegalStateException.IllegalStatementException::class)
-    fun illegalStatementException(e: IllegalStateException.IllegalStatementException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(IllegalStateException.CardWriteNotAllowedException::class)
+    fun cardWriteNotAllowedException(e: IllegalStateException.CardWriteNotAllowedException):
+            ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, HttpStatus.BAD_REQUEST, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(IllegalStateException.AlreadyCompletedException::class)
+    fun alreadyCompletedException(e: IllegalStateException.AlreadyCompletedException):
+            ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, HttpStatus.CONFLICT, e.message)
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
 
     @ExceptionHandler(IllegalArgumentException.CardNotFoundException::class)
