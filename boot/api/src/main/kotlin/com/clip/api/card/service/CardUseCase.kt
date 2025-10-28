@@ -77,7 +77,7 @@ class CardUseCase(
         if (isBanPeriodExpired(member)){
             member.unban()
         } else {
-            throw IllegalStateException.IllegalStatementException("글 작성이 차단된 사용자입니다.")
+            throw IllegalStateException.CardWriteNotAllowedException()
         }
 
 
@@ -109,7 +109,7 @@ class CardUseCase(
         if (isBanPeriodExpired(member)) {
             member.unban()
         } else {
-            throw IllegalStateException.IllegalStatementException("글 작성이 차단된 사용자입니다.")
+            throw IllegalStateException.CardWriteNotAllowedException()
         }
 
         if (isUserImgType(createCommentCardRequest.imgType))
@@ -262,7 +262,7 @@ class CardUseCase(
     fun deleteCard(cardId: Long, userId: Long) {
         val card = getCard(cardId)
         if (card.writer.pk != userId)
-            throw com.clip.global.exception.IllegalArgumentException.NotResourceOwnerException("본인이 작성한 카드만 삭제할 수 있습니다.")
+            throw IllegalArgumentException.NotResourceOwnerException("본인이 작성한 카드만 삭제할 수 있습니다.")
 
         when (card) {
             is FeedCard -> {
@@ -309,15 +309,16 @@ class CardUseCase(
 
 
     private fun getCard(cardId: Long): Card {
-        if (feedCardService.isExistFeedCard(cardId))
-            return feedCardService.findFeedCard(cardId)
+        return if (feedCardService.isExistFeedCard(cardId))
+            feedCardService.findFeedCard(cardId)
         else if (commentCardService.isExistCommentCard(cardId))
-            return commentCardService.findCommentCard(cardId)
+            commentCardService.findCommentCard(cardId)
         else throw IllegalArgumentException.CardNotFoundException()
     }
 
     private fun isBanPeriodExpired(member: Member): Boolean =
-        (member.untilBan?.isBefore(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) == true)
+        (member.untilBan == null ||
+                member.untilBan?.isBefore(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) == true)
                 && member.role == Role.BANNED
 
     private fun isUserImgType(cardImgType: CardImgType) =
