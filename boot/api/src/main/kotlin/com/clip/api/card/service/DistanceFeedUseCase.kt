@@ -34,7 +34,7 @@ class DistanceFeedUseCase(
         val distanceFeeds = feedCardService.findFeedsByDistance(Optional.ofNullable(lastId), userLocation, distance , blockedMembers)
 
         val feedLikes = feedLikeService.findByTargetCardIds(distanceFeeds.map { it.pk })
-        val comments = commentCardService.findCommentCardsIn(distanceFeeds.map { it.pk })
+        val comments = commentCardService.findChildCommentsByParents(distanceFeeds.map { it.pk })
 
         return distanceFeeds.map {
             feedMapper.toFeedResponse(

@@ -23,7 +23,7 @@ class PopularFeedUseCase(
         val popularFeeds = popularFeedService.getPopularFeeds(blockedMembers)
 
         val feedLikes = feedLikeService.findByTargetCards(popularFeeds)
-        val comments = commentCardService.findCommentCardsIn(popularFeeds.map { it.pk })
+        val comments = commentCardService.findChildCommentsByParents(popularFeeds.map { it.pk })
 
         return popularFeeds.map {
             feedMapper.toFeedResponse(
