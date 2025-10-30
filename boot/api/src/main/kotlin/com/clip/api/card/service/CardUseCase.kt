@@ -87,7 +87,7 @@ class CardUseCase(
         if (isUserImgType(createFeedCardRequest.imgType))
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
 
-        val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags)
+        val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags.distinct())
         feedTagService.saveAll(feedCard, savedTags)
     }
 
@@ -120,7 +120,7 @@ class CardUseCase(
         if (isUserImgType(createCommentCardRequest.imgType))
             cardImgService.updateCardImg(commentCard, createCommentCardRequest.imgName)
 
-        val savedTags = tagService.saveAllAndNoIncrementTagCnt(createCommentCardRequest.tags)
+        val savedTags = tagService.saveAllAndNoIncrementTagCnt(createCommentCardRequest.tags.distinct())
         commentTagService.saveAll(commentCard, savedTags)
 
         if (parentCard.writer.pk != userId) {
