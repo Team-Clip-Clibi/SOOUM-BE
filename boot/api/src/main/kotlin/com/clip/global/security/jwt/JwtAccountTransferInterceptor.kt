@@ -38,7 +38,7 @@ class JwtAccountTransferInterceptor(
         tokenIssuedAt: LocalDateTime,
         userId: Long
     ) {
-        accountTransferHistoryService.findByMemberPk(userId).ifPresent { history ->
+        accountTransferHistoryService.findLatestByMemberPk(userId).ifPresent { history ->
             if (tokenIssuedAt.isBefore(history.transferAt)) {
                 throw TokenException.AlreadyAccountTransferredException(
                     "이미 계정 이전이 완료된 사용자입니다.",
