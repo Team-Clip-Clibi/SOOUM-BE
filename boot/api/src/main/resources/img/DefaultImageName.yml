@@ -1,12 +1,12 @@
 default-img:
   abstract:
     - Abstract1.jpeg
+    - Abstract7.jpeg
+    - Abstract6.jpeg
+    - Abstract5.jpeg
     - Abstract2.jpeg
     - Abstract3.jpeg
     - Abstract4.jpeg
-    - Abstract5.jpeg
-    - Abstract6.jpeg
-    - Abstract7.jpeg
 
   color:
     - Blue.jpeg
