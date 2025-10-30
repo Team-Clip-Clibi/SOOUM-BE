@@ -72,14 +72,7 @@ class CardUseCase(
         createFeedCardRequest: CreateFeedCardRequest,
         userId: Long
     ) {
-        val member = memberService.findMember(userId)
-
-        if (isBanPeriodExpired(member)){
-            member.unban()
-        } else {
-            throw IllegalStateException.IllegalStatementException("글 작성이 차단된 사용자입니다.")
-        }
-
+        val member = handleBanStatus(memberService.findMember(userId))
 
         if (isUserImgType(createFeedCardRequest.imgType))
             validUserCardImg(createFeedCardRequest.imgName)
@@ -104,13 +97,7 @@ class CardUseCase(
         cardId: Long,
         userId: Long
     ) {
-        val member = memberService.findMember(userId)
-
-        if (isBanPeriodExpired(member)) {
-            member.unban()
-        } else {
-            throw IllegalStateException.IllegalStatementException("글 작성이 차단된 사용자입니다.")
-        }
+        val member = handleBanStatus(memberService.findMember(userId))
 
         if (isUserImgType(createCommentCardRequest.imgType))
             validUserCardImg(createCommentCardRequest.imgName)
@@ -262,7 +249,7 @@ class CardUseCase(
     fun deleteCard(cardId: Long, userId: Long) {
         val card = getCard(cardId)
         if (card.writer.pk != userId)
-            throw com.clip.global.exception.IllegalArgumentException.NotResourceOwnerException("본인이 작성한 카드만 삭제할 수 있습니다.")
+            throw IllegalArgumentException.NotResourceOwnerException("본인이 작성한 카드만 삭제할 수 있습니다.")
 
         when (card) {
             is FeedCard -> {
@@ -309,11 +296,22 @@ class CardUseCase(
 
 
     private fun getCard(cardId: Long): Card {
-        if (feedCardService.isExistFeedCard(cardId))
-            return feedCardService.findFeedCard(cardId)
+        return if (feedCardService.isExistFeedCard(cardId))
+            feedCardService.findFeedCard(cardId)
         else if (commentCardService.isExistCommentCard(cardId))
-            return commentCardService.findCommentCard(cardId)
+            commentCardService.findCommentCard(cardId)
         else throw IllegalArgumentException.CardNotFoundException()
+    }
+
+    private fun handleBanStatus(member: Member): Member {
+        if (member.role == Role.BANNED) {
+            if (isBanPeriodExpired(member)){
+                member.unban()
+            }else {
+                throw IllegalStateException.CardWriteNotAllowedException()
+            }
+        }
+        return member
     }
 
     private fun isBanPeriodExpired(member: Member): Boolean =
