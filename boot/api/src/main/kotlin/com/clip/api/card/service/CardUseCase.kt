@@ -158,8 +158,8 @@ class CardUseCase(
                         )
                     )
 
-                val feedLikes = feedLikeService.findByTargetCardIds(listOf(cardId))
-                val comments = commentCardService.findCommentCardsIn(listOf(cardId))
+                val feedLikes = feedLikeService.findByTargetCard(cardId)
+                val comments = commentCardService.findChildCommentCardList(cardId)
                 val feedViews = feedViewService.countView(card)
                 cardMapper.toFeedCardDetailResponse(
                     card,
@@ -187,8 +187,8 @@ class CardUseCase(
                     CardType.COMMENT_CARD -> commentCardService.findCommentCardOrNull(card.parentCardPk)
                     else -> null
                 }
-                val commentLikes = commentLikeService.findByTargetCardIds(listOf(cardId))
-                val comments = commentCardService.findCommentCardsIn(listOf(cardId))
+                val commentLikes = commentLikeService.findByTargetCard(cardId)
+                val comments = commentCardService.findChildCommentCardList(cardId)
                 val commentViews = commentViewService.countView(card)
                 cardMapper.toCommentCardDetailResponse(
                     card,

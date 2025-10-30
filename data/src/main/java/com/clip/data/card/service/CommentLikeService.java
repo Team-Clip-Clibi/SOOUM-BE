@@ -33,6 +33,10 @@ public class CommentLikeService {
         return commentLikeRepository.findByTargetCardIn(targetCardPks);
     }
 
+    public List<CommentLike> findByTargetCard(Long targetCardPk) {
+        return commentLikeRepository.findByTargetCard(targetCardPk);
+    }
+
     @Transactional
     public void deleteAllFeedLikes(Long commentCardPk) {
         commentLikeRepository.deleteAllInBatch(commentLikeRepository.findAllByTargetCard_Pk(commentCardPk));
