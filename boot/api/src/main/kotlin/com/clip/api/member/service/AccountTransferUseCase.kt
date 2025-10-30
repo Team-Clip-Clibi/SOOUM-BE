@@ -36,7 +36,8 @@ class AccountTransferUseCase(
         }
 
         return AccountTransferCodeResponse(
-            transferCode = accountTransfer.transferId
+            transferCode = accountTransfer.transferId,
+            expiredAt = accountTransfer.expirationDate
         )
     }
 
@@ -47,7 +48,8 @@ class AccountTransferUseCase(
         accountTransfer.updateTransferId(accountTransferService.createTransferId())
 
         return AccountTransferCodeResponse(
-            transferCode = accountTransfer.transferId
+            transferCode = accountTransfer.transferId,
+            expiredAt = accountTransfer.expirationDate
         )
     }
 

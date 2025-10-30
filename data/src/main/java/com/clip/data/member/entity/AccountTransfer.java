@@ -34,13 +34,13 @@ public class AccountTransfer extends BaseEntity {
     @Builder
     public AccountTransfer(Member member, String transferId) {
         this.transferId = transferId;
-        this.expirationDate = LocalDateTime.now().plusMinutes(3);
+        this.expirationDate = LocalDateTime.now().plusHours(1);
         this.member = member;
     }
 
     public void updateTransferId (String transferId) {
         this.transferId = transferId;
-        this.expirationDate = LocalDateTime.now().plusMinutes(3);
+        this.expirationDate = LocalDateTime.now().plusHours(1);
     }
 
     public boolean isExpired() {
