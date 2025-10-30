@@ -46,7 +46,7 @@ class AuthUseCase(
 
         refreshTokenService.findByMember(member.pk).update(refreshToken)
         memberService.save(
-            member.updateDeviceInfo(
+            member.updateDeviceSpec(
                 request.deviceType,
                 request.deviceModel,
                 request.deviceOsVersion

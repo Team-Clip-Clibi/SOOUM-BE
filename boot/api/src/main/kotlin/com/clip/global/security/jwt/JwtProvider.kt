@@ -90,6 +90,12 @@ class JwtProvider(
             authorities
         )
     }
+
+    fun getIssuedAt(token: String): LocalDateTime =
+        getClaims(token).issuedAt.toInstant()
+            .atZone(ZoneId.of("Asia/Seoul"))
+            .toLocalDateTime()
+
     private fun getClaims(token: String): Claims =
         Jwts.parserBuilder()
             .setSigningKey(getSigningKey())

@@ -37,6 +37,7 @@ class SwaggerConfig {
                     - 카드 작성 차단 유저의 카드 작성 요청: BAD_REQUEST(400)
                     - 삭제된 카드에 대한 리소스 생성 및 수정(좋아요, 좋아요 취소, 답카드 작성, 신고): GONE(410)
                     - 이미 신고된 카드의 중복 신고 요청: CONFLICT(409)
+                    - 이미 계정 이전이 완료된 사용자의 요청: I_AM_A_TEAPOT(418)
                 """.trimIndent())
         )
         .addServersItem(Server().url("/"))

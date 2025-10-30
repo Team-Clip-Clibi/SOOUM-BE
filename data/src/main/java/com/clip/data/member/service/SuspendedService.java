@@ -13,6 +13,10 @@ import java.util.Optional;
 public class SuspendedService {
     private final SuspendedRepository suspendedRepository;
 
+    public void save(Suspended suspended) {
+        suspendedRepository.save(suspended);
+    }
+
     public Optional<Suspended> findSuspensionByDeviceId(String deviceId) {
         return suspendedRepository.findByDeviceIdAndUntilBanAfter(deviceId, LocalDateTime.now());
     }

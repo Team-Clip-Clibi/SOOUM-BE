@@ -119,10 +119,20 @@ public class Member extends BaseEntity {
         return isAllowNotify && !Objects.isNull(firebaseToken);
     }
 
-    public Member updateDeviceInfo(DeviceType deviceType, String deviceModel, String deviceOsVersion) {
+
+    public Member updateDeviceSpec(DeviceType deviceType, String deviceModel, String deviceOsVersion) {
         this.deviceType = deviceType;
         this.deviceModel = deviceModel;
         this.deviceOsVersion = deviceOsVersion;
         return this;
     }
+
+    public Member updateDeviceInfo(String deviceId, DeviceType deviceType, String deviceModel, String deviceOsVersion) {
+        this.deviceId = deviceId;
+        this.deviceType = deviceType;
+        this.deviceModel = deviceModel;
+        this.deviceOsVersion = deviceOsVersion;
+        return this;
+    }
+
 }

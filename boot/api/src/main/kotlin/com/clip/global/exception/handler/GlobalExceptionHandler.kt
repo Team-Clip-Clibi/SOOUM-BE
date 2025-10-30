@@ -29,6 +29,18 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse)
     }
 
+    @ExceptionHandler(TokenException.BlacklistTokenException::class)
+    fun blacklistTokenException(e: TokenException.BlacklistTokenException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(TokenException.AlreadyAccountTransferredException::class)
+    fun alreadyAccountTransferredException(e: TokenException.AlreadyAccountTransferredException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
     @ExceptionHandler(ImageException.InvalidImageException::class)
     fun invalidImageException(e: ImageException.InvalidImageException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)

@@ -59,3 +59,5 @@ exclude-auth-path-patterns:
       method: GET
     - path-pattern: /api/auth/token/reissue
       method: POST
+    - path-pattern: /api/members/account/transfer
+      method: POST

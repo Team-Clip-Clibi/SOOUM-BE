@@ -34,4 +34,13 @@ sealed class TokenException(
         message,
         token
     )
+
+    class AlreadyAccountTransferredException(
+        message: String = "이미 계정 이전이 완료된 사용자입니다.",
+        memberPk: Long? = null
+    ) : TokenException(
+        HttpStatus.I_AM_A_TEAPOT,
+        message,
+        memberPk
+    )
 }
