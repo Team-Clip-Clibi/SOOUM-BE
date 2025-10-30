@@ -23,6 +23,10 @@ public class FeedLikeService {
         return feedLikeRepository.findByTargetCardPks(targetCardPks);
     }
 
+    public List<FeedLike> findByTargetCard(Long targetCardPk) {
+        return feedLikeRepository.findByTargetCardPk(targetCardPk);
+    }
+
     public void deleteAllFeedLikes(Long feedCardPk) {
         feedLikeRepository.deleteAllFeedLikes(feedCardPk);
     }

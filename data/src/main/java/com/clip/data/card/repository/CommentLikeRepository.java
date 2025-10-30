@@ -18,6 +18,9 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
     @Query("select cl from CommentLike cl where cl.targetCard.pk in :targetCardPks and cl.isDeleted = false")
     List<CommentLike> findByTargetCardIn(@Param("targetCardPks") List<Long> targetCardPks);
 
+    @Query("select cl from CommentLike cl where cl.targetCard.pk = :targetCardPk and cl.isDeleted = false")
+    List<CommentLike> findByTargetCard(@Param("targetCardPk") Long targetCardPk);
+
     List<CommentLike> findAllByTargetCard_Pk(Long cardPk);
 
     @Modifying
