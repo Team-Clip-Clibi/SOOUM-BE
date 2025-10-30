@@ -102,21 +102,22 @@ class MemberWithdrawalUseCase(
     }
 
     private fun handleSuspendedUser(member: Member) {
-        val suspended = if (member.role == Role.BANNED) {
-            Suspended.builder()
-                .deviceId(member.deviceId)
-                .untilBan(member.untilBan)
-                .isBanUser(true)
-                .build()
-        } else {
-            Suspended.builder()
-                .deviceId(member.deviceId)
-                .untilBan(LocalDateTime.now().plusDays(7))
-                .isBanUser(false)
-                .build()
+        val (untilBan, isBanUser) = when {
+            member.role == Role.BANNED && member.untilBan > LocalDateTime.now().plusDays(7) ->
+                member.untilBan to true
+            else ->
+                LocalDateTime.now().plusDays(7) to false
         }
+
+        val suspended = Suspended.builder()
+            .deviceId(member.deviceId)
+            .untilBan(untilBan)
+            .isBanUser(isBanUser)
+            .build()
+
         suspendedService.save(suspended)
     }
+
 
     private fun addTokensToBlacklist(withdrawalRequest: TokenDto) {
         blacklistService.save(
