@@ -68,11 +68,12 @@ class AccountTransferUseCase(
             transferRequest.deviceOsVersion
         )
         accountTransferService.deleteAccountTransfer(transferredMember.pk)
-        accountTransferHistoryService.save(
-            AccountTransferHistory(
-                transferredMember
+
+        accountTransferHistoryService.findByMemberPk(transferredMember.pk)
+            .ifPresentOrElse(
+                { it.updateTransferAt() },
+                { accountTransferHistoryService.save(AccountTransferHistory(transferredMember)) }
             )
-        )
 
         applicationEventPublisher.publishEvent(
             SystemFCMEvent(

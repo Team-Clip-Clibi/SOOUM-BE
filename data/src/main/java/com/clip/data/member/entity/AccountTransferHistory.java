@@ -33,4 +33,8 @@ public class AccountTransferHistory extends BaseEntity {
         this.member = member;
         this.transferAt = LocalDateTime.now();
     }
+
+    public void updateTransferAt() {
+        this.transferAt = LocalDateTime.now();
+    }
 }

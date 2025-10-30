@@ -16,7 +16,7 @@ public class AccountTransferHistoryService {
         accountTransferHistoryRepository.save(accountTransferHistory);
     }
 
-    public Optional<AccountTransferHistory> findLatestByMemberPk(Long memberPk) {
-        return accountTransferHistoryRepository.findLatestByMemberPk(memberPk);
+    public Optional<AccountTransferHistory> findByMemberPk(Long memberPk) {
+        return accountTransferHistoryRepository.findByMemberPk(memberPk);
     }
 }
