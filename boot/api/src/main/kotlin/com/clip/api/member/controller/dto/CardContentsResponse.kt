@@ -1,4 +1,4 @@
-package com.clip.api.card.controller.dto
+package com.clip.api.member.controller.dto
 
 data class CardContentsResponse(
     val cardContents: List<CardContent>
