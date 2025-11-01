@@ -2,7 +2,6 @@ package com.clip.data.tag.repository;
 
 import com.clip.data.card.entity.FeedCard;
 import com.clip.data.tag.entity.FeedTag;
-import com.clip.data.tag.entity.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,8 +16,8 @@ public interface FeedTagRepository extends JpaRepository<FeedTag, Long> {
     @Query("select ft from FeedTag ft join fetch ft.tag where ft.feedCard.pk = :cardPk")
     List<FeedTag> findAllByFeedCardPk(@Param("cardPk") Long cardPk);
 
-    @Query("SELECT ft.tag FROM FeedTag ft WHERE ft.feedCard = :feedCard")
-    List<Tag> findTagsByFeedCard(@Param("feedCard") FeedCard feedCard);
+    @Query("SELECT ft FROM FeedTag ft WHERE ft.feedCard = :feedCard")
+    List<FeedTag> findTagsByFeedCard(@Param("feedCard") FeedCard feedCard);
     @Query("select ft.feedCard from FeedTag ft " +
             "inner join ft.feedCard " +
             "where ft.tag.pk = :tagPk " +

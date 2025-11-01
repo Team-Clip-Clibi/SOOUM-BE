@@ -2,7 +2,6 @@ package com.clip.data.tag.repository;
 
 import com.clip.data.card.entity.CommentCard;
 import com.clip.data.tag.entity.CommentTag;
-import com.clip.data.tag.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +18,8 @@ public interface CommentTagRepository extends JpaRepository<CommentTag, Long> {
     @Query("select ct from CommentTag ct where ct.commentCard in :cards")
     List<CommentTag> findAllByCommentCards(@Param("cards") List<CommentCard> commentCards);
 
-    @Query("SELECT ct.tag FROM CommentTag ct WHERE ct.commentCard = :commentCard")
-    List<Tag> findTagsByCommentCard(@Param("commentCard") CommentCard commentCard);
+    @Query("SELECT ct FROM CommentTag ct WHERE ct.commentCard = :commentCard")
+    List<CommentTag> findTagsByCommentCard(@Param("commentCard") CommentCard commentCard);
 
     @Modifying
     @Transactional
