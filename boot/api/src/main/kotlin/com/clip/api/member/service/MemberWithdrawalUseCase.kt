@@ -1,5 +1,6 @@
 package com.clip.api.member.service
 
+import com.clip.api.member.controller.dto.TokenDto
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.*
 import com.clip.data.follow.service.FollowService
@@ -17,7 +18,6 @@ import com.clip.data.tag.service.FeedTagService
 import com.clip.data.visitor.service.VisitorService
 import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
-import com.clip.global.security.jwt.TokenDto
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

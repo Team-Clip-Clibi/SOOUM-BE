@@ -1,7 +1,6 @@
 package com.clip.api.member.service
 
 import com.clip.api.member.controller.dto.*
-import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.entity.Blacklist
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.PolicyTerm
@@ -9,7 +8,6 @@ import com.clip.data.member.service.BlacklistService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.PolicyService
 import com.clip.data.member.service.RefreshTokenService
-import com.clip.data.notification.service.NotificationHistoryService
 import com.clip.global.exception.ImageException
 import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
@@ -31,8 +29,7 @@ class AuthUseCase(
     private val s3ImgService: S3ImgService,
     private val rekognitionService: RekognitionService,
     private val s3ImgPathProperties: S3ImgPathProperties,
-    private val profileImgService: ProfileImgService,
-    private val notificationHistoryService: NotificationHistoryService,
+    private val withdrawalUseCase: MemberWithdrawalUseCase
 ) {
 
     @Transactional
@@ -152,22 +149,6 @@ class AuthUseCase(
 
     @Transactional
     fun withdrawal(withdrawalRequest: TokenDto, userId: Long) {
-        blacklistService.save(
-            Blacklist(
-                withdrawalRequest.accessToken,
-                jwtProvider.getTokenExpiration(withdrawalRequest.accessToken)
-            )
-        )
-        blacklistService.save(
-            Blacklist(
-                withdrawalRequest.refreshToken,
-                jwtProvider.getTokenExpiration(withdrawalRequest.refreshToken)
-            )
-        )
-        profileImgService.updateProfileImgNull(userId)
-        policyService.deletePolicyTerm(userId)
-        refreshTokenService.deleteRefreshToken(userId)
-        notificationHistoryService.deleteAllNotificationHistory(userId)
-        memberService.deleteMember(userId)
+        withdrawalUseCase.withdrawMember(userId, withdrawalRequest)
     }
 }
