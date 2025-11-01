@@ -4,7 +4,9 @@ import com.clip.data.card.entity.Card;
 import com.clip.data.card.entity.CommentCard;
 import com.clip.data.card.entity.FeedCard;
 import com.clip.data.common.deactivatewords.DeactivateTagWords;
+import com.clip.data.tag.entity.CommentTag;
 import com.clip.data.tag.entity.FavoriteTag;
+import com.clip.data.tag.entity.FeedTag;
 import com.clip.data.tag.entity.Tag;
 import com.clip.data.tag.repository.CommentTagRepository;
 import com.clip.data.tag.repository.FavoriteTagRepository;
@@ -31,10 +33,10 @@ public class TagService {
 
     public List<Tag> getTagsByCard(Card card) {
         if(card instanceof FeedCard feedCard){
-            return feedTagRepository.findTagsByFeedCard(feedCard);
+            return feedTagRepository.findTagsByFeedCard(feedCard).stream().map(FeedTag::getTag).toList();
         }
         if(card instanceof CommentCard commentCard){
-            return commentTagRepository.findTagsByCommentCard(commentCard);
+            return commentTagRepository.findTagsByCommentCard(commentCard).stream().map(CommentTag::getTag).toList();
         }
         throw new IllegalArgumentException();
     }

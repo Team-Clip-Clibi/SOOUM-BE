@@ -91,7 +91,10 @@ class CardUseCase(
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
 
         val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags.distinct().toMutableList())
-        feedTagService.saveAll(feedCard, savedTags)
+        val restoredTags = createFeedCardRequest.tags.mapNotNull { tagName ->
+            savedTags.find { it.content == tagName }
+        }
+        feedTagService.saveAll(feedCard, restoredTags)
     }
 
     fun createCommentCard(
