@@ -127,7 +127,10 @@ class CardUseCase(
             cardImgService.updateCardImg(commentCard, createCommentCardRequest.imgName)
 
         val savedTags = tagService.saveAllAndNoIncrementTagCnt(createCommentCardRequest.tags.distinct().toMutableList())
-        commentTagService.saveAll(commentCard, savedTags)
+        val restoredTags = createCommentCardRequest.tags.mapNotNull { tagName ->
+            savedTags.find { it.content == tagName }
+        }
+        commentTagService.saveAll(commentCard, restoredTags)
 
         if (parentCard.writer.pk != userId) {
             val commentWriteNotification =
