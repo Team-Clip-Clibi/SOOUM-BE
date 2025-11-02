@@ -76,7 +76,7 @@ class GlobalExceptionHandler {
     fun alreadyCompletedException(e: IllegalStateException.AlreadyCompletedException):
             ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, HttpStatus.CONFLICT, e.message)
-        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse)
     }
 
     @ExceptionHandler(IllegalArgumentException.CardNotFoundException::class)
