@@ -17,7 +17,7 @@ public interface FeedReportRepository extends JpaRepository<FeedReport, Long> {
 
     boolean existsByReporter_PkAndTargetCard_Pk(Long reporterPk, Long cardPk);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Transactional
     @Query("delete from FeedReport f where f.targetCard.pk = :feedCardPk")
     void deleteAllByFeedCardPk(@Param("feedCardPk") Long feedCardPk);

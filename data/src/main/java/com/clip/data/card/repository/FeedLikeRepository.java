@@ -21,7 +21,7 @@ public interface FeedLikeRepository extends JpaRepository<FeedLike, Long> {
     @Query("select fl from FeedLike fl where fl.targetCard.pk = :targetCardPk and fl.isDeleted = false")
     List<FeedLike> findByTargetCardPk(@Param("targetCardPk") Long targetCardPk);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Transactional
     @Query("delete from FeedLike fl where fl.targetCard.pk = :feedCardPk")
     void deleteAllFeedLikes(@Param("feedCardPk") Long feedCardPk);
