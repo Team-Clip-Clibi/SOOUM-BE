@@ -18,7 +18,7 @@ public interface CommentReportRepository extends JpaRepository<CommentReport, Lo
 
     boolean existsByReporter_PkAndTargetCard_Pk(Long cardPk, Long memberPk);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("delete from CommentReport c where c.targetCard = :cardPk")
     void deleteAllByCommentCardPk(@Param("cardPk") CommentCard cardPk);

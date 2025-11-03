@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface CardImgRepository extends JpaRepository<CardImg, Long> {
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("delete from CardImg u where u.imgName = :imgName")
     void deleteByImgName(@Param("imgName") String imgName);
