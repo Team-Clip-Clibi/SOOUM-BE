@@ -29,6 +29,7 @@ import com.clip.global.exception.IllegalStateException
 import com.clip.global.exception.ImageException
 import com.clip.infra.rekognition.RekognitionService
 import com.clip.infra.s3.S3ImgService
+import jakarta.persistence.EntityManager
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -59,7 +60,8 @@ class CardUseCase(
     private val popularFeedService: PopularFeedService,
     private val notificationHistoryService: NotificationHistoryService,
     private val commentViewService: CommentViewService,
-    private val feedViewService: FeedViewService
+    private val feedViewService: FeedViewService,
+    private val entityManager: EntityManager
 ) {
 
     companion object {
@@ -263,11 +265,13 @@ class CardUseCase(
         when (card) {
             is FeedCard -> {
                 deleteFeedCardDependencies(card)
+                entityManager.clear()
                 feedCardService.deleteFeedCard(card.pk)
             }
 
             is CommentCard -> {
                 deleteCommentCardDependencies(card)
+                entityManager.clear()
                 commentCardService.deleteCommentCard(card.pk)
             }
 
