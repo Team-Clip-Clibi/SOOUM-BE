@@ -8,6 +8,7 @@ import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.CardFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
+import com.clip.api.tag.event.TagUsageEvent
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.entity.*
 import com.clip.data.card.entity.imgtype.CardImgType
@@ -93,6 +94,11 @@ class CardUseCase(
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
 
         val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags.distinct().toMutableList())
+        applicationEventPublisher.publishEvent(TagUsageEvent(
+            userId,
+            feedCard.pk,
+            savedTags
+        ))
         val restoredTags = createFeedCardRequest.tags.mapNotNull { tagName ->
             savedTags.find { it.content == tagName }
         }

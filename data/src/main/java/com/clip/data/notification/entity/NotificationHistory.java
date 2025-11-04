@@ -64,6 +64,15 @@ public class NotificationHistory extends BaseEntity {
         this.readAt = readAt;
     }
 
+    public static NotificationHistory ofFavoriteTagUsage(Member fromMember, Member toMember, Long targetCardId) {
+        return NotificationHistory.builder()
+                .fromMember(fromMember)
+                .toMember(toMember)
+                .notificationType(NotificationType.TAG_USAGE)
+                .targetCardPk(targetCardId)
+                .build();
+    }
+
     public static NotificationHistory ofCommentWrite(Member fromMember, Long targetCardPk, Card parentCard) {
         return ofGeneral(fromMember, targetCardPk, parentCard, NotificationType.COMMENT_WRITE);
     }
