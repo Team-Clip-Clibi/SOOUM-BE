@@ -19,7 +19,7 @@ class NotificationUseCase(
     private val memberService: MemberService
 ) {
     fun updateNotificationStatusToRead(notificationId: Long, userId: Long) {
-        if (isNotificationOwner(userId, notificationId)) {
+        if (!isNotificationOwner(notificationId, userId)) {
             throw IllegalArgumentException("notificationId: $notificationId, userId: $userId 본인의 알림이 아닙니다.")
         }
         notificationHistoryService.updateToRead(notificationId)
