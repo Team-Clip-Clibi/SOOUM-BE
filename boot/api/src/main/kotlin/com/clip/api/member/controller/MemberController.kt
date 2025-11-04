@@ -33,6 +33,11 @@ class MemberController(
     override fun getActivityRestrictionDate(@AccessUser userId: Long): ResponseEntity<ActivityRestrictionDateResponse> =
         ResponseEntity.ok(memberUseCase.getActivityRestrictionDate(userId))
 
+    @GetMapping("/rejoinable-date")
+    override fun getRejoinableDate(@AccessUser userId: Long): ResponseEntity<RejoinableDateResponse> =
+        ResponseEntity.ok(memberUseCase.getRejoinableDate(userId))
+
+
     @PostMapping("/check-available")
     override fun checkAvailableSignUp(@RequestBody checkAvailableRequest: CheckAvailableRequest): ResponseEntity<CheckAvailableResponse> {
         val response = memberUseCase.checkAvailableSignUp(checkAvailableRequest)

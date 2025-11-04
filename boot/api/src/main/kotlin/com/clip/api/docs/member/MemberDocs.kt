@@ -82,4 +82,11 @@ interface MemberDocs {
         - 제한이 없는 경우 null을 반환합니다.
     """)
     fun getActivityRestrictionDate(userId: Long): ResponseEntity<ActivityRestrictionDateResponse>
+
+    @Operation(summary = "탈퇴 시 재가입 가능 날짜 조회 API", description = """
+        - 탈퇴 시 재가입 가능 날짜 조회 API
+        - 사용자가 탈퇴한 경우, 재가입이 가능한 날짜를 조회합니다.
+        - 또한, 활동 정지 상태인지에 대한 정보도 함께 제공합니다.  
+    """)
+    fun getRejoinableDate(userId: Long): ResponseEntity<RejoinableDateResponse>
 }
