@@ -99,6 +99,7 @@ class CardUseCase(
         feedTagService.saveAll(feedCard, restoredTags)
     }
 
+    @Transactional
     fun createCommentCard(
         httpServletRequest: HttpServletRequest,
         createCommentCardRequest: CreateCommentCardRequest,
