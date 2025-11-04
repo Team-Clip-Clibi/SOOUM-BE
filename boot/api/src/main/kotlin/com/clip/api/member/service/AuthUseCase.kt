@@ -148,7 +148,7 @@ class AuthUseCase(
     }
 
     @Transactional
-    fun withdrawal(withdrawalRequest: TokenDto, userId: Long) {
+    fun withdrawal(withdrawalRequest: WithdrawalRequest, userId: Long) {
         withdrawalUseCase.withdrawMember(userId, withdrawalRequest)
     }
 }

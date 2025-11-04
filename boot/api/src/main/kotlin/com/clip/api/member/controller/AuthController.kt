@@ -15,7 +15,7 @@ class AuthController(
 
     @DeleteMapping("/withdrawal")
     override fun withdrawal(
-        @RequestBody withdrawalRequest: TokenDto,
+        @RequestBody withdrawalRequest: WithdrawalRequest,
         @AccessUser userId: Long
     ): ResponseEntity<Void> =
         authUseCase.withdrawal(withdrawalRequest, userId)

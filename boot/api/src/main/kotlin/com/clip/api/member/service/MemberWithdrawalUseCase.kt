@@ -1,15 +1,12 @@
 package com.clip.api.member.service
 
-import com.clip.api.member.controller.dto.TokenDto
+import com.clip.api.member.controller.dto.WithdrawalRequest
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.*
 import com.clip.data.follow.service.FollowService
 import com.clip.data.img.service.CardImgService
 import com.clip.data.img.service.ProfileImgService
-import com.clip.data.member.entity.Blacklist
-import com.clip.data.member.entity.Member
-import com.clip.data.member.entity.Role
-import com.clip.data.member.entity.Suspended
+import com.clip.data.member.entity.*
 import com.clip.data.member.service.*
 import com.clip.data.notification.service.NotificationHistoryService
 import com.clip.data.tag.service.CommentTagService
@@ -44,11 +41,12 @@ class MemberWithdrawalUseCase(
     private val accountTransferService: AccountTransferService,
     private val feedTagService: FeedTagService,
     private val commentTagService: CommentTagService,
-    private val notificationHistoryService: NotificationHistoryService
+    private val notificationHistoryService: NotificationHistoryService,
+    private val memberWithdrawalReasonService: MemberWithdrawalReasonService,
 ) {
 
     @Transactional
-    fun withdrawMember(memberPk: Long, withdrawalRequest: TokenDto) {
+    fun withdrawMember(memberPk: Long, withdrawalRequest: WithdrawalRequest) {
         if (blacklistService.findByToken(withdrawalRequest.refreshToken).isPresent)
             throw TokenException.BlacklistTokenException(token = withdrawalRequest.refreshToken)
 
@@ -56,6 +54,12 @@ class MemberWithdrawalUseCase(
         handleSuspendedUser(member)
 
         addTokensToBlacklist(withdrawalRequest)
+
+        memberWithdrawalReasonService.save(
+            MemberWithdrawalReason(
+                withdrawalRequest.reason,
+            )
+        )
 
         executeWithdrawal(memberPk)
     }
@@ -105,6 +109,7 @@ class MemberWithdrawalUseCase(
         val (untilBan, isBanUser) = when {
             member.role == Role.BANNED && member.untilBan > LocalDateTime.now().plusDays(7) ->
                 member.untilBan to true
+
             else ->
                 LocalDateTime.now().plusDays(7) to false
         }
@@ -119,7 +124,7 @@ class MemberWithdrawalUseCase(
     }
 
 
-    private fun addTokensToBlacklist(withdrawalRequest: TokenDto) {
+    private fun addTokensToBlacklist(withdrawalRequest: WithdrawalRequest) {
         blacklistService.save(
             Blacklist(
                 withdrawalRequest.accessToken,

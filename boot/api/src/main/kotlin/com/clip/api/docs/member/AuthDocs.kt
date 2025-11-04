@@ -12,7 +12,7 @@ interface AuthDocs {
         - 사용자가 탈퇴할 수 있도록 합니다. 
         - 탈퇴 요청이 성공하면 200을 반환하며, 사용자의 Refresh Token, Access Token은 모두 사용불가처리 됩니다.
     """)
-    fun withdrawal(withdrawalRequest: TokenDto, userId: Long): ResponseEntity<Void>
+    fun withdrawal(withdrawalRequest: WithdrawalRequest, userId: Long): ResponseEntity<Void>
 
     @Operation(summary = "로그인 API", description = """
         - 사용자가 로그인할 수 있도록 합니다. 가입 가능 여부 확인 API에서 가입이 되어있는 사용자로 확인된 경우에만 로그인이 가능합니다.
