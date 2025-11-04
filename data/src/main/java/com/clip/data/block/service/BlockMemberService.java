@@ -6,15 +6,19 @@ import com.clip.data.member.entity.Member;
 import com.clip.data.member.service.MemberService;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BlockMemberService {
     private final BlockRepository blockRepository;
     private final MemberService memberService;
+    private static final int MAX_PAGE_SIZE = 50;
 
     public void saveBlockMember(Long fromMemberPk, Long toMemberPk) {
         if (fromMemberPk.equals(toMemberPk)) {
@@ -45,5 +49,10 @@ public class BlockMemberService {
 
     public void deleteAllBlockMember(Long memberPK) {
         blockRepository.deleteAllBlockMember(memberPK);
+    }
+
+    public List<Block> getBlockMemberList(Long fromMemberPk, Optional<Long> lastBlockPk) {
+        Pageable pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
+        return blockRepository.findBlockMembers(fromMemberPk, lastBlockPk.orElse(null), pageRequest);
     }
 }

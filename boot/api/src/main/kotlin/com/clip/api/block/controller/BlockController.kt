@@ -1,5 +1,6 @@
 package com.clip.api.block.controller
 
+import com.clip.api.block.controller.dto.BlockInfoDto
 import com.clip.api.block.service.BlockUseCase
 import com.clip.api.docs.block.BlockDocs
 import com.clip.global.security.annotation.AccessUser
@@ -27,5 +28,13 @@ class BlockController(
     ): ResponseEntity<Void> =
         blockUseCase.deleteBlockMember(toMemberId, fromMemberId)
             .let { ResponseEntity.ok().build() }
+
+    @GetMapping( "", "/{lastBlockId}")
+    override fun getBlockMemberList(@AccessUser fromMemberId: Long, @PathVariable(required = false) lastBlockId: Long?): ResponseEntity<List<BlockInfoDto>> =
+        blockUseCase.getBlockMemberList(fromMemberId, lastBlockId)
+            .takeIf { it.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
+
 
 }
