@@ -1,5 +1,6 @@
 package com.clip.api.docs.block
 
+import com.clip.api.block.controller.dto.BlockInfoDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -16,4 +17,9 @@ interface BlockDocs {
         - toMemberId에 해당하는 유저의 차단을 해제합니다.
     """)
     fun deleteBlockMember(toMemberId: Long, fromMemberId: Long): ResponseEntity<Void>
+
+    @Operation(summary = "차단 목록 조회 API", description = """
+        - 차단한 유저들의 목록을 조회합니다.
+    """)
+    fun getBlockMemberList(fromMemberId: Long, lastBlockId: Long?): ResponseEntity<List<BlockInfoDto>>
 }
