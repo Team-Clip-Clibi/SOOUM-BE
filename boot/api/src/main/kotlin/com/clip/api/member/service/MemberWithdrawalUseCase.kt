@@ -105,13 +105,18 @@ class MemberWithdrawalUseCase(
         memberService.deleteMember(memberPk)
     }
 
+
     private fun handleSuspendedUser(member: Member) {
+        val threshold = LocalDateTime.now().plusDays(7)
         val (untilBan, isBanUser) = when {
-            member.role == Role.BANNED && member.untilBan > LocalDateTime.now().plusDays(7) ->
+            member.role == Role.BANNED && member.untilBan > threshold ->
                 member.untilBan to true
 
+            member.role == Role.BANNED ->
+                threshold to true
+
             else ->
-                LocalDateTime.now().plusDays(7) to false
+                threshold to false
         }
 
         val suspended = Suspended.builder()
