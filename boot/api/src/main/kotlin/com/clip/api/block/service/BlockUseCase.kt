@@ -37,7 +37,9 @@ class BlockUseCase(
                     blockId = it.pk,
                     blockMemberId = it.toMember.pk,
                     blockMemberNickname = it.toMember.nickname,
-                    blockMemberProfileImageUrl = s3ImgService.generateProfileImgUrl(it.toMember.profileImgName)
+                    blockMemberProfileImageUrl = it.toMember.profileImgName?.let { profileName ->
+                        s3ImgService.generateProfileImgUrl(profileName)
+                    }
                 )
             }
 
