@@ -195,4 +195,9 @@ class MemberUseCase(
             .takeIf { it.isAllowNotify == allowNotify }
             ?.updateNotifyAllow(allowNotify)
     }
+
+    fun getActivityRestrictionDate(userId: Long): ActivityRestrictionDateResponse {
+        val member = memberService.findMember(userId)
+        return ActivityRestrictionDateResponse(member.untilBan)
+    }
 }

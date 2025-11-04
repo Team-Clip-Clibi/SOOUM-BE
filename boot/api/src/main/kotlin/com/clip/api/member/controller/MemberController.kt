@@ -29,6 +29,9 @@ class MemberController(
         memberUseCase.updateAllowNotify(allowNotifyRequest.isAllowNotify, userId)
             .let { ResponseEntity.ok().build() }
 
+    @GetMapping("/activity-restriction-date")
+    override fun getActivityRestrictionDate(@AccessUser userId: Long): ResponseEntity<ActivityRestrictionDateResponse> =
+        ResponseEntity.ok(memberUseCase.getActivityRestrictionDate(userId))
 
     @PostMapping("/check-available")
     override fun checkAvailableSignUp(@RequestBody checkAvailableRequest: CheckAvailableRequest): ResponseEntity<CheckAvailableResponse> {

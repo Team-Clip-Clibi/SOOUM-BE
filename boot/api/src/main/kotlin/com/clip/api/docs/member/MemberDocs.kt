@@ -75,4 +75,11 @@ interface MemberDocs {
         - allowNotify가 true이면 푸시알림을 수신하고, false이면 수신하지 않습니다.
     """)
     fun updateNotifyAllow(allowNotifyRequest: AllowNotifyRequest, userId: Long): ResponseEntity<Void>
+
+    @Operation(summary = "활동 제한 날짜 조회 API", description = """
+        - 활동 제한 날짜 조회 API
+        - 사용자가 활동 제한을 당한 경우, 제한이 해제되는 날짜를 조회합니다.
+        - 제한이 없는 경우 null을 반환합니다.
+    """)
+    fun getActivityRestrictionDate(userId: Long): ResponseEntity<ActivityRestrictionDateResponse>
 }
