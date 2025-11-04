@@ -173,6 +173,7 @@ class CardUseCase(
                 val feedLikes = feedLikeService.findByTargetCard(cardId)
                 val comments = commentCardService.findChildCommentCardList(cardId)
                 val feedViews = feedViewService.countView(card)
+                val isReported = feedReportService.hasAlreadyReported(cardId, userId)
                 cardMapper.toFeedCardDetailResponse(
                     card,
                     writer,
@@ -181,7 +182,8 @@ class CardUseCase(
                     distance,
                     userId,
                     tags,
-                    feedViews
+                    feedViews,
+                    isReported
                 )
             }
 
@@ -202,6 +204,7 @@ class CardUseCase(
                 val commentLikes = commentLikeService.findByTargetCard(cardId)
                 val comments = commentCardService.findChildCommentCardList(cardId)
                 val commentViews = commentViewService.countView(card)
+                val isReported = commentReportService.hasAlreadyReported(cardId, userId)
                 cardMapper.toCommentCardDetailResponse(
                     card,
                     writer,
@@ -211,7 +214,8 @@ class CardUseCase(
                     userId,
                     tags,
                     parentCard,
-                    commentViews
+                    commentViews,
+                    isReported
                 )
             }
 

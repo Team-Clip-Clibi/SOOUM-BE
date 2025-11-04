@@ -16,6 +16,7 @@ sealed class CardDetailResponse(
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     val createdAt: LocalDateTime,
     val isAdminCard: Boolean,
+    val isReported: Boolean
 )
 
 class FeedCardDetailResponse(
@@ -29,6 +30,7 @@ class FeedCardDetailResponse(
     distance: String?,
     createdAt: LocalDateTime,
     isAdminCard: Boolean,
+    isReported: Boolean,
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     val storyExpirationTime: LocalDateTime?,
     val memberId: Long,
@@ -51,6 +53,7 @@ class FeedCardDetailResponse(
     distance = distance,
     createdAt = createdAt,
     isAdminCard = isAdminCard,
+    isReported = isReported,
 )
 
 class CommentCardDetailResponse(
@@ -64,6 +67,7 @@ class CommentCardDetailResponse(
     distance: String?,
     createdAt: LocalDateTime,
     isAdminCard: Boolean,
+    isReported: Boolean,
     val memberId: Long,
     val nickname: String,
     val profileImgUrl: String?,
@@ -86,6 +90,7 @@ class CommentCardDetailResponse(
     distance = distance,
     createdAt = createdAt,
     isAdminCard = isAdminCard,
+    isReported = isReported,
 )
 
 data class TagResponse (
