@@ -5,6 +5,7 @@ import com.clip.data.card.service.FeedCardService
 import com.clip.data.follow.service.FollowService
 import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.entity.Member
+import com.clip.data.member.entity.Role
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
 import com.clip.data.visitor.service.VisitorService
@@ -199,5 +200,26 @@ class MemberUseCase(
     fun getActivityRestrictionDate(userId: Long): ActivityRestrictionDateResponse {
         val member = memberService.findMember(userId)
         return ActivityRestrictionDateResponse(member.untilBan)
+    }
+
+    fun getRejoinableDate(userId: Long): RejoinableDateResponse {
+        val member = memberService.findMember(userId)
+
+        val threshold = LocalDateTime.now().plusDays(7)
+        val (rejoinableDate, isActivityRestricted) = when {
+            member.role == Role.BANNED && member.untilBan > threshold ->
+                member.untilBan to true
+
+            member.role == Role.BANNED ->
+                threshold to true
+
+            else ->
+                threshold to false
+        }
+
+        return RejoinableDateResponse(
+            rejoinableDate = rejoinableDate?.toString() ?: "",
+            isActivityRestricted = isActivityRestricted
+        )
     }
 }
