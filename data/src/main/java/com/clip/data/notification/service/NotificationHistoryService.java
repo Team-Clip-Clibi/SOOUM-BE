@@ -29,6 +29,7 @@ public class NotificationHistoryService {
         return notificationHistoryRepository.findUnreadNotifications(
                 memberId,
                 lastId.orElse(null),
+                LocalDateTime.now().minusDays(7),
                 PageRequest.ofSize(30)
         );
     }
@@ -38,7 +39,8 @@ public class NotificationHistoryService {
         return notificationHistoryRepository.findReadNotifications(
                 memberId,
                 lastPk.orElse(null),
-                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().minusDays(7),
+                LocalDateTime.now().minusDays(30),
                 PageRequest.ofSize(30)
         );
     }
