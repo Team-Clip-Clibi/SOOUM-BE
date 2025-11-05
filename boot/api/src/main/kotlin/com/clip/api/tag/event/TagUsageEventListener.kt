@@ -49,7 +49,8 @@ class TagUsageEventListener(
                         NotificationHistory.ofFavoriteTagUsage(
                             writer,
                             favoriteTag.member,
-                            tagUsageEvent.cardId
+                            tagUsageEvent.cardId,
+                            tag.content
                         )
                     )
                 }.toList()

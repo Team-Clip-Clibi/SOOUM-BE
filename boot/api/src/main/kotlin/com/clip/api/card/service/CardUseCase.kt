@@ -1,9 +1,6 @@
 package com.clip.api.card.service
 
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CommentCardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.CardFCMEvent
@@ -77,7 +74,7 @@ class CardUseCase(
         httpServletRequest: HttpServletRequest,
         createFeedCardRequest: CreateFeedCardRequest,
         userId: Long
-    ) {
+    ): CreateCardResponse {
         val member = handleBanStatus(memberService.findMember(userId))
 
         if (isUserImgType(createFeedCardRequest.imgType))
@@ -103,6 +100,7 @@ class CardUseCase(
             savedTags.find { it.content == tagName }
         }
         feedTagService.saveAll(feedCard, restoredTags)
+        return CreateCardResponse(feedCard.pk)
     }
 
     @Transactional
@@ -111,7 +109,7 @@ class CardUseCase(
         createCommentCardRequest: CreateCommentCardRequest,
         cardId: Long,
         userId: Long
-    ) {
+    ): CreateCardResponse {
         val member = handleBanStatus(memberService.findMember(userId))
 
         if (isUserImgType(createCommentCardRequest.imgType))
@@ -156,6 +154,7 @@ class CardUseCase(
                     )
                 )
         }
+        return CreateCardResponse(commentCard.pk)
     }
 
     @Transactional
