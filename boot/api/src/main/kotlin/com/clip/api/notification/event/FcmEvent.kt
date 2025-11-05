@@ -28,6 +28,15 @@ class CardFCMEvent(
     notificationType: NotificationType
 ): FCMEvent(notificationId, targetDeviceType, fcmToken, notificationType)
 
+class TagUsageFcmEvent(
+    val tagContent: String,
+    val targetCardId: Long,
+    notificationId: Long,
+    targetDeviceType: DeviceType,
+    fcmToken: String,
+    notificationType: NotificationType
+): FCMEvent(notificationId, targetDeviceType, fcmToken, notificationType)
+
 class FollowFCMEvent(
     val followingNickname: String,
     val followingMemberId: Long,

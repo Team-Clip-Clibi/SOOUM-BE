@@ -31,8 +31,8 @@ public class NotificationHistory extends BaseEntity {
     @Column(name = "targetCardPk")
     private Long targetCardPk;
 
-    @Column(name = "CONTENT", columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "TAG_CONTENT", columnDefinition = "TEXT")
+    private String tagContent;
 
     @Column(name = "isRead")
     private boolean isRead;
@@ -55,13 +55,25 @@ public class NotificationHistory extends BaseEntity {
     private Member toMember;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private NotificationHistory(Member fromMember, Member toMember, NotificationType notificationType, Long targetCardPk, LocalDateTime readAt) {
+    private NotificationHistory(Member fromMember, Member toMember, NotificationType notificationType,
+                                Long targetCardPk, LocalDateTime readAt, String tagContent) {
         this.isRead = false;
         this.targetCardPk = targetCardPk;
         this.notificationType = notificationType;
         this.fromMember = fromMember;
         this.toMember = toMember;
         this.readAt = readAt;
+        this.tagContent = tagContent;
+    }
+
+    public static NotificationHistory ofFavoriteTagUsage(Member fromMember, Member toMember, Long targetCardId, String tagContent) {
+        return NotificationHistory.builder()
+                .fromMember(fromMember)
+                .toMember(toMember)
+                .tagContent(tagContent)
+                .notificationType(NotificationType.TAG_USAGE)
+                .targetCardPk(targetCardId)
+                .build();
     }
 
     public static NotificationHistory ofCommentWrite(Member fromMember, Long targetCardPk, Card parentCard) {

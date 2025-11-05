@@ -2,6 +2,7 @@ package com.clip.api.docs.card
 
 import com.clip.api.card.controller.dto.CardDetailResponse
 import com.clip.api.card.controller.dto.CommentCardResponse
+import com.clip.api.card.controller.dto.CreateCardResponse
 import com.clip.api.card.controller.dto.CreateCommentCardRequest
 import com.clip.api.card.controller.dto.CreateFeedCardRequest
 import io.swagger.v3.oas.annotations.Operation
@@ -19,7 +20,7 @@ interface CardDocs {
         request: HttpServletRequest,
         createFeedCardRequest: CreateFeedCardRequest,
         userId: Long,
-    ): ResponseEntity<Unit>
+    ): ResponseEntity<CreateCardResponse>
 
     @Operation(summary = "답카드 작성 API", description = """
         - 답카드 작성 API
@@ -29,7 +30,7 @@ interface CardDocs {
         cardId: Long,
         createCommentCardRequest: CreateCommentCardRequest,
         userId: Long,
-    ): ResponseEntity<Unit>
+    ): ResponseEntity<CreateCardResponse>
 
     @Operation(summary = "카드 상세 조회 API", description = """
         - 카드 상세 조회 API

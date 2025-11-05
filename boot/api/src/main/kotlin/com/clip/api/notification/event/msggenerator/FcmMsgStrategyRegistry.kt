@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class FcmMsgStrategyRegistry(
-    private val strategies: List<FcmMsgGenerator>
+    private val strategies: List<FcmMsgGenerator>,
 ) {
     fun getMessage(fcmEvent: FCMEvent): Message {
         val strategy = strategies.firstOrNull { it.isSupported(fcmEvent) }

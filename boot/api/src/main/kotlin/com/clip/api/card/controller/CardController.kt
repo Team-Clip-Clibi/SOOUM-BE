@@ -1,9 +1,6 @@
 package com.clip.api.card.controller
 
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CommentCardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import com.clip.api.card.service.CardUseCase
 import com.clip.api.docs.card.CardDocs
 import com.clip.global.security.annotation.AccessUser
@@ -22,9 +19,9 @@ class CardController(
         request: HttpServletRequest,
         @RequestBody createFeedCardRequest: CreateFeedCardRequest,
         @AccessUser userId: Long,
-    ): ResponseEntity<Unit> =
+    ): ResponseEntity<CreateCardResponse> =
         cardUseCase.createFeedCard(request, createFeedCardRequest, userId)
-            .let { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it) }
 
 
     @PostMapping("/{cardId}")
@@ -33,9 +30,9 @@ class CardController(
         @PathVariable cardId: Long,
         @RequestBody createCommentCardRequest: CreateCommentCardRequest,
         @AccessUser userId: Long,
-    ): ResponseEntity<Unit> =
+    ): ResponseEntity<CreateCardResponse> =
         cardUseCase.createCommentCard(request, createCommentCardRequest, cardId, userId)
-            .let { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{cardId}")
     override fun getCardDetail(

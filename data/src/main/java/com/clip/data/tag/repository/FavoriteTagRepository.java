@@ -32,4 +32,26 @@ public interface FavoriteTagRepository extends JpaRepository<FavoriteTag, Long> 
     @Transactional
     @Query("delete from FavoriteTag ft where ft.member.pk = :memberPk")
     void deleteAllFavoriteTag(@Param("memberPk") Long memberPk);
+
+    @Query("""
+    select ft
+    from FavoriteTag ft
+    join fetch ft.member m
+    where ft.tag.pk = :tagId
+      and m.pk <> :writerId
+      and (:lastId is null or ft.pk > :lastId)
+      and not exists (
+        select 1
+        from NotificationHistory nh
+        where nh.toMember.pk = m.pk
+          and nh.targetCardPk = :cardId
+          and nh.notificationType = com.clip.data.notification.entity.notificationtype.NotificationType.COMMENT_WRITE
+      )
+    order by ft.pk asc
+    """)
+    List<FavoriteTag> findUsersByTagIdWithoutUserIdAndCardId(@Param("tagId") Long tagId,
+                                                             @Param("writerId") Long writerId,
+                                                             @Param("cardId") Long cardId,
+                                                             @Param("lastId") Long lastId,
+                                                             Pageable pageable);
 }
