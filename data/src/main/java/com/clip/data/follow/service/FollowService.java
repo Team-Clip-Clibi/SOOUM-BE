@@ -29,8 +29,8 @@ public class FollowService {
     }
 
     @Transactional
-    public void deleteFollower(Member fromMember, Member toMember) {
-        followRepository.deleteFollower(fromMember, toMember);
+    public void deleteFollow(Member fromMember, Member toMember) {
+        followRepository.deleteFollow(fromMember, toMember);
     }
 
     public Long findFollowerCnt(Member profileOwner) {
