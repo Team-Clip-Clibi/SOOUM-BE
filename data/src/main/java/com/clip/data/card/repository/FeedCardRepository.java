@@ -60,7 +60,11 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
                                                  @Param("blockMemberPks") List<Long> blockMemberPks,
                                                  Pageable pageable);
 
-    @Query("select count(f) from FeedCard f where f.writer = :cardOwnerMember")
+    @Query("select count(f) " +
+            "from FeedCard f " +
+            "where f.writer = :cardOwnerMember " +
+                "and (f.isStory = false " +
+                    "or (f.isStory = true and f.createdAt > (current_timestamp - 1 day)))")
     Long findFeedCardCnt(@Param("cardOwnerMember") Member cardOwnerMember);
 
     @Query("select fc from FeedCard fc " +
