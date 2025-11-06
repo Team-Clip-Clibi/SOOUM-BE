@@ -15,9 +15,11 @@ class AppVersionUseCase(
         val appVersion = appVersionService.getAppVersionByDeviceType(type)
 
         return when {
-            isPendingVersion(appVersion.pendingVersion, appVersion.latestVersion, version) -> AppVersionStatusResponse(AppVersionStatusEnum.PENDING)
-            isUpdateVersion(appVersion.minVersion, version) -> AppVersionStatusResponse(AppVersionStatusEnum.UPDATE)
-            else -> AppVersionStatusResponse(AppVersionStatusEnum.OK)
+            isPendingVersion(appVersion.pendingVersion, appVersion.latestVersion, version) ->
+                AppVersionStatusResponse(AppVersionStatusEnum.PENDING, appVersion.latestVersion)
+            isUpdateVersion(appVersion.minVersion, version) ->
+                AppVersionStatusResponse(AppVersionStatusEnum.UPDATE, appVersion.latestVersion)
+            else -> AppVersionStatusResponse(AppVersionStatusEnum.OK, appVersion.latestVersion)
         }
     }
 
