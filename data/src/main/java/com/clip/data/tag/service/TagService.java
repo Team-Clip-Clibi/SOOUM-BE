@@ -137,4 +137,12 @@ public class TagService {
     public void deleteFavoriteTag(FavoriteTag favoriteTag) {
         favoriteTagRepository.delete(favoriteTag);
     }
+
+    public Long findMyFavoriteTagsCount(long userId) {
+        return favoriteTagRepository.findFavoriteTagCntByUserId(userId);
+    }
+
+    public List<Tag> findTop10Tags() {
+        return tagRepository.findTop10Tags(DeactivateTagWords.deactivateWordsList);
+    }
 }

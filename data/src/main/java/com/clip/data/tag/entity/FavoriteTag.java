@@ -6,14 +6,16 @@ import com.clip.data.member.entity.Member;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "FavoriteTag", uniqueConstraints = {
+        @UniqueConstraint(name = "uc_favoritetag", columnNames = {"MEMBER", "TAG"})
+})
+@NoArgsConstructor
 public class FavoriteTag extends BaseEntity {
     @Id @Tsid
     private Long pk;
