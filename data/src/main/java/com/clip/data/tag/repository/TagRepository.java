@@ -42,4 +42,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     @Transactional
     @Query("update Tag t set t.count = t.count - 1 where t in :tags")
     void decrementTagCount(@Param("tags") List<Tag> tags);
+
+    @Query("select t from Tag t where t.content not in :tagContents order by t.count desc limit 10")
+    List<Tag> findTop10Tags(@Param("tagContents") List<String> tagContents);
 }

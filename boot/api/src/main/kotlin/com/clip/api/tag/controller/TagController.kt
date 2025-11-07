@@ -4,6 +4,7 @@ import com.clip.api.docs.tag.TagDocs
 import com.clip.api.tag.controller.dto.RelatedTagRequest
 import com.clip.api.tag.controller.dto.TagInfoResponse
 import com.clip.api.tag.service.TagUseCase
+import com.clip.global.security.annotation.AccessUser
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -24,4 +25,26 @@ class TagController(
             ?.takeIf { it.tagInfos.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()
+
+    @GetMapping("/rank")
+    override fun getTop10Tags(): ResponseEntity<TagInfoResponse> =
+        tagUseCase.findTop10Tags()
+            .let { ResponseEntity.ok(it) }
+
+    @PostMapping("/{tagId}/favorite")
+    override fun createFavoriteTag(
+        @PathVariable tagId: Long,
+        @AccessUser userId: Long
+    ): ResponseEntity<Unit> =
+        tagUseCase.saveFavoriteTag(tagId, userId)
+            .let { ResponseEntity.ok().build() }
+
+    @DeleteMapping("/{tagId}/favorite")
+    override fun deleteFavoriteTag(
+        @PathVariable tagId: Long,
+        @AccessUser userId: Long
+    ): ResponseEntity<Unit> =
+        tagUseCase.deleteFavoriteTag(tagId, userId)
+            .let { ResponseEntity.ok().build() }
+
 }

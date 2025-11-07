@@ -30,4 +30,12 @@ sealed class IllegalStateException(
         HttpStatus.BAD_REQUEST,
         message,
     )
+
+    class LimitOverException(
+        message: String = "제한을 초과한 요청입니다.",
+        vararg parameters: Any?
+    ): IllegalStateException(
+        HttpStatus.BAD_REQUEST,
+        message,
+    )
 }

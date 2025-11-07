@@ -28,6 +28,9 @@ public interface FavoriteTagRepository extends JpaRepository<FavoriteTag, Long> 
             "order by ft.tag.pk desc")
     List<Long> findMyFavoriteTags(@Param("memberPk") Long memberPk, @Param("lastTagPk") Long lastTagPk, Pageable pageable);
 
+    @Query("select count(*) from FavoriteTag f where f.member.pk = :userId")
+    Long findFavoriteTagCntByUserId(@Param("userId") Long userId);
+
     @Modifying
     @Transactional
     @Query("delete from FavoriteTag ft where ft.member.pk = :memberPk")
