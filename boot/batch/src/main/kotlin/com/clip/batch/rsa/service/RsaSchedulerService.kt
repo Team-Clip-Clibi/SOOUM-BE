@@ -13,7 +13,6 @@ import java.util.*
 
 @Service
 class RsaSchedulerService(
-    private val stringRedisTemplate: StringRedisTemplate,
     private val rsaService: RsaService
 ) {
     companion object {
@@ -25,44 +24,9 @@ class RsaSchedulerService(
     fun save(currentDateTime: LocalDateTime) {
         val keyPair = generateKeyPair()
 
-        // Save to RDB
         val newKeyExpiredAt = currentDateTime.plusDays(1).plusMinutes(10)
-        val oldKeyExpiredAt = currentDateTime.plusMinutes(10)
-        val rsa = rsaService.save(keyPair, newKeyExpiredAt)
+        rsaService.save(keyPair, newKeyExpiredAt)
         rsaService.deleteExpiredRsaKey()
-
-        // Save to Redis
-        val oldPublicKey = stringRedisTemplate.opsForValue().get("rsa:public-key:new")
-        val oldPrivateKey = stringRedisTemplate.opsForValue().get("rsa:private-key:new")
-
-        stringRedisTemplate.opsForValue().set(
-            "rsa:public-key:new",
-            rsa.publicKey,
-            Duration.between(currentDateTime, newKeyExpiredAt)
-        )
-
-        stringRedisTemplate.opsForValue().set(
-            "rsa:private-key:new",
-            rsa.privateKey,
-            Duration.between(currentDateTime, newKeyExpiredAt)
-        )
-
-        if (oldPublicKey != null || oldPrivateKey != null) {
-            oldPublicKey?.let {
-                stringRedisTemplate.opsForValue().set(
-                    "rsa:public-key:old",
-                    it,
-                    Duration.between(currentDateTime, oldKeyExpiredAt)
-                )
-            }
-            oldPrivateKey?.let {
-                stringRedisTemplate.opsForValue().set(
-                    "rsa:private-key:old",
-                    it,
-                    Duration.between(currentDateTime, oldKeyExpiredAt)
-                )
-            }
-        }
     }
 
     @Throws(NoSuchAlgorithmException::class)
