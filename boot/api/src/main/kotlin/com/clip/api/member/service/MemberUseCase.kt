@@ -153,7 +153,7 @@ class MemberUseCase(
         )
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     fun getUserProfileSummaryInfo(profileOwnerId: Long, userId: Long): UserProfileInfoResponse {
         val profileOwner = memberService.findMember(profileOwnerId)
         val visitor = memberService.findMember(userId)
