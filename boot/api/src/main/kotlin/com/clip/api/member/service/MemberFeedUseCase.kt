@@ -28,7 +28,8 @@ class MemberFeedUseCase(
                     } else {
                         s3ImgService.generateDefaultCardImgUrl(card.imgName)
                     },
-                    card.content
+                    card.content,
+                    card.font
                 )
             }.toList().let { CardContentsResponse(it) }
 
@@ -45,7 +46,8 @@ class MemberFeedUseCase(
                     } else {
                         s3ImgService.generateDefaultCardImgUrl(card.imgName)
                     },
-                    card.content
+                    card.content,
+                    card.font
                 )
             }.toList().let { CardContentsResponse(it) }
 

@@ -69,7 +69,7 @@ class MemberUseCase(
 
     @Transactional
     fun updateNickname(nickname: String, id: Long) {
-        if (isAvailableNickname(nickname))
+        if (!isAvailableNickname(nickname))
             throw IllegalArgumentException.NicknameInvalidException()
         memberService.findMember(id)
             .takeIf { it.nickname != nickname }
@@ -153,7 +153,7 @@ class MemberUseCase(
         )
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     fun getUserProfileSummaryInfo(profileOwnerId: Long, userId: Long): UserProfileInfoResponse {
         val profileOwner = memberService.findMember(profileOwnerId)
         val visitor = memberService.findMember(userId)
