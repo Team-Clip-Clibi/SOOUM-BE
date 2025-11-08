@@ -57,7 +57,7 @@ class MemberFollowUseCase(
         val fromMember = memberService.findMember(userId)
         val toMember = memberService.findMember(toMemberId)
 
-        followService.deleteFollower(fromMember, toMember)
+        followService.deleteFollow(fromMember, toMember)
     }
 
     fun getFollowingList(profileOwnerId: Long, userId: Long, lastId: Long?) : List<FollowInfoDto> {

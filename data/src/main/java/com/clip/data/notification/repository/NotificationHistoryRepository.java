@@ -21,17 +21,29 @@ public interface NotificationHistoryRepository extends JpaRepository<Notificatio
             "where n.toMember.pk = :memberPk " +
                 "and (:lastPk is null or n.pk < :lastPk) " +
                 "and n.isRead = false " +
+                "and n.createdAt >= :minusSevenDays " +
             "order by n.pk desc ")
-    List<NotificationHistory> findUnreadNotifications(@Param("memberPk")Long memberPk, @Param("lastPk") Long lastPk, Pageable page);
+    List<NotificationHistory> findUnreadNotifications(
+            @Param("memberPk")Long memberPk,
+            @Param("lastPk") Long lastPk,
+            @Param("minusSevenDays") LocalDateTime minusSevenDays,
+            Pageable page
+    );
 
     @Query("select n from NotificationHistory n " +
             "join fetch n.fromMember " +
             "where n.toMember.pk = :memberPk " +
-                "and (:lastPk is null or n.pk < :lastPk) " +
-                "and n.isRead = true " +
-                "and n.readAt > :minusOneDays " +
+            "and (:lastPk is null or n.pk < :lastPk) " +
+            "and ((n.isRead = true and n.createdAt >= :minusThirtyDays) " +
+                "or (n.isRead =  false and n.createdAt < :minusSevenDays and n.createdAt > :minusThirtyDays)) " +
             "order by n.pk desc ")
-    List<NotificationHistory> findReadNotifications(@Param("memberPk") Long memberPk, @Param("lastPk") Long lastPk, @Param("minusOneDays") LocalDateTime minusOneDays, Pageable page);
+    List<NotificationHistory> findReadNotifications(
+            @Param("memberPk") Long memberPk,
+            @Param("lastPk") Long lastPk,
+            @Param("minusSevenDays") LocalDateTime minusSevenDays,
+            @Param("minusThirtyDays") LocalDateTime minusThirtyDays,
+            Pageable page
+    );
 
     @Query("select n.toMember from NotificationHistory n where n.pk = :notificationPk")
     Member findToMember(@Param("notificationPk") Long notificationPk);

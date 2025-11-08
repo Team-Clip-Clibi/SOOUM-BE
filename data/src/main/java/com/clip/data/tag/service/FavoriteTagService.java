@@ -55,4 +55,14 @@ public class FavoriteTagService {
     public void deleteAllFavoriteTag(Long memberPk) {
         favoriteTagRepository.deleteAllFavoriteTag(memberPk);
     }
+
+    public List<FavoriteTag> findFavoriteTagsByTagIdWithoutUserId(
+            Long tagId, Long writerId, Long cardId,
+            Long lastId, Pageable pageable
+    ) {
+        return favoriteTagRepository.findUsersByTagIdWithoutUserIdAndCardId(
+                tagId, writerId, cardId, lastId,
+                pageable
+        );
+    }
 }

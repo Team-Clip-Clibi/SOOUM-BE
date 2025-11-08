@@ -35,7 +35,8 @@ class NotificationUseCase(
                 when {
                     isDeleteNotification(notification) -> NotificationDto.DeleteNotificationInfoResponse.of(notification)
                     isBlockedNotification(notification) -> NotificationDto.BlockedNotificationInfoResponse.of(notification)
-
+                    isFollowNotification(notification) -> NotificationDto.FollowNotificationInfoResponse.of(notification)
+                    isTagNotification(notification) -> NotificationDto.TagNotificationInfoResponse.of(notification)
                     else -> NotificationDto.NotificationInfoResponse.of(notification)
                 }
             }.toList()
@@ -47,6 +48,7 @@ class NotificationUseCase(
                     isDeleteNotification(notification) -> NotificationDto.DeleteNotificationInfoResponse.of(notification)
                     isBlockedNotification(notification) -> NotificationDto.BlockedNotificationInfoResponse.of(notification)
                     isFollowNotification(notification) -> NotificationDto.FollowNotificationInfoResponse.of(notification)
+                    isTagNotification(notification) -> NotificationDto.TagNotificationInfoResponse.of(notification)
                     else -> NotificationDto.NotificationInfoResponse.of(notification)
                 }
             }.toList()
@@ -65,6 +67,9 @@ class NotificationUseCase(
 
     private fun isFollowNotification(notification: NotificationHistory) =
         notification.notificationType.equals(NotificationType.FOLLOW)
+
+    private fun isTagNotification(notification: NotificationHistory) =
+        notification.notificationType.equals(NotificationType.TAG_USAGE)
 
     @Transactional
      fun saveCardDeletedHistoryByReport(toMemberId: Long): NotificationHistory {

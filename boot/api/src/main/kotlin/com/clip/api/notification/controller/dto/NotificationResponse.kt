@@ -43,7 +43,7 @@ object NotificationDto {
         override val createTime: LocalDateTime,
         val targetCardId: Long,
         val nickName: String
-    ) : CommonNotificationInfo(notificationId, notificationType, createTime) {
+    ): CommonNotificationInfo(notificationId, notificationType, createTime) {
 
         companion object {
             fun of(history: NotificationHistory): NotificationInfoResponse =
@@ -53,6 +53,26 @@ object NotificationDto {
                     notificationType = history.notificationType,
                     createTime = history.createdAt,
                     nickName = history.fromMember.nickname
+                )
+        }
+    }
+
+    data class TagNotificationInfoResponse(
+        override val notificationId: Long,
+        override val notificationType: NotificationType,
+        override val createTime: LocalDateTime,
+        val targetCardId: Long,
+        val tagContent: String
+    ): CommonNotificationInfo(notificationId, notificationType, createTime) {
+
+        companion object {
+            fun of(history: NotificationHistory): TagNotificationInfoResponse =
+                TagNotificationInfoResponse(
+                    notificationId = history.pk,
+                    targetCardId = history.targetCardPk,
+                    notificationType = history.notificationType,
+                    createTime = history.createdAt,
+                    tagContent = history.tagContent
                 )
         }
     }

@@ -8,7 +8,7 @@ import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
-class FCMEventListener(
+class FcmEventListener(
     private val fcmSender: FcmSender,
     private val fcmMsgStrategyRegistry: FcmMsgStrategyRegistry
 ) {
@@ -19,5 +19,23 @@ class FCMEventListener(
     ) {
         val message = fcmMsgStrategyRegistry.getMessage(fcmEvent)
         fcmSender.send(message)
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun sendMulticastFcm(
+        multiFcmEvent: MultiFcmEvent
+    ) {
+        multiFcmEvent.notificationHistories.forEach { notificationHistory ->
+            val message = fcmMsgStrategyRegistry.getMessage(TagUsageFcmEvent(
+                multiFcmEvent.tagContent,
+                multiFcmEvent.targetCardId,
+                notificationHistory.pk,
+                notificationHistory.toMember.deviceType,
+                notificationHistory.toMember.firebaseToken,
+                notificationHistory.notificationType
+            ))
+            fcmSender.send(message)
+        }
     }
 }

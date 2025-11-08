@@ -79,6 +79,13 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse)
     }
 
+    @ExceptionHandler(IllegalStateException.LimitOverException::class)
+    fun limitOverException(e: IllegalStateException.LimitOverException):
+            ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, HttpStatus.BAD_REQUEST, e.message)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
+
     @ExceptionHandler(IllegalArgumentException.CardNotFoundException::class)
     fun cardNotFoundException(e: IllegalArgumentException.CardNotFoundException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, HttpStatus.GONE, e.message)
