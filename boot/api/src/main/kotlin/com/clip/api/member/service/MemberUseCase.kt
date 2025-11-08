@@ -69,7 +69,7 @@ class MemberUseCase(
 
     @Transactional
     fun updateNickname(nickname: String, id: Long) {
-        if (isAvailableNickname(nickname))
+        if (!isAvailableNickname(nickname))
             throw IllegalArgumentException.NicknameInvalidException()
         memberService.findMember(id)
             .takeIf { it.nickname != nickname }
