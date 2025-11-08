@@ -69,7 +69,7 @@ class MemberFollowUseCase(
             FollowInfoDto(
                 memberId = it.pk,
                 nickname = it.nickname,
-                profileImageUrl = imgService.generateProfileImgUrl(it.profileImgName ?: ""),
+                profileImageUrl = it.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
                 isFollowing = followedFollowingsPk.contains(it.pk),
                 isRequester = it.pk == userId
             )
@@ -85,7 +85,7 @@ class MemberFollowUseCase(
             FollowInfoDto(
                 memberId = it.pk,
                 nickname = it.nickname,
-                profileImageUrl = imgService.generateProfileImgUrl(it.profileImgName ?: ""),
+                profileImageUrl = it.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
                 isFollowing = followedFollowersPk.contains(it.pk),
                 isRequester = it.pk == userId
             )
