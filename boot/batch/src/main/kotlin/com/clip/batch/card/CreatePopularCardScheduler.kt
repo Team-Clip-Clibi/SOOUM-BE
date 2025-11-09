@@ -97,6 +97,7 @@ class CreatePopularCardScheduler(
                 ) l ON l.feed_id = fc.pk
                 WHERE fc.is_feed_active = TRUE
                     AND fc.is_deleted = FALSE
+                    AND (fc.is_story = FALSE OR (fc.is_story = TRUE AND fc.created_at > NOW() - INTERVAL 1 DAY))
                 ORDER BY (COALESCE(v.views_7d, 0) + COALESCE(l.likes_cnt, 0) * 5) DESC, 
                     fc.pk DESC
                 LIMIT 200
@@ -131,13 +132,13 @@ class CreatePopularCardScheduler(
             .name("deletePreviousPopularCardReader")
             .dataSource(dataSource)
             .pageSize(CHUNK_SIZE)
-            .selectClause("SELECT pk AS id")
+            .selectClause("SELECT pk AS id, pk")
             .fromClause("FROM popular_feed")
             .whereClause("""
                 WHERE CREATE_VERSION != :createVersion
                 """)
             .parameterValues(mapOf("createVersion" to createVersion))
-            .sortKeys(mapOf("id" to Order.DESCENDING))
+            .sortKeys(mapOf("pk" to Order.DESCENDING))
             .dataRowMapper(PopularFeedCardId::class.java)
             .build()
 
