@@ -18,7 +18,7 @@ class BlockController(
         @PathVariable toMemberId: Long,
         @AccessUser fromMemberId: Long
     ): ResponseEntity<Void> =
-        blockUseCase.saveBlockMember(toMemberId, fromMemberId)
+        blockUseCase.saveBlockMember(fromMemberId, toMemberId)
             .let { ResponseEntity.ok().build() }
 
     @DeleteMapping("/{toMemberId}")
@@ -26,7 +26,7 @@ class BlockController(
         @PathVariable toMemberId: Long,
         @AccessUser fromMemberId: Long
     ): ResponseEntity<Void> =
-        blockUseCase.deleteBlockMember(toMemberId, fromMemberId)
+        blockUseCase.deleteBlockMember(fromMemberId, toMemberId)
             .let { ResponseEntity.ok().build() }
 
     @GetMapping( "", "/{lastBlockId}")
