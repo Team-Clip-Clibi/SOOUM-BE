@@ -55,4 +55,8 @@ public class BlockMemberService {
         Pageable pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
         return blockRepository.findBlockMembers(fromMemberPk, lastBlockPk.orElse(null), pageRequest);
     }
+
+    public Optional<Block> findBlockMemberOpt(Member fromMember, Member toMember) {
+        return blockRepository.findBlockMember(fromMember, toMember);
+    }
 }

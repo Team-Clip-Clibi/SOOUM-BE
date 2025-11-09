@@ -21,5 +21,6 @@ data class UserProfileInfoResponse(
     val cardCnt: Long,
     val followingCnt: Long,
     val followerCnt: Long,
-    val isAlreadyFollowing: Boolean
+    val isAlreadyFollowing: Boolean,
+    val isBlocked: Boolean
 )

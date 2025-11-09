@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BlockRepository extends JpaRepository<Block, Long> {
     @Query("select b.toMember.pk from Block b where b.fromMember.pk = :memberPk")
@@ -32,4 +33,7 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
     List<Block> findBlockMembers(@Param("fromMemberPk") Long fromMemberPk,
                                  @Param("lastBlockPk") Long lastBlockPk,
                                  Pageable pageable);
+
+    @Query("select b from Block b where b.fromMember = :fromMember and b.toMember = :toMember")
+    Optional<Block> findBlockMember(@Param("fromMember") Member fromMember, @Param("toMember") Member toMember);
 }
