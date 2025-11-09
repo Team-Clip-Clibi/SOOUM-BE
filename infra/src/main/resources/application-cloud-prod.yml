@@ -18,3 +18,6 @@ spring:
         default-card-img: prod/card/default/
         user-card-img: prod/card/user/
         profile-img: prod/profile/
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
