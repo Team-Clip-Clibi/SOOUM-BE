@@ -167,7 +167,7 @@ class MemberUseCase(
         val followerCnt = followService.findFollowerCnt(profileOwner)
         val followingCnt = followService.findFollowingCnt(profileOwner)
         val alreadyFollowing = followService.isAlreadyFollowing(visitor, profileOwner)
-        val isBlocked = blockMemberService.findBlockMemberOpt(profileOwner, visitor).isPresent
+        val isBlocked = blockMemberService.findBlockMemberOpt(visitor, profileOwner).isPresent
 
         return UserProfileInfoResponse(
             profileOwner.pk,
