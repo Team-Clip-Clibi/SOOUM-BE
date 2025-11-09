@@ -1,6 +1,7 @@
 package com.clip.api.member.service
 
 import com.clip.api.member.controller.dto.*
+import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.FeedCardService
 import com.clip.data.follow.service.FollowService
 import com.clip.data.img.service.ProfileImgService
@@ -33,6 +34,7 @@ class MemberUseCase(
     private val visitorService: VisitorService,
     private val feedCardService: FeedCardService,
     private val followService: FollowService,
+    private val blockMemberService: BlockMemberService,
 ) {
     companion object {
         private val FORBIDDEN_NICKNAME = listOf("숨 운영자", "숨 운영진", "숨 관리자", "숨 관리진", "운영자", "운영진", "관리자", "관리진")
@@ -165,6 +167,7 @@ class MemberUseCase(
         val followerCnt = followService.findFollowerCnt(profileOwner)
         val followingCnt = followService.findFollowingCnt(profileOwner)
         val alreadyFollowing = followService.isAlreadyFollowing(visitor, profileOwner)
+        val isBlocked = blockMemberService.findBlockMemberOpt(visitor, profileOwner).isPresent
 
         return UserProfileInfoResponse(
             profileOwner.pk,
@@ -175,7 +178,8 @@ class MemberUseCase(
             feedCardCnt,
             followingCnt,
             followerCnt,
-            alreadyFollowing
+            alreadyFollowing,
+            isBlocked
         )
     }
 
