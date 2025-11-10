@@ -32,22 +32,20 @@ class MemberFollowUseCase(
             throw IllegalStateException("이미 팔로우한 회원입니다.")
         }
 
-        notificationUseCase.findNotificationHistoryByMemberAndType(fromMember.pk, toMember.pk, NotificationType.FOLLOW)?.let {
-            if( it.createdAt.isBefore( LocalDateTime.now().minusHours(1) ) ) {
-                notificationUseCase.deleteNotificationHistory(it)
-                val notificationHistory = notificationUseCase.saveFollowHistory(fromMember, toMember)
-                applicationEventPublisher.publishEvent(
-                    FollowFCMEvent(
-                        fromMember.nickname,
-                        fromMember.pk,
-                        notificationHistory.pk,
-                        toMember.deviceType,
-                        toMember.firebaseToken,
-                        NotificationType.FOLLOW
-                    )
+        val existing = notificationUseCase.findNotificationHistoryByMemberAndType(fromMember.pk, toMember.pk, NotificationType.FOLLOW)
+        if (existing == null || existing.createdAt.isBefore(LocalDateTime.now().minusHours(1))) {
+            existing?.let { notificationUseCase.deleteNotificationHistory(it) }
+            val notificationHistory = notificationUseCase.saveFollowHistory(fromMember, toMember)
+            applicationEventPublisher.publishEvent(
+                FollowFCMEvent(
+                    fromMember.nickname,
+                    fromMember.pk,
+                    notificationHistory.pk,
+                    toMember.deviceType,
+                    toMember.firebaseToken,
+                    NotificationType.FOLLOW
                 )
-
-            }
+            )
         }
         followService.saveFollower(fromMember, toMember)
 
