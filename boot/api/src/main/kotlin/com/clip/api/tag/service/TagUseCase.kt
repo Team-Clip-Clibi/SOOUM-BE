@@ -1,18 +1,30 @@
 package com.clip.api.tag.service
 
+import com.clip.api.tag.controller.dto.CardContent
+import com.clip.api.tag.controller.dto.TagCardContentsResponse
 import com.clip.api.tag.controller.dto.TagInfo
 import com.clip.api.tag.controller.dto.TagInfoResponse
+import com.clip.data.block.service.BlockMemberService
+import com.clip.data.card.entity.imgtype.CardImgType
 import com.clip.data.member.service.MemberService
 import com.clip.data.tag.entity.FavoriteTag
+import com.clip.data.tag.service.FavoriteTagService
+import com.clip.data.tag.service.FeedTagService
 import com.clip.data.tag.service.TagService
 import com.clip.global.exception.IllegalStateException
+import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 class TagUseCase(
     private val tagService: TagService,
     private val memberService: MemberService,
+    private val feedTagService: FeedTagService,
+    private val blockMemberService: BlockMemberService,
+    private val s3ImgService: S3ImgService,
+    private val favoriteTagService: FavoriteTagService
 ) {
     companion object
     {
@@ -53,5 +65,25 @@ class TagUseCase(
             TagInfo(id = it.pk.toString(), name = it.content, usageCnt = it.count)
         }.let(::TagInfoResponse)
 
+
+    fun findFeedTagCards(tagId: Long, lastId: Long?, userId: Long): TagCardContentsResponse {
+        val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
+        val isFavorite = favoriteTagService.isExistsByTagPkAndMemberPk(tagId, userId)
+        val cardContents = feedTagService
+            .findFeedCardsByTag(tagId, Optional.ofNullable(lastId), blockedMembers)
+            .map {
+                CardContent(
+                    cardId = it.feedCard.pk,
+                    cardImgName = it.feedCard.imgName,
+                    cardImgUrl = when (it.feedCard.imgType) {
+                        CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(it.feedCard.imgName)
+                        CardImgType.USER -> s3ImgService.generateUserCardImgUrl(it.feedCard.imgName)
+                    },
+                    cardContent = it.feedCard.content,
+                    font = it.feedCard.font
+                )
+            }
+        return TagCardContentsResponse(cardContents, isFavorite)
+    }
 
 }

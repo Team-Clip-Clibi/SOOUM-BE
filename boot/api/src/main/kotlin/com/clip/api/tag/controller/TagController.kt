@@ -2,6 +2,7 @@ package com.clip.api.tag.controller
 
 import com.clip.api.docs.tag.TagDocs
 import com.clip.api.tag.controller.dto.RelatedTagRequest
+import com.clip.api.tag.controller.dto.TagCardContentsResponse
 import com.clip.api.tag.controller.dto.TagInfoResponse
 import com.clip.api.tag.service.TagUseCase
 import com.clip.global.security.annotation.AccessUser
@@ -46,5 +47,13 @@ class TagController(
     ): ResponseEntity<Unit> =
         tagUseCase.deleteFavoriteTag(tagId, userId)
             .let { ResponseEntity.ok().build() }
+
+    @GetMapping("/{tagId}/cards", "/{tagId}/cards/{lastId}")
+    override fun getTagFeedCards(@PathVariable tagId: Long, @PathVariable(required = false) lastId: Long?, @AccessUser userId: Long): ResponseEntity<TagCardContentsResponse> =
+        tagUseCase.findFeedTagCards(tagId, lastId, userId)
+            .takeIf { it.cardContents.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
+
 
 }
