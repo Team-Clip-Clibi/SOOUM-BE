@@ -6,6 +6,7 @@ import com.clip.data.tag.entity.Tag;
 import com.clip.data.tag.repository.FeedTagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class FeedTagService {
 
     private final FeedTagRepository feedTagRepository;
     private final TagService tagService;
+    private static final int MAX_PAGE_SIZE = 50;
 
     @Transactional
     public void deleteByFeedCardPk(Long cardPk) {
@@ -56,4 +58,12 @@ public class FeedTagService {
     public void deleteFeedTag(Long memberPk) {
         feedTagRepository.deleteFeedTag(memberPk);
     }
+
+    public List<FeedTag> findFeedCardsByTag(Long tagPk, List<Long> blockMemberPks) {
+        PageRequest pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
+        return blockMemberPks.isEmpty()
+                ? feedTagRepository.findFeedCardsByTagWithoutBlock(tagPk, pageRequest)
+                : feedTagRepository.findFeedCardsByTagWithBlock(tagPk, blockMemberPks, pageRequest);
+    }
+
 }

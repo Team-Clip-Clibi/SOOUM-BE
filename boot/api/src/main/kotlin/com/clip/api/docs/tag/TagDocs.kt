@@ -1,6 +1,7 @@
 package com.clip.api.docs.tag
 
 import com.clip.api.tag.controller.dto.RelatedTagRequest
+import com.clip.api.tag.controller.dto.TagCardContentsResponse
 import com.clip.api.tag.controller.dto.TagInfoResponse
 import com.clip.global.security.annotation.AccessUser
 import io.swagger.v3.oas.annotations.Operation
@@ -43,4 +44,14 @@ interface TagDocs {
         @PathVariable tagId: Long,
         @AccessUser userId: Long
     ): ResponseEntity<Unit>
+
+    @Operation(
+        summary = "태그 등록된 카드 조회 API", description = """
+        - 요청 태그id가 등록된 카드들을 조회하는 API
+    """
+    )
+    fun getTagFeedCards(
+        @PathVariable tagId: Long,
+        @AccessUser userId: Long
+    ): ResponseEntity<TagCardContentsResponse>
 }

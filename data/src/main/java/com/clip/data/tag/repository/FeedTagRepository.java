@@ -66,4 +66,23 @@ public interface FeedTagRepository extends JpaRepository<FeedTag, Long> {
     @Transactional
     @Query("delete from FeedTag ft where ft.feedCard.writer.pk = :memberPk")
    void deleteFeedTag(@Param("memberPk") Long memberPk);
+
+    @Query("select ft " +
+            "from FeedTag ft " +
+           "join fetch ft.feedCard " +
+            "where ft.tag.pk = :tagPk " +
+                "and ft.feedCard.isStory = false " +
+            "order by ft.feedCard.pk desc")
+    List<FeedTag> findFeedCardsByTagWithoutBlock(@Param("tagPk") Long tagPk, Pageable pageable);
+
+    @Query("select ft " +
+            "from FeedTag ft " +
+           "join fetch ft.feedCard " +
+            "where ft.tag.pk = :tagPk " +
+                "and ft.feedCard.writer.pk not in :blockMemberPks " +
+                "and ft.feedCard.isStory = false " +
+            "order by ft.feedCard.pk desc")
+    List<FeedTag> findFeedCardsByTagWithBlock(@Param("tagPk") Long tagPk,
+                                               @Param("blockMemberPks") List<Long> blockMemberPks, Pageable pageable);
+
 }
