@@ -52,6 +52,7 @@ interface TagDocs {
     )
     fun getTagFeedCards(
         @PathVariable tagId: Long,
+        @PathVariable lastId: Long?,
         @AccessUser userId: Long
     ): ResponseEntity<TagCardContentsResponse>
 }

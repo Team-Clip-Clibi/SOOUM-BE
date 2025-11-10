@@ -48,9 +48,9 @@ class TagController(
         tagUseCase.deleteFavoriteTag(tagId, userId)
             .let { ResponseEntity.ok().build() }
 
-    @GetMapping("/{tagId}/cards")
-    override fun getTagFeedCards(@PathVariable tagId: Long, @AccessUser userId: Long): ResponseEntity<TagCardContentsResponse> =
-        tagUseCase.findFeedTagCards(tagId, userId)
+    @GetMapping("/{tagId}/cards", "/{tagId}/cards/{lastId}")
+    override fun getTagFeedCards(@PathVariable tagId: Long, @PathVariable(required = false) lastId: Long?, @AccessUser userId: Long): ResponseEntity<TagCardContentsResponse> =
+        tagUseCase.findFeedTagCards(tagId, lastId, userId)
             .takeIf { it.cardContents.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()

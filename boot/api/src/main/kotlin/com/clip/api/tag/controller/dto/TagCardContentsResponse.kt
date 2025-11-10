@@ -3,7 +3,8 @@ package com.clip.api.tag.controller.dto
 import com.clip.data.card.entity.font.Font
 
 data class TagCardContentsResponse(
-    val cardContents: List<CardContent>
+    val cardContents: List<CardContent>,
+    val isFavorite: Boolean
 )
 
 data class CardContent(
