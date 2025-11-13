@@ -210,15 +210,10 @@ class MemberUseCase(
         val member = memberService.findMember(userId)
 
         val threshold = LocalDateTime.now().plusDays(7)
-        val (rejoinableDate, isActivityRestricted) = when {
-            member.role == Role.BANNED && member.untilBan > threshold ->
-                member.untilBan to true
-
-            member.role == Role.BANNED ->
-                threshold to true
-
-            else ->
-                threshold to false
+        val (rejoinableDate, isActivityRestricted) = if (member.role == Role.BANNED && member.untilBan != null && member.untilBan > threshold) {
+            member.untilBan to true
+        } else {
+            threshold to false
         }
 
         return RejoinableDateResponse(
