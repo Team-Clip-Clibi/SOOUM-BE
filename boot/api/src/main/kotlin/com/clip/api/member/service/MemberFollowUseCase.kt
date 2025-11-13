@@ -69,8 +69,8 @@ class MemberFollowUseCase(
                 memberId = it.toMember.pk,
                 nickname = it.toMember.nickname,
                 profileImageUrl = it.toMember.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
-                isFollowing = followedFollowingsPk.contains(it.pk),
-                isRequester = it.pk == userId
+                isFollowing = followedFollowingsPk.contains(it.toMember.pk),
+                isRequester = it.toMember.pk == userId
             )
         }
     }
@@ -86,8 +86,8 @@ class MemberFollowUseCase(
                 memberId = it.fromMember.pk,
                 nickname = it.fromMember.nickname,
                 profileImageUrl = it.fromMember.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
-                isFollowing = followedFollowersPk.contains(it.pk),
-                isRequester = it.pk == userId
+                isFollowing = followedFollowersPk.contains(it.fromMember.pk),
+                isRequester = it.fromMember.pk == userId
             )
         }
     }
