@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,8 +15,14 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
 
-    public List<Notice> findNotices(Long lastPk, Integer pageSize) {
+    public List<Notice> findNoticesForNotification(Long lastPk, Integer pageSize) {
         if (pageSize > 30) pageSize = 30;
-        return noticeRepository.findNotice(lastPk, PageRequest.ofSize(pageSize));
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        return noticeRepository.findNoticesForNotification(lastPk, thirtyDaysAgo, PageRequest.ofSize(pageSize));
+    }
+
+    public List<Notice> findNoticesForSettings(Long lastPk, Integer pageSize) {
+        if (pageSize > 30) pageSize = 30;
+        return noticeRepository.findNoticeForSettings(lastPk, PageRequest.ofSize(pageSize));
     }
 }

@@ -1,6 +1,7 @@
 package com.clip.api.docs.notice
 
 import com.clip.api.notice.controller.dto.NoticeInfoResponse
+import com.clip.api.notice.controller.dto.NoticeSource
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -15,5 +16,5 @@ interface NoticeDocs {
         - pageSize의 기본값과 최대값은 30입니다.
         - pageSize를 30이하 (예: 3)으로 설정하여 홈 상단의 공지 노출에 사용할 수 있습니다.
     """)
-    fun findNotices(lastId: Long?, pageSize: Int,): ResponseEntity<NoticeInfoResponse>
+    fun findNotices(lastId: Long?, pageSize: Int, noticeSource: NoticeSource): ResponseEntity<NoticeInfoResponse>
 }
