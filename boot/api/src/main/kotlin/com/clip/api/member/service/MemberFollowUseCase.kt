@@ -61,13 +61,14 @@ class MemberFollowUseCase(
     fun getFollowingList(profileOwnerId: Long, userId: Long, lastId: Long?) : List<FollowInfoDto> {
         val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
         val followings = followService.findFollowingWithoutBlockedMembers(Optional.ofNullable(lastId), profileOwnerId, blockedMemberIds)
-        val followedFollowingsPk = followService.findFollowedFollowingsPk(userId, followings)
+        val followedFollowingsPk = followService.findFollowedFollowingsPk(userId, followings.map { it.toMember })
 
         return followings.map {
             FollowInfoDto(
-                memberId = it.pk,
-                nickname = it.nickname,
-                profileImageUrl = it.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
+                followId = it.pk,
+                memberId = it.toMember.pk,
+                nickname = it.toMember.nickname,
+                profileImageUrl = it.toMember.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
                 isFollowing = followedFollowingsPk.contains(it.pk),
                 isRequester = it.pk == userId
             )
@@ -77,13 +78,14 @@ class MemberFollowUseCase(
     fun getFollowerList(profileOwnerId: Long, userId: Long, lastId: Long?) : List<FollowInfoDto> {
         val blockedMemberIds = blockMemberService.findAllBlockMemberPks(userId)
         val followers = followService.findFollowerWithoutBlockedMembers(Optional.ofNullable(lastId), profileOwnerId, blockedMemberIds)
-        val followedFollowersPk = followService.findFollowedFollowersPk(userId, followers)
+        val followedFollowersPk = followService.findFollowedFollowersPk(userId, followers.map { it.fromMember })
 
         return followers.map {
             FollowInfoDto(
-                memberId = it.pk,
-                nickname = it.nickname,
-                profileImageUrl = it.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
+                followId = it.pk,
+                memberId = it.fromMember.pk,
+                nickname = it.fromMember.nickname,
+                profileImageUrl = it.fromMember.profileImgName?.let { imgName -> imgService.generateProfileImgUrl(imgName) },
                 isFollowing = followedFollowersPk.contains(it.pk),
                 isRequester = it.pk == userId
             )

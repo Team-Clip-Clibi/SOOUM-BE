@@ -5,6 +5,7 @@ data class FollowDto(
 )
 
 data class FollowInfoDto(
+    val followId: Long,
     val memberId: Long,
     val nickname: String,
     val profileImageUrl: String?,
