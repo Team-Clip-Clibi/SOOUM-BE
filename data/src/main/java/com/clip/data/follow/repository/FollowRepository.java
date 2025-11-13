@@ -28,13 +28,13 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("select count(f) from Follow f where f.fromMember = :profileOwner")
     Long findFollowingCnt(@Param("profileOwner") Member profileOwner);
 
-    @Query("select f from Follow f join fetch f.fromMember join fetch f.toMember where f.toMember.pk = :requesterPk and f.fromMember.pk not in :blockMembers " +
+    @Query("select f from Follow f join fetch f.fromMember where f.toMember.pk = :requesterPk and f.fromMember.pk not in :blockMembers " +
             "order by f.pk desc ")
     List<Follow> findFollowers(@Param("requesterPk") Long requesterPk,
                                @Param("blockMembers") List<Long> blockMembers,
                                Pageable pageable);
 
-    @Query("select f from Follow f join fetch f.fromMember join fetch f.toMember where f.toMember.pk = :requesterPk and f.fromMember.pk not in :blockMembers " +
+    @Query("select f from Follow f join fetch f.fromMember where f.toMember.pk = :requesterPk and f.fromMember.pk not in :blockMembers " +
             "and f.pk < :lastPk " +
             "order by f.pk desc ")
     List<Follow> findFollowersByFollowerLastPk(@Param("lastPk") Long lastPk,
@@ -42,13 +42,13 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
                                                @Param("blockMembers") List<Long> blockMembers,
                                                Pageable pageable);
 
-    @Query("select f from Follow f join fetch f.toMember join fetch f.fromMember where f.fromMember.pk = :requesterPk and f.toMember.pk not in :blockMembers " +
+    @Query("select f from Follow f join fetch f.toMember where f.fromMember.pk = :requesterPk and f.toMember.pk not in :blockMembers " +
             "order by f.pk desc ")
     List<Follow> findFollowings(@Param("requesterPk") Long requesterPk,
                                 @Param("blockMembers") List<Long> blockMembers,
                                 Pageable pageable);
 
-    @Query("select f from Follow f join fetch f.toMember join fetch f.fromMember where f.fromMember.pk = :requesterPk and f.toMember.pk not in :blockMembers " +
+    @Query("select f from Follow f join fetch f.toMember where f.fromMember.pk = :requesterPk and f.toMember.pk not in :blockMembers " +
             "and f.pk < :lastPk " +
             "order by f.pk desc ")
     List<Follow> findFollowingsByFollowingLastPk(@Param("lastPk") Long lastPk,
