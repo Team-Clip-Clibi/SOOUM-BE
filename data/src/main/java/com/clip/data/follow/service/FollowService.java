@@ -42,7 +42,7 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<Member> findFollowerWithoutBlockedMembers(Optional<Long> followerLastId, Long requesterPk, List<Long> blockMembersPk) {
+    public List<Follow> findFollowerWithoutBlockedMembers(Optional<Long> followerLastId, Long requesterPk, List<Long> blockMembersPk) {
         PageRequest pageRequest = PageRequest.ofSize(50);
         if (followerLastId.isEmpty()) {
             return followRepository.findFollowers(requesterPk, blockMembersPk, pageRequest);
@@ -51,7 +51,7 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<Member> findFollowingWithoutBlockedMembers(Optional<Long> followingLastId, Long requesterPk, List<Long> blockMembersPk) {
+    public List<Follow> findFollowingWithoutBlockedMembers(Optional<Long> followingLastId, Long requesterPk, List<Long> blockMembersPk) {
         PageRequest pageRequest = PageRequest.ofSize(50);
         if (followingLastId.isEmpty()) {
             return followRepository.findFollowings(requesterPk, blockMembersPk, pageRequest);
