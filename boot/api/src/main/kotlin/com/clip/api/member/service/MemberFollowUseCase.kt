@@ -72,7 +72,7 @@ class MemberFollowUseCase(
                 isFollowing = followedFollowingsPk.contains(it.toMember.pk),
                 isRequester = it.toMember.pk == userId
             )
-        }
+        }.sortedByDescending { it.isRequester }
     }
 
     fun getFollowerList(profileOwnerId: Long, userId: Long, lastId: Long?) : List<FollowInfoDto> {
@@ -89,7 +89,7 @@ class MemberFollowUseCase(
                 isFollowing = followedFollowersPk.contains(it.fromMember.pk),
                 isRequester = it.fromMember.pk == userId
             )
-        }
+        }.sortedByDescending { it.isRequester }
     }
 
 }
