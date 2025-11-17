@@ -1,5 +1,6 @@
 package com.clip.api.docs.tag
 
+import com.clip.api.tag.controller.dto.FavoriteTagResponse
 import com.clip.api.tag.controller.dto.RelatedTagRequest
 import com.clip.api.tag.controller.dto.TagCardContentsResponse
 import com.clip.api.tag.controller.dto.TagInfoResponse
@@ -55,4 +56,13 @@ interface TagDocs {
         @PathVariable lastId: Long?,
         @AccessUser userId: Long
     ): ResponseEntity<TagCardContentsResponse>
+
+    @Operation(
+        summary = "즐겨찾기한 태그 조회 API", description = """
+        - 사용자가 즐겨찾기한 태그들을 조회하는 API
+    """
+    )
+    fun getFavoriteTags(
+        @AccessUser userId: Long
+    ): ResponseEntity<FavoriteTagResponse>
 }

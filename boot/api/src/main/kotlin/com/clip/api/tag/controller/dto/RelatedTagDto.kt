@@ -10,7 +10,16 @@ data class TagInfoResponse(
 )
 
 data class TagInfo(
-    val id: String,
+    val id: Long,
     val name: String,
     val usageCnt: Int,
+)
+
+data class FavoriteTagResponse(
+    val favoriteTags: List<FavoriteTagInfo>,
+)
+
+data class FavoriteTagInfo(
+    val id: Long,
+    val name: String,
 )

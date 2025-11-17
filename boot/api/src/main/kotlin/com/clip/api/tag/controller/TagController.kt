@@ -1,6 +1,7 @@
 package com.clip.api.tag.controller
 
 import com.clip.api.docs.tag.TagDocs
+import com.clip.api.tag.controller.dto.FavoriteTagResponse
 import com.clip.api.tag.controller.dto.RelatedTagRequest
 import com.clip.api.tag.controller.dto.TagCardContentsResponse
 import com.clip.api.tag.controller.dto.TagInfoResponse
@@ -54,6 +55,12 @@ class TagController(
             .takeIf { it.cardContents.isNotEmpty() }
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()
+
+    @GetMapping("/favorite")
+    override fun getFavoriteTags(userId: Long): ResponseEntity<FavoriteTagResponse> {
+        return tagUseCase.findFavoriteTags(userId)
+            .let { ResponseEntity.ok(it) }
+    }
 
 
 }
