@@ -1,9 +1,6 @@
 package com.clip.api.tag.service
 
-import com.clip.api.tag.controller.dto.CardContent
-import com.clip.api.tag.controller.dto.TagCardContentsResponse
-import com.clip.api.tag.controller.dto.TagInfo
-import com.clip.api.tag.controller.dto.TagInfoResponse
+import com.clip.api.tag.controller.dto.*
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.entity.imgtype.CardImgType
 import com.clip.data.member.service.MemberService
@@ -34,7 +31,7 @@ class TagUseCase(
 
     fun findRelatedTags(relatedTag: String, resultCnt: Int): TagInfoResponse =
         tagService.findRelatedTags(relatedTag, resultCnt.coerceIn(0, MAX_RESULT_CNT))
-            .map { TagInfo(id = it.pk.toString(), name = it.content, usageCnt = it.count) }
+            .map { TagInfo(id = it.pk, name = it.content, usageCnt = it.count) }
             .let(::TagInfoResponse)
 
     @Transactional
@@ -62,7 +59,7 @@ class TagUseCase(
 
     fun findTop10Tags(): TagInfoResponse =
         tagService.findTop10Tags().map {
-            TagInfo(id = it.pk.toString(), name = it.content, usageCnt = it.count)
+            TagInfo(id = it.pk, name = it.content, usageCnt = it.count)
         }.let(::TagInfoResponse)
 
 
@@ -84,6 +81,17 @@ class TagUseCase(
                 )
             }
         return TagCardContentsResponse(cardContents, isFavorite)
+    }
+
+    fun findFavoriteTags(userId: Long): FavoriteTagResponse {
+        val favoriteTags = favoriteTagService.findFavoriteTags(userId)
+            .map {
+                FavoriteTagInfo(
+                    id = it.pk,
+                    name = it.content
+                )
+            }
+        return FavoriteTagResponse(favoriteTags)
     }
 
 }
