@@ -119,7 +119,7 @@ class AuthUseCase(
         val userId = try {
             jwtProvider.getUserId(request.refreshToken)
         } catch (e: ExpiredJwtException) {
-            throw TokenException.ExpiredTokenException(token = request.refreshToken)
+            throw TokenException.ExpiredRefreshTokenException(token = request.refreshToken)
         }
 
         val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)

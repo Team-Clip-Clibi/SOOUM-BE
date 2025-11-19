@@ -23,10 +23,16 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
     }
 
-    @ExceptionHandler(TokenException.ExpiredTokenException::class)
-    fun expiredTokenException(e: TokenException.ExpiredTokenException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(TokenException.ExpiredAccessTokenException::class)
+    fun expiredAccessTokenException(e: TokenException.ExpiredAccessTokenException): ResponseEntity<ErrorResponse> {
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse)
+    }
+
+    @ExceptionHandler(TokenException.ExpiredRefreshTokenException::class)
+    fun expiredRefreshTokenException(e: TokenException.ExpiredRefreshTokenException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
     }
 
     @ExceptionHandler(TokenException.BlacklistTokenException::class)
