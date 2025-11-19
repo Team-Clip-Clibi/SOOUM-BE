@@ -18,7 +18,7 @@ sealed class TokenException(
     )
 
     class ExpiredAccessTokenException(
-        message: String = "만료된 엑세스 토큰입니다. ",
+        message: String = "만료된 엑세스 토큰입니다.  ",
         token: String? = null
     ) : TokenException(
         HttpStatus.UNAUTHORIZED,
