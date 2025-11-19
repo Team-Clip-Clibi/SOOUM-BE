@@ -27,7 +27,7 @@ sealed class TokenException(
     )
 
     class ExpiredRefreshTokenException(
-        message: String = "만료된 리프레시 토큰입니다. ",
+        message: String = "만료된 리프레시 토큰입니다.  ",
         token: String? = null
     ) : TokenException(
         HttpStatus.FORBIDDEN,
