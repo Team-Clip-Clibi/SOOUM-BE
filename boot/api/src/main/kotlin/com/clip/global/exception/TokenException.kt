@@ -17,8 +17,17 @@ sealed class TokenException(
         token
     )
 
-    class ExpiredTokenException(
-        message: String = "만료된 토큰입니다.",
+    class ExpiredAccessTokenException(
+        message: String = "만료된 엑세스 토큰입니다.",
+        token: String? = null
+    ) : TokenException(
+        HttpStatus.UNAUTHORIZED,
+        message,
+        token
+    )
+
+    class ExpiredRefreshTokenException(
+        message: String = "만료된 리프레시 토큰입니다.",
         token: String? = null
     ) : TokenException(
         HttpStatus.FORBIDDEN,
