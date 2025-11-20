@@ -38,19 +38,19 @@ class DeleteProfileImgTasklet(
 
         log.info("Found ${imgNames.size} unused profile images to delete")
 
-        val deletedCount = jdbcTemplate.update(
-            "delete from profile_img where profile_owner is null"
-        )
-
-        contribution.incrementWriteCount(deletedCount.toLong())
-        log.info("${deletedCount}개의 미사용 프로필 이미지가 DB에서 삭제되었습니다.")
-
         try {
             s3ImgService.deleteImgs(PROFILE_IMG, imgNames)
             log.info("Successfully deleted ${imgNames.size} images from S3")
         } catch (e: Exception) {
             log.error("Failed to delete images from S3(DB already deleted)", e)
         }
+
+        val deletedCount = jdbcTemplate.update(
+            "delete from profile_img where profile_owner is null"
+        )
+
+        contribution.incrementWriteCount(deletedCount.toLong())
+        log.info("${deletedCount}개의 미사용 프로필 이미지가 DB에서 삭제되었습니다.")
 
         return RepeatStatus.FINISHED
     }

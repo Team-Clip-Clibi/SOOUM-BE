@@ -16,7 +16,7 @@ class DeleteCardImgTasklet(
 ) : Tasklet {
 
     companion object {
-        private val log = LoggerFactory.getLogger(DeleteProfileImgTasklet::class.java)
+        private val log = LoggerFactory.getLogger(DeleteCardImgTasklet::class.java)
         private const val USER_CARD_IMG = "card/user/"
     }
 
@@ -36,6 +36,14 @@ class DeleteCardImgTasklet(
             return RepeatStatus.FINISHED
         }
 
+        try {
+            s3ImgService.deleteImgs(USER_CARD_IMG, imgNames)
+            log.info("Successfully deleted ${imgNames.size} images from S3")
+        } catch (e: Exception) {
+            log.error("Failed to delete images from S3. Rolling back transaction.", e)
+            throw e
+        }
+
         log.info("Found ${imgNames.size} unused card images to delete")
 
         val deletedCount = jdbcTemplate.update(
@@ -44,14 +52,6 @@ class DeleteCardImgTasklet(
 
         contribution.incrementWriteCount(deletedCount.toLong())
         log.info("${deletedCount}개의 미사용 카드 이미지가 삭제되었습니다.")
-
-        try {
-            s3ImgService.deleteImgs(USER_CARD_IMG, imgNames)
-            log.info("Successfully deleted ${imgNames.size} images from S3")
-        } catch (e: Exception) {
-            log.error("Failed to delete images from S3. Rolling back transaction.", e)
-            throw e
-        }
 
         return RepeatStatus.FINISHED
     }

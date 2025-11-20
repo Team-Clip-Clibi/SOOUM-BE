@@ -1,7 +1,6 @@
 package com.clip.batch.img
 
 import com.clip.batch.img.tasklet.DeleteCardImgTasklet
-import com.clip.batch.img.tasklet.DeleteProfileImgTasklet
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
@@ -36,7 +35,7 @@ class DeleteCardImgScheduler(
         runCatching {
             jobLauncher.run(deleteCardImgJob(), jobParameters)
         }.onFailure { e ->
-            log.error("Failed to execute DeleteProfileImg batch job", e)
+            log.error("Failed to execute DeleteCardImg batch job", e)
         }
     }
 
