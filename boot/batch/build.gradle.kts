@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
     implementation(project(":data"))
+    implementation(project(":infra"))
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
