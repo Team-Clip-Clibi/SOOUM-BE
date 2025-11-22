@@ -54,33 +54,34 @@ class AccountTransferUseCase(
     }
 
     @Transactional
-    fun transferMemberAccount(transferRequest: TransferAccountRequest, memberPk: Long) {
+    fun transferMemberAccount(transferRequest: TransferAccountRequest) {
         val accountTransfer = accountTransferService.findAvailableAccountTransfer(transferRequest.transferCode)
-        val transferredMember = accountTransfer.member
-        val decryptedRequesterDeviceId = rsaUseCase.decodeDeviceId(transferRequest.encryptedDeviceId)
-        withdrawRequesterIfPresent(decryptedRequesterDeviceId)
-        saveTransferredMemberRefreshTokenInBlackList(transferredMember.pk)
-
-        transferredMember.updateDeviceInfo(
-            decryptedRequesterDeviceId,
+        val transferCodeOwner = accountTransfer.member
+        val decryptedNewDeviceId = rsaUseCase.decodeDeviceId(transferRequest.encryptedDeviceId)
+        withdrawRequesterIfPresent(decryptedNewDeviceId)
+        saveTransferredMemberRefreshTokenInBlackList(transferCodeOwner.pk)
+        val transferCodeOwnerFcmToken = transferCodeOwner.firebaseToken
+        transferCodeOwner.updateDeviceInfo(
+            decryptedNewDeviceId,
             transferRequest.deviceType,
             transferRequest.deviceModel,
             transferRequest.deviceOsVersion
-        )
-        accountTransferService.deleteAccountTransfer(transferredMember.pk)
+        ).updateFCMToken(memberService.findByDeviceId(decryptedNewDeviceId).firebaseToken)
 
-        accountTransferHistoryService.findByMemberPk(transferredMember.pk)
+        accountTransferService.deleteAccountTransfer(transferCodeOwner.pk)
+
+        accountTransferHistoryService.findByMemberPk(transferCodeOwner.pk)
             .ifPresentOrElse(
                 { it.updateTransferAt() },
-                { accountTransferHistoryService.save(AccountTransferHistory(transferredMember)) }
+                { accountTransferHistoryService.save(AccountTransferHistory(transferCodeOwner)) }
             )
 
         applicationEventPublisher.publishEvent(
             SystemFCMEvent(
                 expiredAt = null,
                 notificationId = 1L,
-                targetDeviceType = transferredMember.deviceType,
-                fcmToken = transferredMember.firebaseToken,
+                targetDeviceType = transferCodeOwner.deviceType,
+                fcmToken = transferCodeOwnerFcmToken,
                 notificationType = NotificationType.TRANSFER_SUCCESS
             )
         )

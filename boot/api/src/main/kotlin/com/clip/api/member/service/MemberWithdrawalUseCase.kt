@@ -15,6 +15,7 @@ import com.clip.data.tag.service.FeedTagService
 import com.clip.data.visitor.service.VisitorService
 import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
+import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -43,6 +44,7 @@ class MemberWithdrawalUseCase(
     private val commentTagService: CommentTagService,
     private val notificationHistoryService: NotificationHistoryService,
     private val memberWithdrawalReasonService: MemberWithdrawalReasonService,
+    private val entityManager: EntityManager
 ) {
 
     @Transactional
@@ -103,6 +105,7 @@ class MemberWithdrawalUseCase(
         notificationHistoryService.deleteAllNotificationHistory(memberPk)
 
         memberService.deleteMember(memberPk)
+        entityManager.flush()
     }
 
 
