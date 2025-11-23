@@ -19,4 +19,8 @@ public class AccountTransferHistoryService {
     public Optional<AccountTransferHistory> findByMemberPk(Long memberPk) {
         return accountTransferHistoryRepository.findByMemberPk(memberPk);
     }
+
+    public void deleteAccountTransferHistory(Long memberPk) {
+        accountTransferHistoryRepository.deleteAccountTransferHistoryByMemberPk(memberPk);
+    }
 }

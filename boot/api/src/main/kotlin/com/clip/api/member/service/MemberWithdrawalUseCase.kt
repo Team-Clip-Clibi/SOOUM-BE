@@ -44,6 +44,7 @@ class MemberWithdrawalUseCase(
     private val commentTagService: CommentTagService,
     private val notificationHistoryService: NotificationHistoryService,
     private val memberWithdrawalReasonService: MemberWithdrawalReasonService,
+    private val accountTransferHistoryService: AccountTransferHistoryService,
     private val entityManager: EntityManager
 ) {
 
@@ -103,6 +104,7 @@ class MemberWithdrawalUseCase(
         accountTransferService.deleteAccountTransfer(memberPk)
         profileImgService.updateProfileImgNull(memberPk)
         notificationHistoryService.deleteAllNotificationHistory(memberPk)
+        accountTransferHistoryService.deleteAccountTransferHistory(memberPk)
 
         memberService.deleteMember(memberPk)
         entityManager.flush()
