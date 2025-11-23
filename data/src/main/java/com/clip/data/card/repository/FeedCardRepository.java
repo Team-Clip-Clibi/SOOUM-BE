@@ -44,7 +44,36 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
         from feed_card f
         join member m on f.writer = m.pk
         where (:lastPk is null or f.pk < :lastPk)
-          and (:blockMemberPks is null or f.writer not in (:blockMemberPks))
+          and (f.writer not in (:blockMemberPks))
+          and ST_Contains(ST_Buffer(:userLocation, :distance), f.location)
+          and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000)
+          and (f.is_story = false or (f.is_story = true and f.created_at > (CURRENT_TIMESTAMP - interval 1 day)))
+          and f.is_deleted = false
+          and f.is_feed_active = true
+        order by f.pk desc
+        """,
+            nativeQuery = true
+    )
+    List<DistanceFeedCardDto> findNextByDistanceWithBlockMembers(@Param("lastPk") Long lastPk,
+                                                 @Param("userLocation") Point userLocation,
+                                                 @Param("distance") double distance,
+                                                 @Param("blockMemberPks") List<Long> blockMemberPks,
+                                                 Pageable pageable);
+
+    @Query(
+            value = """
+        select f.pk as pk,
+               f.img_type as imgType,
+               f.img_name as imgName,
+               f.font as font,
+               f.content as content,
+               f.created_at as createdAt,
+               f.is_story as isStory,
+               m.role as role,
+               f.location as location
+        from feed_card f
+        join member m on f.writer = m.pk
+        where (:lastPk is null or f.pk < :lastPk)
           and ST_Contains(ST_Buffer(:userLocation, :distance), f.location)
           and ST_Distance_Sphere(f.location, :userLocation) <= (:distance * 1000)
           and (f.is_story = false or (f.is_story = true and f.created_at > (CURRENT_TIMESTAMP - interval 1 day)))
@@ -55,10 +84,9 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
             nativeQuery = true
     )
     List<DistanceFeedCardDto> findNextByDistance(@Param("lastPk") Long lastPk,
-                                                 @Param("userLocation") Point userLocation,
-                                                 @Param("distance") double distance,
-                                                 @Param("blockMemberPks") List<Long> blockMemberPks,
-                                                 Pageable pageable);
+                                                                 @Param("userLocation") Point userLocation,
+                                                                 @Param("distance") double distance,
+                                                                 Pageable pageable);
 
     @Query("select count(f) " +
             "from FeedCard f " +
