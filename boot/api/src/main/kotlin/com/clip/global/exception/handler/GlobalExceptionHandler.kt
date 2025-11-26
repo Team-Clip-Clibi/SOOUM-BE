@@ -147,6 +147,17 @@ class GlobalExceptionHandler(
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
     }
 
+    @ExceptionHandler(IllegalStateException.SuspendedUserException::class)
+    fun suspendedUserException(e: IllegalStateException.SuspendedUserException):
+            ResponseEntity<ErrorResponse> {
+        slackEventPublisher.publish(
+            message = "suspendedUserException Handler 호출됨: ${e.message}",
+            exception = e,
+        )
+        val errorResponse = ErrorResponse.create(e, HttpStatus.BAD_REQUEST, e.message)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
+
     @ExceptionHandler(IllegalArgumentException.CardNotFoundException::class)
     fun cardNotFoundException(e: IllegalArgumentException.CardNotFoundException): ResponseEntity<ErrorResponse> {
         slackEventPublisher.publish(

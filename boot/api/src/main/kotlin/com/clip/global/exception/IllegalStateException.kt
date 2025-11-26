@@ -38,4 +38,12 @@ sealed class IllegalStateException(
         HttpStatus.BAD_REQUEST,
         message,
     )
+
+    class SuspendedUserException(
+        message: String = "현재 회원가입을 할 수 없는 상태입니다.",
+        vararg parameters: Any?
+    ): IllegalStateException(
+        HttpStatus.BAD_REQUEST,
+        message,
+    )
 }

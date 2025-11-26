@@ -8,6 +8,8 @@ import com.clip.data.member.service.BlacklistService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.PolicyService
 import com.clip.data.member.service.RefreshTokenService
+import com.clip.data.member.service.SuspendedService
+import com.clip.global.exception.IllegalStateException
 import com.clip.global.exception.ImageException
 import com.clip.global.exception.TokenException
 import com.clip.global.security.jwt.JwtProvider
@@ -29,7 +31,8 @@ class AuthUseCase(
     private val s3ImgService: S3ImgService,
     private val rekognitionService: RekognitionService,
     private val s3ImgPathProperties: S3ImgPathProperties,
-    private val withdrawalUseCase: MemberWithdrawalUseCase
+    private val withdrawalUseCase: MemberWithdrawalUseCase,
+    private val suspendedService: SuspendedService,
 ) {
 
     @Transactional
@@ -59,6 +62,9 @@ class AuthUseCase(
     @Transactional
     fun signUp(request: SignUpRequest): SignUpResponse {
         val encryptedDeviceId = request.memberInfo.encryptedDeviceId
+        suspendedService.findSuspensionByDeviceId(encryptedDeviceId).ifPresent {
+            throw IllegalStateException.SuspendedUserException()
+        }
         val deviceId = decodeWithRsa.execute(encryptedDeviceId)
         request.memberInfo.profileImage?.takeIf { it.isNotBlank() }?.let { imgName ->
             // 이미지 저장 여부 확인
