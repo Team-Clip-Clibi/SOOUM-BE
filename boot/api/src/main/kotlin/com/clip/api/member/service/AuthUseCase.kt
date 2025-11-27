@@ -41,8 +41,8 @@ class AuthUseCase(
         val deviceId = decodeWithRsa.execute(encryptedDeviceId)
 
         val member = memberService.findByDeviceId(deviceId)
-        val accessToken = jwtProvider.createAccessToken(member.pk, member.role)
-        val refreshToken = jwtProvider.createRefreshToken(member.pk, member.role)
+        val accessToken = jwtProvider.createAccessToken(member.pk, member.role, deviceId)
+        val refreshToken = jwtProvider.createRefreshToken(member.pk, member.role, deviceId)
 
         refreshTokenService.findByMember(member.pk).update(refreshToken)
         memberService.save(
@@ -106,8 +106,8 @@ class AuthUseCase(
             newMember
         }
 
-        val accessToken = jwtProvider.createAccessToken(member.pk, member.role)
-        val refreshToken = jwtProvider.createRefreshToken(member.pk, member.role)
+        val accessToken = jwtProvider.createAccessToken(member.pk, member.role, deviceId)
+        val refreshToken = jwtProvider.createRefreshToken(member.pk, member.role, deviceId)
 
         refreshTokenService.save(refreshToken, member)
 
@@ -122,13 +122,15 @@ class AuthUseCase(
         if (blacklistService.findByToken(request.refreshToken).isPresent)
             throw TokenException.BlacklistTokenException(token = request.refreshToken)
 
-        val userId = try {
-            jwtProvider.getUserId(request.refreshToken)
+        val (userId, deviceId) = try {
+            Pair(
+                jwtProvider.getUserId(request.refreshToken),
+                jwtProvider.getDeviceId(request.refreshToken)
+            )
         } catch (e: ExpiredJwtException) {
             throw TokenException.ExpiredRefreshTokenException(token = request.refreshToken)
         }
-
-        val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId)
+        val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId, deviceId)
         val refreshToken = refreshTokenService.findByMember(userId)
             .update(reissueToken.refreshToken)
         refreshTokenService.save(refreshToken)

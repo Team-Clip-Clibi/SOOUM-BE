@@ -28,9 +28,10 @@ class JwtProvider(
         const val REFRESH_SUBJECT = "RefreshToken"
         const val ID_CLAIM = "id"
         const val ROLE_CLAIM = "role"
+        const val DEVICE_ID_CLAIM = "deviceId"
     }
 
-    fun createAccessToken(id: Long?, role: Role): String {
+    fun createAccessToken(id: Long?, role: Role, deviceId: String): String {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
         val expiration = now.plusDays(JwtProperties.ACCESS_TOKEN_EXPIRE_DAY)
         return Jwts.builder()
@@ -40,6 +41,7 @@ class JwtProvider(
             .setSubject(ACCESS_SUBJECT)
             .claim(ID_CLAIM, id)
             .claim(ROLE_CLAIM, role)
+            .claim(DEVICE_ID_CLAIM, deviceId)
             .signWith(
                 getSigningKey(),
                 SignatureAlgorithm.HS256
@@ -47,7 +49,7 @@ class JwtProvider(
             .compact()
     }
 
-    fun createRefreshToken(id: Long?, role: Role): String {
+    fun createRefreshToken(id: Long?, role: Role, deviceId: String): String {
         val now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
         val expiration = now.plusMonths(JwtProperties.REFRESH_TOKEN_EXPIRE_MONTH)
         return Jwts.builder()
@@ -57,6 +59,7 @@ class JwtProvider(
             .setSubject(REFRESH_SUBJECT)
             .claim(ID_CLAIM, id)
             .claim(ROLE_CLAIM, role)
+            .claim(DEVICE_ID_CLAIM, deviceId)
             .signWith(
                 getSigningKey(),
                 SignatureAlgorithm.HS256
@@ -79,6 +82,9 @@ class JwtProvider(
     fun getUserId(token: String): Long =
         getClaims(token)[ID_CLAIM].toString().toLong()
 
+    fun getDeviceId(token: String): String =
+        getClaims(token)[DEVICE_ID_CLAIM].toString()
+
     fun getAuthentication(token: String): Authentication {
         val claims = getClaims(token)
         val role = getRole(token) ?: Role.USER
@@ -90,11 +96,6 @@ class JwtProvider(
             authorities
         )
     }
-
-    fun getIssuedAt(token: String): LocalDateTime =
-        getClaims(token).issuedAt.toInstant()
-            .atZone(ZoneId.of("Asia/Seoul"))
-            .toLocalDateTime()
 
     private fun getClaims(token: String): Claims =
         Jwts.parserBuilder()
@@ -111,25 +112,25 @@ class JwtProvider(
     private fun getSigningKey(): Key =
         Keys.hmacShaKeyFor(jwtProperties.key.toByteArray(StandardCharsets.UTF_8))
 
-    fun reissueToken(refreshToken: String, userId: Long): TokenDto =
+    fun reissueToken(refreshToken: String, userId: Long, deviceId: String): TokenDto =
         refreshToken
             .also { require(isRefreshToken(it)) { "Not Refresh Token" } }
             .also { require(validateToken(it)) { "Invalid Refresh Token" } }
             .let {
-                val newAccessToken = reissueAccessToken(it, userId)
-                val newRefreshToken = rotationRefreshToken(it, userId)
+                val newAccessToken = reissueAccessToken(it, userId, deviceId)
+                val newRefreshToken = rotationRefreshToken(it, userId, deviceId)
                 TokenDto(
                     accessToken = newAccessToken,
                     refreshToken = newRefreshToken
                 )
             }
 
-    private fun reissueAccessToken(refreshToken: String, userId: Long): String =
+    private fun reissueAccessToken(refreshToken: String, userId: Long, deviceId: String): String =
         refreshToken
             .let { getRole(it) ?: Role.USER }
-            .let { createAccessToken(userId, it) }
+            .let { createAccessToken(userId, it, deviceId) }
 
-    private fun rotationRefreshToken(refreshToken: String, userId: Long): String =
+    private fun rotationRefreshToken(refreshToken: String, userId: Long, deviceId: String): String =
         refreshToken
             .let { refreshToken -> getRole(refreshToken) ?: Role.USER }
             .let { role ->
@@ -150,6 +151,7 @@ class JwtProvider(
                     .setSubject(REFRESH_SUBJECT)
                     .claim(ID_CLAIM, userId)
                     .claim(ROLE_CLAIM, role)
+                    .claim(DEVICE_ID_CLAIM, deviceId)
                     .signWith(
                         getSigningKey(),
                         SignatureAlgorithm.HS256
