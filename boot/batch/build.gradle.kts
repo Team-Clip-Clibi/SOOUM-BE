@@ -35,6 +35,8 @@ dependencies {
 
     //tsid generator
     implementation("com.github.f4b6a3:tsid-creator:5.2.6")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 }
 
 kotlin {
