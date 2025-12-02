@@ -4,7 +4,10 @@ import com.clip.api.notification.event.FCMEvent
 import com.clip.api.notification.event.SystemFCMEvent
 import com.clip.data.member.entity.DeviceType
 import com.clip.data.notification.entity.notificationtype.NotificationType
-import com.google.firebase.messaging.*
+import com.google.firebase.messaging.ApnsConfig
+import com.google.firebase.messaging.Aps
+import com.google.firebase.messaging.Message
+import com.google.firebase.messaging.Notification
 import org.springframework.stereotype.Component
 
 @Component
@@ -34,7 +37,7 @@ class SystemFcmMsgGenerator: FcmMsgGenerator {
         return Message.builder()
             .setNotification(
                 Notification.builder()
-                    .setTitle(FcmMsgGenerator.Companion.TITLE)
+                    .setTitle(FcmMsgGenerator.TITLE)
                     .setBody(generateSystemMsgBody(fcmDto.notificationType))
                     .build()
             )
@@ -56,22 +59,8 @@ class SystemFcmMsgGenerator: FcmMsgGenerator {
         val data = toSystemFcmData(fcmDto)
 
         return Message.builder()
-            .setNotification(
-                Notification.builder()
-                    .setTitle(FcmMsgGenerator.Companion.TITLE)
-                    .setBody(generateSystemMsgBody(fcmDto.notificationType))
-                    .build()
-            )
-            .setAndroidConfig(
-                AndroidConfig.builder()
-                    .setNotification(
-                        AndroidNotification.builder()
-                            .setClickAction(fcmDto.notificationType.name)
-                            .build()
-                    )
-                    .build()
-            )
-            .putAllData(data)
+            .putAllData(data + mapOf("title" to FcmMsgGenerator.TITLE,
+                "body" to generateSystemMsgBody(fcmDto.notificationType)))
             .setToken(fcmDto.fcmToken)
             .build()
     }
