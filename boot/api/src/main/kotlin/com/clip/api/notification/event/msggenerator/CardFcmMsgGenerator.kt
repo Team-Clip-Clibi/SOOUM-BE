@@ -4,7 +4,10 @@ import com.clip.api.notification.event.CardFCMEvent
 import com.clip.api.notification.event.FCMEvent
 import com.clip.data.member.entity.DeviceType
 import com.clip.data.notification.entity.notificationtype.NotificationType
-import com.google.firebase.messaging.*
+import com.google.firebase.messaging.ApnsConfig
+import com.google.firebase.messaging.Aps
+import com.google.firebase.messaging.Message
+import com.google.firebase.messaging.Notification
 import org.springframework.stereotype.Component
 
 @Component
@@ -47,22 +50,8 @@ class CardFcmMsgGenerator: FcmMsgGenerator {
         val data = toCardFcmData(fcmDto)
 
         return Message.builder()
-            .setNotification(
-                Notification.builder()
-                    .setTitle(FcmMsgGenerator.TITLE)
-                    .setBody(generateCardMsgBody(fcmDto.writerNickname, fcmDto.notificationType))
-                    .build()
-            )
-            .setAndroidConfig(
-                AndroidConfig.builder()
-                    .setNotification(
-                        AndroidNotification.builder()
-                            .setClickAction(fcmDto.notificationType.name)
-                            .build()
-                    )
-                    .build()
-            )
-            .putAllData(data)
+            .putAllData(data + mapOf("title" to FcmMsgGenerator.TITLE,
+                "body" to generateCardMsgBody(fcmDto.writerNickname, fcmDto.notificationType)))
             .setToken(fcmDto.fcmToken)
             .build()
     }
