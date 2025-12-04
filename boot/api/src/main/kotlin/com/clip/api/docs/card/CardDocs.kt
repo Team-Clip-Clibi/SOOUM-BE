@@ -1,10 +1,6 @@
 package com.clip.api.docs.card
 
-import com.clip.api.card.controller.dto.CardDetailResponse
-import com.clip.api.card.controller.dto.CommentCardResponse
-import com.clip.api.card.controller.dto.CreateCardResponse
-import com.clip.api.card.controller.dto.CreateCommentCardRequest
-import com.clip.api.card.controller.dto.CreateFeedCardRequest
+import com.clip.api.card.controller.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
@@ -63,4 +59,11 @@ interface CardDocs {
         cardId: Long,
         userId: Long,
     ): ResponseEntity<Unit>
+
+    @Operation(summary = "카드 삭제여부 조회 API", description = """
+        - 피드카드 id 또는 답카드 id로 해당 카드를 삭제할 수 있는지 조회하는 API
+    """)
+    fun isDeleteCard(
+        cardId: Long,
+    ): DeleteCheckResponse
 }

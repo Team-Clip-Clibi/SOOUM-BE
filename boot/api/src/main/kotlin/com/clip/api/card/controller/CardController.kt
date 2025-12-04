@@ -24,6 +24,12 @@ class CardController(
             .let { ResponseEntity.ok(it) }
 
 
+    @GetMapping("/{cardId}/delete-check")
+    override fun isDeleteCard(
+        @PathVariable cardId: Long,
+    ): DeleteCheckResponse =
+        cardUseCase.isDeleteCard(cardId)
+
     @PostMapping("/{cardId}")
     override fun createCommentCard(
         request: HttpServletRequest,
