@@ -352,4 +352,12 @@ class CardUseCase(
             throw ImageException.InvalidImageException(imgName = imgName)
     }
 
+    fun isDeleteCard(cardId: Long): DeleteCheckResponse {
+        val existFeedCard = feedCardService.isExistFeedCard(cardId)
+        if (!existFeedCard) {
+            return DeleteCheckResponse(!commentCardService.isExistCommentCard(cardId))
+        }
+        return DeleteCheckResponse(isDeleted = false)
+    }
+
 }
