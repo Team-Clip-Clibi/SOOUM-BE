@@ -15,4 +15,5 @@ class DefaultImageProperties {
     lateinit var sensitivity: List<String>
     lateinit var food: List<String>
     lateinit var memo: List<String>
+    lateinit var event: List<String>
 }

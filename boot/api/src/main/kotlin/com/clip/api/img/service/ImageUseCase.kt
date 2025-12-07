@@ -91,6 +91,12 @@ class ImageUseCase(
                         it,
                         s3ImgService.generateDefaultCardImgUrl(it)
                     )
+                },
+                DefaultImgCategory.EVENT to defaultImageProperties.event.takeIf { it.isNotEmpty() }?.map {
+                    ImgInfo(
+                        it,
+                        s3ImgService.generateDefaultCardImgUrl(it)
+                    )
                 }
             )
         )

@@ -1,7 +1,7 @@
 package com.clip.api.img.controller.dto
 
 data class DefaultImagesResponse(
-    val defaultImages: Map<DefaultImgCategory, List<ImgInfo>>
+    val defaultImages: Map<DefaultImgCategory, List<ImgInfo>?>
 )
 
 data class ImgInfo(

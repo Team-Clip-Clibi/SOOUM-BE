@@ -18,7 +18,10 @@ interface ImageDocs {
     fun uploadProfileImage(): ResponseEntity<ImageUrlInfoResponse>
 
     @Operation(summary = "기본 배경 리스트 조회 API", description = """
-        - 카드 작성 시 사용되는 배경 사진 중 기본 배경 사진의 이름과 현재 사용 가능 여부를 조회합니다.
+        - 카드 작성 시 사용되는 배경 사진 중 기본 배경 사진의 카테고리와, 각 카테고리에 해당하는 사진 이름 및 url 정보를 가진 DTO 리스트를 조회합니다.
+        - 기본 배경 사진은 COLOR, MEMO, NATURE, SENSITIVITY, FOOD, ABSTRACT, EVENT 총 7가지 카테고리로 구분됩니다.
+        - 카테고리별 이미지는 7장씩 반환됩니다.
+        - EVENT 카테고리의 이미지 리스트는 이벤트 배경 사진이 오픈된 경우에만 반환되며, 이벤트 기간이 아닌경우 null을 반환합니다.
     """)
     fun getDefaultImgs(): ResponseEntity<DefaultImagesResponse>
 
