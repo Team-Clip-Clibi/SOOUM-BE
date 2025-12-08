@@ -52,3 +52,12 @@ default-img:
     - Memo5.jpeg
     - Memo6.jpeg
     - Memo7.jpeg
+
+  event:
+    - event1.jpeg
+    - event2.jpeg
+    - event3.jpeg
+    - event4.jpeg
+    - event5.jpeg
+    - event6.jpeg
+    - event7.jpeg

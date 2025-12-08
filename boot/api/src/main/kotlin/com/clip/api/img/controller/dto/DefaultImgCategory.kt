@@ -8,5 +8,6 @@ enum class DefaultImgCategory(
     NATURE("자연"),
     SENSITIVITY("감성"),
     FOOD("음식"),
-    ABSTRACT("추상")
+    ABSTRACT("추상"),
+    EVENT("이벤트")
 }
