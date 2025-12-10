@@ -23,6 +23,8 @@ spring:
         cacheServerConfiguration: true
         elideSetAutoCommits: true
         maintainTimeStats: false
+  flyway:
+    enabled: false
 
   jpa:
     defer-datasource-initialization: false
