@@ -4,6 +4,8 @@ spring:
     username: ${USERNAME}
     password: ${PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: false
 
   jpa:
     defer-datasource-initialization: false
