@@ -25,10 +25,6 @@ class DeleteExpiredBlacklistScheduler(
 
     @Scheduled(cron = "0 45 4 * * ?")
     fun runDeleteExpiredBlacklistJob() {
-//        val jobParameters = JobParametersBuilder(jobExplorer)
-//            .getNextJobParameters(deleteExpiredBlacklistJob())
-//            .toJobParameters()
-//        jobLauncher.run(deleteExpiredBlacklistJob(), jobParameters)
         jobOperator.startNextInstance(deleteExpiredBlacklistJob())
     }
     @Bean

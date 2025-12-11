@@ -48,14 +48,6 @@ class FcmScheduler(
             .addString("startTime", LocalDateTime.now().toString())
             .toJobParameters()
 
-//        val jobParameters = JobParametersBuilder(jobExplorer)
-//            .getNextJobParameters(fcmSchedulerJob())
-//            .addString("title", findFirstSchedulerContent.title)
-//            .addString("content", findFirstSchedulerContent.content)
-//            .toJobParameters()
-//        jobLauncher.run(fcmSchedulerJob(),jobParameters)
-
-//        jobOperator.startNextInstance(fcmSchedulerJob(), jobParameters)
         jobOperator.start(fcmSchedulerJob(),jobParameters)
     }
 

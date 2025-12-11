@@ -25,12 +25,7 @@ class DeleteCardImgScheduler(
 
     @Scheduled(cron = "0 0 3 * * *")
     fun runJob() {
-//        val jobParameters = JobParametersBuilder(jobExplorer)
-//            .getNextJobParameters(deleteCardImgJob())
-//            .toJobParameters()
-
         runCatching {
-//            jobLauncher.run(deleteCardImgJob(), jobParameters)
             jobOperator.startNextInstance(deleteCardImgJob())
         }.onFailure { e ->
             log.error("Failed to execute DeleteCardImg batch job", e)

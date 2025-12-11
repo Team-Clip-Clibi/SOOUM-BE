@@ -29,7 +29,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.batch:spring-batch-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation(("org.springframework.boot:spring-boot-starter-data-redis"))
     //firebase
     implementation("com.google.firebase:firebase-admin:9.4.1")
 

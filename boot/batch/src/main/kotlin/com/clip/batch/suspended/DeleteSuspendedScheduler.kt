@@ -24,11 +24,6 @@ class DeleteSuspendedScheduler(
 
     @Scheduled(cron = "0 30 4 * * ?")
     fun runDeleteSuspendedJob() {
-//        val jobParameters = JobParametersBuilder(jobExplorer)
-//            .getNextJobParameters(deleteSuspendedJob())
-//            .toJobParameters()
-//        jobLauncher.run(deleteSuspendedJob(), jobParameters)
-
         jobOperator.startNextInstance(deleteSuspendedJob())
     }
     @Bean

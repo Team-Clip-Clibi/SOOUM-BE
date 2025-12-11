@@ -26,12 +26,7 @@ class DeleteProfileImgScheduler(
 
     @Scheduled(cron = "0 30 3 * * *")
     fun runJob() {
-//        val jobParameters = JobParametersBuilder(jobExplorer)
-//            .getNextJobParameters(deleteProfileImgJob())
-//            .toJobParameters()
-
         runCatching {
-//            jobLauncher.run(deleteProfileImgJob(), jobParameters)
             jobOperator.startNextInstance(deleteProfileImgJob())
         }.onFailure { e ->
             log.error("Failed to execute DeleteProfileImg batch job", e)
