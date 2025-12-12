@@ -66,7 +66,12 @@ class AuthUseCase(
             throw IllegalStateException.SuspendedUserException()
         }
         val deviceId = decodeWithRsa.execute(encryptedDeviceId)
-        request.memberInfo.profileImage?.takeIf { it.isNotBlank() }?.let { imgName ->
+
+        val normalizedImgName = request.memberInfo.profileImage
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+
+        normalizedImgName?.let { imgName ->
             // 이미지 저장 여부 확인
             if (!s3ImgService.isImgSaved(s3ImgPathProperties.profileImg, imgName)) {
                 throw ImageException.ImageNotFoundException(imgName = imgName)
@@ -91,7 +96,7 @@ class AuthUseCase(
                     .deviceOsVersion(request.memberInfo.deviceOsVersion)
                     .firebaseToken(request.memberInfo.fcmToken)
                     .nickname(request.memberInfo.nickname)
-                    .profileImgName(request.memberInfo.profileImage)
+                    .profileImgName(normalizedImgName)
                     .isAllowNotify(true)
                     .build()
             )
