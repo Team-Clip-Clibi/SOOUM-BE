@@ -82,8 +82,12 @@ class MemberUseCase(
     fun updateProfileImage(imageName: String?, id: Long) {
         val member = memberService.findMember(id)
 
+        val normalizedImgName = imageName
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+
         // 프로필 이미지가 null 또는 공백이 아닐 때
-        imageName?.takeIf { it.isNotBlank() }?.let { imgName ->
+        normalizedImgName?.let { imgName ->
             // 기존 프로필 이미지와 동일하면 함수 종료
             if (member.profileImgName == imageName) {
                 return
@@ -102,7 +106,7 @@ class MemberUseCase(
         }
 
         // 멤버 프로필 이미지 이름 업데이트
-        member.updateProfileImgName(imageName)
+        member.updateProfileImgName(normalizedImgName)
     }
 
     @Transactional
