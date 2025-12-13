@@ -1,7 +1,6 @@
 package com.clip.global.security.resolver
 
 import com.clip.global.security.annotation.AccessUser
-import com.clip.global.security.jwt.JwtProvider
 import org.springframework.core.MethodParameter
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -33,7 +32,7 @@ class AccessUserArgumentResolver : HandlerMethodArgumentResolver {
             return 0L
         }
 
-        return when (val principal = authentication.principal) {
+        return when (val principal = authentication?.principal) {
             is User -> principal.username.toLongOrNull()
             is String -> principal.toLongOrNull()
             else -> null

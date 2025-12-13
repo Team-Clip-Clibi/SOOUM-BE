@@ -22,7 +22,7 @@ class RequestCachingFilter : OncePerRequestFilter() {
         val wrappedRequest = if (request is ContentCachingRequestWrapper) {
             request
         } else {
-            ContentCachingRequestWrapper(request)
+            ContentCachingRequestWrapper(request, 1024*1024)
         }
 
         val wrappedResponse = if (response is ContentCachingResponseWrapper) {
