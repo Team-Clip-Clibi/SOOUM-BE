@@ -1,13 +1,11 @@
 package com.clip.batch.rsa.service
 
 import com.clip.data.rsa.service.RsaService
-import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.security.KeyPairGenerator
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
-import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 

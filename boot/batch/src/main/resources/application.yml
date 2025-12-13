@@ -1,10 +1,15 @@
 spring:
   batch:
     job:
+      enabled: false
   profiles:
     group:
       local:
         - data-local
+        - cloud-local
+      dev:
+        - data-dev
+        - cloud-dev
 
   jackson:
     time-zone: Asia/Seoul

@@ -5,20 +5,21 @@ import com.clip.batch.card.dto.FeedRelatedEntitiesDeletionDto
 import com.clip.batch.card.repository.*
 import com.clip.data.card.entity.CommentCard
 import com.clip.data.card.entity.FeedCard
+import jakarta.persistence.EntityManager
 import org.springframework.batch.core.ExitStatus
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.StepScope
+import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
-import org.springframework.batch.core.launch.JobLauncher
-import org.springframework.batch.core.launch.support.RunIdIncrementer
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
+import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.Step
 import org.springframework.batch.core.step.builder.StepBuilder
-import org.springframework.batch.item.ItemProcessor
-import org.springframework.batch.item.ItemWriter
-import org.springframework.batch.item.database.JdbcPagingItemReader
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean
+import org.springframework.batch.infrastructure.item.ItemProcessor
+import org.springframework.batch.infrastructure.item.ItemWriter
+import org.springframework.batch.infrastructure.item.database.JdbcPagingItemReader
+import org.springframework.batch.infrastructure.item.database.builder.JdbcPagingItemReaderBuilder
+import org.springframework.batch.infrastructure.item.database.support.SqlPagingQueryProviderFactoryBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -33,8 +34,9 @@ import javax.sql.DataSource
 class DeleteStoryCardScheduler(
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
-    private val jobLauncher: JobLauncher,
+    private val jobOperator: JobOperator,
     private val dataSource: DataSource,
+    private val entityManager: EntityManager,
 
     private val commentCardBatchRepository: CommentCardBatchRepository,
     private val commentLikeBatchRepository: CommentLikeBatchRepository,
@@ -45,6 +47,7 @@ class DeleteStoryCardScheduler(
     private val cardImgBatchRepository: CardImgBatchRepository,
     private val notificationBatchRepository: NotificationBatchRepository,
     private val commentTagBatchRepository: CommentTagBatchRepository,
+    private val feedTagBatchRepository: FeedTagBatchRepository,
 
     private val deletedStoryFeedIdReader: JdbcPagingItemReader<Long>,
 ) {
@@ -61,13 +64,12 @@ class DeleteStoryCardScheduler(
             .addString("baseTime", baseTime.toString())
             .toJobParameters()
 
-        jobLauncher.run(commentCardReaderJob(), jobParameters)
+        jobOperator.start(commentCardReaderJob(), jobParameters)
     }
 
     @Bean
     fun commentCardReaderJob(): Job =
         JobBuilder("commentCardReaderJob", jobRepository)
-            .incrementer(RunIdIncrementer())
             .start(deletedStoryCommentCardStep())
             .on(ExitStatus.COMPLETED.exitCode)
             .to(deletedStoryFeedCardStep())
@@ -78,7 +80,8 @@ class DeleteStoryCardScheduler(
     @Bean
     fun deletedStoryCommentCardStep(): Step =
         StepBuilder("deletedStoryCommentCardStep", jobRepository)
-            .chunk<Long, CommentRelatedEntitiesDeletionDto?>(CHUNK_SIZE, transactionManager)
+            .chunk<Long, CommentRelatedEntitiesDeletionDto>(CHUNK_SIZE)
+            .transactionManager(transactionManager)
             .reader(deletedStoryFeedIdReader)
             .processor(commentRelatedEntitiesDeletionProcessor())
             .writer(commentRelatedEntitiesDeletionWriter())
@@ -87,7 +90,8 @@ class DeleteStoryCardScheduler(
     @Bean
     fun deletedStoryFeedCardStep(): Step =
         StepBuilder("deletedStoryFeedCardStep", jobRepository)
-            .chunk<Long, FeedRelatedEntitiesDeletionDto?>(CHUNK_SIZE, transactionManager)
+            .chunk<Long, FeedRelatedEntitiesDeletionDto>(CHUNK_SIZE)
+            .transactionManager(transactionManager)
             .reader(deletedStoryFeedIdReader)
             .processor(feedRelatedEntitiesDeletionProcessor())
             .writer(feedDeletionWriter())
@@ -115,19 +119,19 @@ class DeleteStoryCardScheduler(
 
         val queryProvider = queryProviderFactory.`object`
 
-        return JdbcPagingItemReader<Long>().apply {
-            name = "deletedStoryFeedIdReader"
-            setDataSource(dataSource)
-            pageSize = CHUNK_SIZE
-            setQueryProvider(queryProvider)
-            setParameterValues(parameterValues)
-            setRowMapper { rs, _ -> rs.getLong("pk") }
-        }
+        return JdbcPagingItemReaderBuilder<Long>()
+            .name("deletedStoryFeedIdReader")
+            .dataSource(dataSource)
+            .pageSize(CHUNK_SIZE)
+            .queryProvider(queryProvider)
+            .parameterValues(parameterValues)
+            .rowMapper { rs, _ -> rs.getLong("pk") }
+            .build()
     }
 
     @Bean
     fun commentRelatedEntitiesDeletionProcessor():
-            ItemProcessor<Long, CommentRelatedEntitiesDeletionDto?> =
+            ItemProcessor<Long, CommentRelatedEntitiesDeletionDto> =
         ItemProcessor { feedCardId ->
             feedCardBatchRepository.findByIdOrNull(feedCardId)?.let { feedCard: FeedCard ->
                 val commentCardsForDeletion: List<CommentCard> =
@@ -157,27 +161,29 @@ class DeleteStoryCardScheduler(
 
     @Bean
     fun feedRelatedEntitiesDeletionProcessor():
-            ItemProcessor<Long, FeedRelatedEntitiesDeletionDto?> =
+            ItemProcessor<Long, FeedRelatedEntitiesDeletionDto> =
         ItemProcessor { feedCardId ->
             feedCardBatchRepository.findByIdOrNull(feedCardId)?.let { feedCard: FeedCard ->
                 val feedLikesForDeletion =
                     feedLikeBatchRepository.findFeedLikesForDeletion(feedCard)
                 val feedReportsForDeletion =
                     feedReportBatchRepository.findFeedReportsForDeletion(feedCard)
+                val feedTagsForDeletion = feedTagBatchRepository.findFeedTagsForDeletion(feedCard)
 
                 FeedRelatedEntitiesDeletionDto(
                     feedCard = feedCard,
                     feedLikes = feedLikesForDeletion,
                     feedReports = feedReportsForDeletion,
+                    feedTags = feedTagsForDeletion
                 )
             }
         }
 
     @Bean
     fun commentRelatedEntitiesDeletionWriter():
-            ItemWriter<CommentRelatedEntitiesDeletionDto?> =
+            ItemWriter<CommentRelatedEntitiesDeletionDto> =
         ItemWriter { items ->
-            items.filterNotNull().forEach { dto ->
+            items.forEach { dto ->
                 commentTagBatchRepository.deleteAllInBatch(dto.commentTags)
                 commentLikeBatchRepository.deleteAllInBatch(dto.commentLikes)
                 commentReportBatchRepository.deleteAllInBatch(dto.commentReports)
@@ -188,7 +194,7 @@ class DeleteStoryCardScheduler(
 
     @Bean
     fun feedDeletionWriter():
-            ItemWriter<FeedRelatedEntitiesDeletionDto?> =
+            ItemWriter<FeedRelatedEntitiesDeletionDto> =
         ItemWriter { items ->
             items.filterNotNull().forEach { dto ->
                 val feedCard = dto.feedCard
@@ -196,10 +202,13 @@ class DeleteStoryCardScheduler(
                 cardImgBatchRepository.updateFeedCardImgNull(feedCard)
                 feedLikeBatchRepository.deleteAllInBatch(dto.feedLikes)
                 feedReportBatchRepository.deleteAllInBatch(dto.feedReports)
+                feedTagBatchRepository.deleteAllInBatch(dto.feedTags)
 
                 val notificationsForDeletion =
                     notificationBatchRepository.findNotificationsForDeletion(listOf(feedCard.pk))
                 notificationBatchRepository.deleteAllInBatch(notificationsForDeletion)
+                entityManager.flush()
+                entityManager.clear()
 
                 feedCardBatchRepository.delete(feedCard)
             }

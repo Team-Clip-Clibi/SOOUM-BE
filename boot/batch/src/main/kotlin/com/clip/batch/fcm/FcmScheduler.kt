@@ -4,32 +4,31 @@ import com.clip.batch.fcm.service.FcmSchedulerService
 import com.clip.data.notification.service.FcmSchedulerContentService
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobScope
-import org.springframework.batch.core.explore.JobExplorer
+import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
-import org.springframework.batch.core.launch.JobLauncher
-import org.springframework.batch.core.launch.support.RunIdIncrementer
+import org.springframework.batch.core.job.parameters.JobParametersBuilder
+import org.springframework.batch.core.job.parameters.RunIdIncrementer
+import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.Step
 import org.springframework.batch.core.step.builder.StepBuilder
-import org.springframework.batch.item.ItemWriter
-import org.springframework.batch.item.database.JdbcPagingItemReader
-import org.springframework.batch.item.database.Order
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder
+import org.springframework.batch.infrastructure.item.ItemWriter
+import org.springframework.batch.infrastructure.item.database.JdbcPagingItemReader
+import org.springframework.batch.infrastructure.item.database.Order
+import org.springframework.batch.infrastructure.item.database.builder.JdbcPagingItemReaderBuilder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.transaction.PlatformTransactionManager
+import java.time.LocalDateTime
 import javax.sql.DataSource
 
 @Configuration
 class FcmScheduler(
     private val dataSource: DataSource,
-    private val jobExplorer: JobExplorer,
-    private val jobLauncher: JobLauncher,
+    private val jobOperator: JobOperator,
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
     private val fcmSchedulerContentService: FcmSchedulerContentService,
@@ -43,13 +42,13 @@ class FcmScheduler(
     fun runFcmSchedulerJob() {
 
         val findFirstSchedulerContent = fcmSchedulerContentService.findFirstSchedulerContent()
-
-        val jobParameters = JobParametersBuilder(jobExplorer)
-            .getNextJobParameters(fcmSchedulerJob())
+        val jobParameters = JobParametersBuilder()
             .addString("title", findFirstSchedulerContent.title)
             .addString("content", findFirstSchedulerContent.content)
+            .addString("startTime", LocalDateTime.now().toString())
             .toJobParameters()
-        jobLauncher.run(fcmSchedulerJob(),jobParameters)
+
+        jobOperator.start(fcmSchedulerJob(),jobParameters)
     }
 
     @Bean
@@ -63,7 +62,8 @@ class FcmScheduler(
     @Bean
     fun fcmSchedulerStep(): Step =
         StepBuilder("fcmSchedulerStep", jobRepository)
-            .chunk<String, String>(CHUNK_SIZE, transactionManager)
+            .chunk<String, String>(CHUNK_SIZE)
+            .transactionManager(transactionManager)
             .reader(fcmReader())
             .writer(fcmWriter(null, null))
             .build()
@@ -74,11 +74,11 @@ class FcmScheduler(
             .name("fcmReader")
             .dataSource(dataSource)
             .pageSize(CHUNK_SIZE)
-            .selectClause("select firebaseToken")
-            .fromClause("from Member")
-            .whereClause("isAllowNotify = true and firebaseToken is not null")
+            .selectClause("select firebase_token, pk")
+            .fromClause("from member")
+            .whereClause("is_allow_notify = true and firebase_token is not null")
             .sortKeys(mapOf("pk" to Order.ASCENDING))
-            .rowMapper { rs, _ -> rs.getString("firebaseToken") }
+            .rowMapper { rs, _ -> rs.getString("firebase_token") }
             .build()
 
     @Bean

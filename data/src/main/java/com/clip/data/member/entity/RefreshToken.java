@@ -16,7 +16,7 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
-    @Column(name = "REFRESH_TOKEN")
+    @Column(name = "REFRESH_TOKEN", length = 300)
     private String refreshToken;
 
     @NotNull
