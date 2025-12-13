@@ -5,6 +5,7 @@ import com.clip.batch.card.dto.FeedRelatedEntitiesDeletionDto
 import com.clip.batch.card.repository.*
 import com.clip.data.card.entity.CommentCard
 import com.clip.data.card.entity.FeedCard
+import jakarta.persistence.EntityManager
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.job.Job
@@ -35,6 +36,7 @@ class DeleteStoryCardScheduler(
     private val transactionManager: PlatformTransactionManager,
     private val jobOperator: JobOperator,
     private val dataSource: DataSource,
+    private val entityManager: EntityManager,
 
     private val commentCardBatchRepository: CommentCardBatchRepository,
     private val commentLikeBatchRepository: CommentLikeBatchRepository,
@@ -181,7 +183,7 @@ class DeleteStoryCardScheduler(
     fun commentRelatedEntitiesDeletionWriter():
             ItemWriter<CommentRelatedEntitiesDeletionDto> =
         ItemWriter { items ->
-            items.filterNotNull().forEach { dto ->
+            items.forEach { dto ->
                 commentTagBatchRepository.deleteAllInBatch(dto.commentTags)
                 commentLikeBatchRepository.deleteAllInBatch(dto.commentLikes)
                 commentReportBatchRepository.deleteAllInBatch(dto.commentReports)
@@ -205,6 +207,8 @@ class DeleteStoryCardScheduler(
                 val notificationsForDeletion =
                     notificationBatchRepository.findNotificationsForDeletion(listOf(feedCard.pk))
                 notificationBatchRepository.deleteAllInBatch(notificationsForDeletion)
+                entityManager.flush()
+                entityManager.clear()
 
                 feedCardBatchRepository.delete(feedCard)
             }

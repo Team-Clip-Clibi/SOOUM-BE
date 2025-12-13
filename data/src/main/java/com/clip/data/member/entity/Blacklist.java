@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class Blacklist extends BaseEntity {
 
     @Id
-    @Column(name = "TOKEN")
+    @Column(name = "TOKEN", length = 300)
     private String token;
 
     @Column(name = "EXPIRED_AT")

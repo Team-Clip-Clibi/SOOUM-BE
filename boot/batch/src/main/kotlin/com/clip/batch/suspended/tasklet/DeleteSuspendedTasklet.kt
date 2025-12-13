@@ -21,7 +21,7 @@ class DeleteSuspendedTasklet(
     ): RepeatStatus {
 
         val updateCnt = jdbcTemplate.update(
-            "delete from Suspended s where s.until_ban < current_timestamp"
+            "delete from suspended s where s.until_ban < current_timestamp"
         )
         log.info("${updateCnt}개의 기간 만료된 탈퇴 이력(재가입 방지용) 레코드가 삭제되었습니다.")
         return RepeatStatus.FINISHED

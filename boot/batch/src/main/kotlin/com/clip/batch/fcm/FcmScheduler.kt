@@ -74,11 +74,11 @@ class FcmScheduler(
             .name("fcmReader")
             .dataSource(dataSource)
             .pageSize(CHUNK_SIZE)
-            .selectClause("select firebaseToken")
-            .fromClause("from Member")
-            .whereClause("isAllowNotify = true and firebaseToken is not null")
+            .selectClause("select firebase_token, pk")
+            .fromClause("from member")
+            .whereClause("is_allow_notify = true and firebase_token is not null")
             .sortKeys(mapOf("pk" to Order.ASCENDING))
-            .rowMapper { rs, _ -> rs.getString("firebaseToken") }
+            .rowMapper { rs, _ -> rs.getString("firebase_token") }
             .build()
 
     @Bean

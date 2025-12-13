@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param
 
 interface FeedTagBatchRepository : FeedTagRepository {
 
-    @Query("select ft from FeedTag ft where ft.feedCard = :feedCard")
+    @Query("select ft from FeedTag ft where ft.feedCard = :targetCard")
     fun findFeedTagsForDeletion(
         @Param("targetCard") targetCard: FeedCard
     ): List<FeedTag>
