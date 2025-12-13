@@ -45,6 +45,7 @@ class DeleteStoryCardScheduler(
     private val cardImgBatchRepository: CardImgBatchRepository,
     private val notificationBatchRepository: NotificationBatchRepository,
     private val commentTagBatchRepository: CommentTagBatchRepository,
+    private val feedTagBatchRepository: FeedTagBatchRepository,
 
     private val deletedStoryFeedIdReader: JdbcPagingItemReader<Long>,
 ) {
@@ -165,11 +166,13 @@ class DeleteStoryCardScheduler(
                     feedLikeBatchRepository.findFeedLikesForDeletion(feedCard)
                 val feedReportsForDeletion =
                     feedReportBatchRepository.findFeedReportsForDeletion(feedCard)
+                val feedTagsForDeletion = feedTagBatchRepository.findFeedTagsForDeletion(feedCard)
 
                 FeedRelatedEntitiesDeletionDto(
                     feedCard = feedCard,
                     feedLikes = feedLikesForDeletion,
                     feedReports = feedReportsForDeletion,
+                    feedTags = feedTagsForDeletion
                 )
             }
         }
@@ -197,6 +200,7 @@ class DeleteStoryCardScheduler(
                 cardImgBatchRepository.updateFeedCardImgNull(feedCard)
                 feedLikeBatchRepository.deleteAllInBatch(dto.feedLikes)
                 feedReportBatchRepository.deleteAllInBatch(dto.feedReports)
+                feedTagBatchRepository.deleteAllInBatch(dto.feedTags)
 
                 val notificationsForDeletion =
                     notificationBatchRepository.findNotificationsForDeletion(listOf(feedCard.pk))
