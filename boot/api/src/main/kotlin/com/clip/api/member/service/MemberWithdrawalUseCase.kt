@@ -89,7 +89,7 @@ class MemberWithdrawalUseCase(
 
         favoriteTagService.deleteAllFavoriteTag(memberPk)
 
-        feedTagService.deleteFeedTag(memberPk)
+        feedTagService.deleteFeedTagByMemberPk(memberPk)
         commentTagService.deleteCommentTag(memberPk)
 
         commentCardService.deleteCommentCardByMemberPk(memberPk)

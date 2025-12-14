@@ -56,8 +56,18 @@ public class FeedTagService {
         return feedTagRepository.saveAll(feedTags);
     }
 
-    public void deleteFeedTag(Long memberPk) {
-        feedTagRepository.deleteFeedTag(memberPk);
+    public void deleteFeedTagByMemberPk(Long memberPk) {
+        List<FeedTag> feedTags = feedTagRepository.findAllByMemberPk(memberPk);
+
+        if(!feedTags.isEmpty()) {
+            tagService.decrementTagCount(
+                    feedTags.stream()
+                            .map(FeedTag::getTag)
+                            .toList()
+            );
+
+            feedTagRepository.deleteAllInBatch(feedTags);
+        }
     }
 
     public List<FeedTag> findFeedCardsByTag(Long tagPk, Optional<Long> lastId, List<Long> blockMemberPks) {
