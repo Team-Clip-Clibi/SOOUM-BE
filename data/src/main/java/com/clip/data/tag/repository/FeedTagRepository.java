@@ -16,6 +16,9 @@ public interface FeedTagRepository extends JpaRepository<FeedTag, Long> {
     @Query("select ft from FeedTag ft join fetch ft.tag where ft.feedCard.pk = :cardPk")
     List<FeedTag> findAllByFeedCardPk(@Param("cardPk") Long cardPk);
 
+    @Query("select ft from FeedTag ft join fetch ft.tag where ft.feedCard.writer.pk = :memberPk")
+    List<FeedTag> findAllByMemberPk(@Param("memberPk") Long memberPk);
+
     @Query("SELECT ft FROM FeedTag ft WHERE ft.feedCard = :feedCard")
     List<FeedTag> findTagsByFeedCard(@Param("feedCard") FeedCard feedCard);
     @Query("select ft.feedCard from FeedTag ft " +
