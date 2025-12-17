@@ -14,6 +14,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        indexes = {
+                @Index(name = "idx_feed_tag_tag_feed_card", columnList = "TAG, FEED_CARD")
+        }
+)
 public class FeedTag extends BaseEntity {
     @Id @Tsid
     private Long pk;

@@ -66,21 +66,52 @@ class TagUseCase(
     fun findFeedTagCards(tagId: Long, lastId: Long?, userId: Long): TagCardContentsResponse {
         val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
         val isFavorite = favoriteTagService.isExistsByTagPkAndMemberPk(tagId, userId)
-        val cardContents = feedTagService
-            .findFeedCardsByTag(tagId, Optional.ofNullable(lastId), blockedMembers)
-            .map {
-                CardContent(
-                    cardId = it.feedCard.pk,
-                    cardImgName = it.feedCard.imgName,
-                    cardImgUrl = when (it.feedCard.imgType) {
-                        CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(it.feedCard.imgName)
-                        CardImgType.USER -> s3ImgService.generateUserCardImgUrl(it.feedCard.imgName)
-                    },
-                    cardContent = it.feedCard.content,
-                    font = it.feedCard.font
+
+        val maxCardCount = 30
+        val maxFetchCount = 10
+
+        val cardContentMap = LinkedHashMap<Long, CardContent>()
+        var lastFetchedCardId: Long? = lastId
+
+        for (fetchTry in 0 until maxFetchCount) {
+            if (cardContentMap.size >= maxCardCount) break
+
+            val fetchedFeedTags = feedTagService.findFeedCardsByTag(
+                tagId,
+                Optional.ofNullable(lastFetchedCardId),
+                blockedMembers
+            )
+
+            if (fetchedFeedTags.isEmpty()) break
+
+            lastFetchedCardId = fetchedFeedTags.last().feedCard.pk
+
+            for (feedTag in fetchedFeedTags) {
+                if (cardContentMap.size >= maxCardCount) break
+
+                val feedCard = feedTag.feedCard
+                cardContentMap.putIfAbsent(
+                    feedCard.pk,
+                    CardContent(
+                        cardId = feedCard.pk,
+                        cardImgName = feedCard.imgName,
+                        cardImgUrl = when (feedCard.imgType) {
+                            CardImgType.DEFAULT ->
+                                s3ImgService.generateDefaultCardImgUrl(feedCard.imgName)
+                            CardImgType.USER ->
+                                s3ImgService.generateUserCardImgUrl(feedCard.imgName)
+                        },
+                        cardContent = feedCard.content,
+                        font = feedCard.font
+                    )
                 )
             }
-        return TagCardContentsResponse(cardContents, isFavorite)
+        }
+
+        return TagCardContentsResponse(
+            cardContents = cardContentMap.values.take(maxCardCount),
+            isFavorite = isFavorite
+        )
     }
 
     fun findFavoriteTags(userId: Long): FavoriteTagResponse {
