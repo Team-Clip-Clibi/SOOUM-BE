@@ -168,6 +168,16 @@ class GlobalExceptionHandler(
         return ResponseEntity.status(e.httpStatus).body(errorResponse)
     }
 
+    @ExceptionHandler(FeedException.FeedCardFetchLimitExceededException::class)
+    fun feedCardFetchLimitExceededException(e: FeedException.FeedCardFetchLimitExceededException): ResponseEntity<ErrorResponse> {
+        slackEventPublisher.publish(
+            message = "feedCardFetchLimitExceededException Handler 호출됨: ${e.message}",
+            exception = e,
+        )
+        val errorResponse = ErrorResponse.create(e, e.httpStatus, e.message)
+        return ResponseEntity.status(e.httpStatus).body(errorResponse)
+    }
+
     @ExceptionHandler(BaseException::class)
     fun baseException(e: BaseException): ResponseEntity<ErrorResponse> {
         slackEventPublisher.publish(

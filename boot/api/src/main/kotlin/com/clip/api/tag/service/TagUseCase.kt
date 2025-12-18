@@ -8,6 +8,7 @@ import com.clip.data.tag.entity.FavoriteTag
 import com.clip.data.tag.service.FavoriteTagService
 import com.clip.data.tag.service.FeedTagService
 import com.clip.data.tag.service.TagService
+import com.clip.global.exception.FeedException
 import com.clip.global.exception.IllegalStateException
 import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
@@ -73,7 +74,7 @@ class TagUseCase(
         val cardContentMap = LinkedHashMap<Long, CardContent>()
         var lastFetchedCardId: Long? = lastId
 
-        for (fetchTry in 0 until maxFetchCount) {
+        for (attempt in 1..maxFetchCount) {
             if (cardContentMap.size >= maxCardCount) break
 
             val fetchedFeedTags = feedTagService.findFeedCardsByTag(
@@ -96,15 +97,17 @@ class TagUseCase(
                         cardId = feedCard.pk,
                         cardImgName = feedCard.imgName,
                         cardImgUrl = when (feedCard.imgType) {
-                            CardImgType.DEFAULT ->
-                                s3ImgService.generateDefaultCardImgUrl(feedCard.imgName)
-                            CardImgType.USER ->
-                                s3ImgService.generateUserCardImgUrl(feedCard.imgName)
+                            CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(feedCard.imgName)
+                            CardImgType.USER -> s3ImgService.generateUserCardImgUrl(feedCard.imgName)
                         },
                         cardContent = feedCard.content,
                         font = feedCard.font
                     )
                 )
+            }
+
+            if (attempt == maxFetchCount && cardContentMap.size < maxCardCount) {
+                throw FeedException.FeedCardFetchLimitExceededException()
             }
         }
 
