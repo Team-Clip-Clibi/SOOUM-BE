@@ -144,7 +144,7 @@ class CardMapper(
             isCommentWritten = CardUtil.isWrittenCommentCard(card, comments, userId),
             tags = tags.map { TagResponse(it.pk, it.content) },
             isOwnCard = writer.pk == userId,
-            previousCardId = parentCard?.pk?.toString() ?: "",
+            previousCardId = card.parentCardPk.toString(),
             isPreviousCardDeleted = parentCard == null,
             previousCardImgUrl = parentCard?.let {
                 when (it.imgType){
