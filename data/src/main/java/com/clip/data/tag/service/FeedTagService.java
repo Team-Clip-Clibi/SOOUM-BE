@@ -71,7 +71,7 @@ public class FeedTagService {
     }
 
     public List<FeedTag> findFeedCardsByTag(Long tagPk, Optional<Long> lastId, List<Long> blockMemberPks) {
-        PageRequest pageRequest = PageRequest.ofSize(MAX_PAGE_SIZE);
+        PageRequest pageRequest = PageRequest.ofSize(35);
         return blockMemberPks.isEmpty()
                 ? feedTagRepository.findFeedCardsByTagWithoutBlock(tagPk, lastId.orElse(null),  pageRequest)
                 : feedTagRepository.findFeedCardsByTagWithBlock(tagPk, lastId.orElse(null), blockMemberPks, pageRequest);

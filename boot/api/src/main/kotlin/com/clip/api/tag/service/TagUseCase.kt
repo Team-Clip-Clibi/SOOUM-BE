@@ -8,6 +8,7 @@ import com.clip.data.tag.entity.FavoriteTag
 import com.clip.data.tag.service.FavoriteTagService
 import com.clip.data.tag.service.FeedTagService
 import com.clip.data.tag.service.TagService
+import com.clip.global.exception.FeedException
 import com.clip.global.exception.IllegalStateException
 import com.clip.infra.s3.S3ImgService
 import org.springframework.stereotype.Service
@@ -66,21 +67,54 @@ class TagUseCase(
     fun findFeedTagCards(tagId: Long, lastId: Long?, userId: Long): TagCardContentsResponse {
         val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
         val isFavorite = favoriteTagService.isExistsByTagPkAndMemberPk(tagId, userId)
-        val cardContents = feedTagService
-            .findFeedCardsByTag(tagId, Optional.ofNullable(lastId), blockedMembers)
-            .map {
-                CardContent(
-                    cardId = it.feedCard.pk,
-                    cardImgName = it.feedCard.imgName,
-                    cardImgUrl = when (it.feedCard.imgType) {
-                        CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(it.feedCard.imgName)
-                        CardImgType.USER -> s3ImgService.generateUserCardImgUrl(it.feedCard.imgName)
-                    },
-                    cardContent = it.feedCard.content,
-                    font = it.feedCard.font
+
+        val maxCardCount = 30
+        val maxFetchCount = 10
+
+        val cardContentMap = LinkedHashMap<Long, CardContent>()
+        var lastFetchedCardId: Long? = lastId
+
+        for (attempt in 1..maxFetchCount) {
+            if (cardContentMap.size >= maxCardCount) break
+
+            val fetchedFeedTags = feedTagService.findFeedCardsByTag(
+                tagId,
+                Optional.ofNullable(lastFetchedCardId),
+                blockedMembers
+            )
+
+            if (fetchedFeedTags.isEmpty()) break
+
+            lastFetchedCardId = fetchedFeedTags.last().feedCard.pk
+
+            for (feedTag in fetchedFeedTags) {
+                if (cardContentMap.size >= maxCardCount) break
+
+                val feedCard = feedTag.feedCard
+                cardContentMap.putIfAbsent(
+                    feedCard.pk,
+                    CardContent(
+                        cardId = feedCard.pk,
+                        cardImgName = feedCard.imgName,
+                        cardImgUrl = when (feedCard.imgType) {
+                            CardImgType.DEFAULT -> s3ImgService.generateDefaultCardImgUrl(feedCard.imgName)
+                            CardImgType.USER -> s3ImgService.generateUserCardImgUrl(feedCard.imgName)
+                        },
+                        cardContent = feedCard.content,
+                        font = feedCard.font
+                    )
                 )
             }
-        return TagCardContentsResponse(cardContents, isFavorite)
+
+            if (attempt == maxFetchCount && cardContentMap.size < maxCardCount) {
+                throw FeedException.FeedCardFetchLimitExceededException()
+            }
+        }
+
+        return TagCardContentsResponse(
+            cardContents = cardContentMap.values.take(maxCardCount),
+            isFavorite = isFavorite
+        )
     }
 
     fun findFavoriteTags(userId: Long): FavoriteTagResponse {
