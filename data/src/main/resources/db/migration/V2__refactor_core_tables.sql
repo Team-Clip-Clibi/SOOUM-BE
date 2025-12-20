@@ -181,3 +181,7 @@ ALTER TABLE popular_feed
 
 ALTER TABLE tag
     DROP COLUMN version; #
+
+update feed_card set font = 'YOONWOO' where font = 'SCHOOL_SAFE_CHALKBOARD_ERASER';
+
+update comment_card set font = 'YOONWOO' where font = 'SCHOOL_SAFE_CHALKBOARD_ERASER';
