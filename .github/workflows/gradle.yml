@@ -50,7 +50,7 @@ jobs:
 
       - name: Make zip file
         if: success()
-        run: zip -j ./$S3_DEPLOY_FILE_NAME ./boot/external-api/build/libs/external-api-0.0.1-SNAPSHOT.jar ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_YML_NAME ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_SCRIPT_NAME
+        run: zip -j ./$S3_DEPLOY_FILE_NAME ./boot/api/build/libs/api-0.0.1-SNAPSHOT.jar ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_YML_NAME ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_SCRIPT_NAME
         shell: bash
 
       - name: Upload to S3
