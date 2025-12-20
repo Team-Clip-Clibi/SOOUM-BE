@@ -7,6 +7,9 @@ spring:
       dev:
         - data-dev
         - cloud-dev
+      prod:
+        - data-prod
+        - cloud-prod
   threads:
     virtual:
       enabled: true
