@@ -5,10 +5,10 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.annotation.PostConstruct
 import org.springframework.context.annotation.Configuration
 import java.io.IOException
 import java.io.InputStream
-import javax.annotation.PostConstruct
 
 @Configuration
 class FcmConfig(
@@ -18,6 +18,7 @@ class FcmConfig(
     @PostConstruct
     fun initialize() {
         if (!FirebaseApp.getApps().isEmpty()) {
+            logger.info { "FirebaseApp already initialized" }
             return
         }
 
