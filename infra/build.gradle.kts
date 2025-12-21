@@ -20,7 +20,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("software.amazon.awssdk:s3:2.28.14")
     implementation("software.amazon.awssdk:rekognition:2.28.14")
