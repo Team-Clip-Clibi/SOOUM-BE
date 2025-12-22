@@ -31,6 +31,8 @@ class CreatePopularCardScheduler(
     private val jobOperator: JobOperator,
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
+    private val newPopularCardWriter: ItemWriter<PopularFeedCardId>,
+    private val deletePreviousPopularCardReader: JdbcPagingItemReader<PopularFeedCardId>
 
 ) {
 
@@ -63,7 +65,7 @@ class CreatePopularCardScheduler(
             .chunk<PopularFeedCardId, PopularFeedCardId>(CHUNK_SIZE)
             .transactionManager(transactionManager)
             .reader(newPopularCardReader())
-            .writer(newPopularCardWriter(null))
+            .writer(newPopularCardWriter)
             .build()
 
     @Bean
@@ -71,7 +73,7 @@ class CreatePopularCardScheduler(
         StepBuilder("deletePreviousPopularCardStep", jobRepository)
             .chunk<PopularFeedCardId, PopularFeedCardId>(CHUNK_SIZE)
             .transactionManager(transactionManager)
-            .reader(deletePreviousPopularCardReader(null))
+            .reader(deletePreviousPopularCardReader)
             .writer(deletePreviousPopularCardWriter())
             .build()
 
