@@ -5,7 +5,7 @@ import com.google.firebase.messaging.Message
 
 interface FcmMsgGenerator {
     companion object {
-        const val TITLE = "Sooum"
+        const val TITLE = "sooum"
     }
 
     fun generateMsg(fcmEvent: FCMEvent): Message
