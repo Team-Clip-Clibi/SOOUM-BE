@@ -10,11 +10,9 @@ spring:
       dev:
         - data-dev
         - cloud-dev
+      prod:
+        - data-prod
+        - cloud-prod
 
   jackson:
     time-zone: Asia/Seoul
-
-  data:
-    redis:
-      port: ${REDIS_PORT}
-      host: ${REDIS_HOST}
