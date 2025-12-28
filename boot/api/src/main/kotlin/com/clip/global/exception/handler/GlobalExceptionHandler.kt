@@ -46,10 +46,6 @@ class GlobalExceptionHandler(
 
     @ExceptionHandler(TokenException.ExpiredRefreshTokenException::class)
     fun expiredRefreshTokenException(e: TokenException.ExpiredRefreshTokenException): ResponseEntity<ErrorResponse> {
-        slackEventPublisher.publish(
-            message = "expiredRefreshTokenException Handler 호출됨: ${e.message}",
-            exception = e,
-        )
         val errorResponse = ErrorResponse.create(e, e.httpStatus, e.parameters.contentToString() + e.message)
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse)
     }
