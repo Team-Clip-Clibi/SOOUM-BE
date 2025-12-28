@@ -38,10 +38,23 @@ class FcmScheduler(
         private const val CHUNK_SIZE = 200
     }
 
-    @Scheduled(cron = "0 0 21 * * *")
-    fun runFcmSchedulerJob() {
+    @Scheduled(cron = "0 0 19 * * *")
+    fun runFirstFcmSchedulerJob() {
 
         val findFirstSchedulerContent = fcmSchedulerContentService.findFirstSchedulerContent()
+        val jobParameters = JobParametersBuilder()
+            .addString("title", findFirstSchedulerContent.title)
+            .addString("content", findFirstSchedulerContent.content)
+            .addString("startTime", LocalDateTime.now().toString())
+            .toJobParameters()
+
+        jobOperator.start(fcmSchedulerJob(),jobParameters)
+    }
+
+    @Scheduled(cron = "0 0 22 * * *")
+    fun runSecondFcmSchedulerJob() {
+
+        val findFirstSchedulerContent = fcmSchedulerContentService.findSecondSchedulerContent()
         val jobParameters = JobParametersBuilder()
             .addString("title", findFirstSchedulerContent.title)
             .addString("content", findFirstSchedulerContent.content)

@@ -14,4 +14,8 @@ public class FcmSchedulerContentService {
     public FcmSchedulerContent findFirstSchedulerContent() {
         return fcmSchedulerContentRepository.findByPk(1L).orElseThrow();
     }
+
+    public FcmSchedulerContent findSecondSchedulerContent() {
+        return fcmSchedulerContentRepository.findByPk(2L).orElseThrow();
+    }
 }
