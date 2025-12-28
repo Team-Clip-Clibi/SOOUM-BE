@@ -12,12 +12,14 @@ spring:
           bucket: sooum-img
         fcm:
           bucket: sooum-fcm
+          sdk: ${FCM_SDK}
         credentials:
           accessKey: ${accessKey}
           secretKey: ${secretKey}
         default-card-img: prod/card/default/
         user-card-img: prod/card/user/
         profile-img: prod/profile/
+
 slack:
   webhook:
     url: ${SLACK_WEBHOOK_URL}
