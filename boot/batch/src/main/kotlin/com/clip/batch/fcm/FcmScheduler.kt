@@ -8,7 +8,6 @@ import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.job.parameters.JobParametersBuilder
-import org.springframework.batch.core.job.parameters.RunIdIncrementer
 import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.Step
@@ -51,7 +50,7 @@ class FcmScheduler(
         jobOperator.start(fcmSchedulerJob(),jobParameters)
     }
 
-    @Scheduled(cron = "0 0 22 * * *")
+    @Scheduled(cron = "0 10 22 * * *")
     fun runSecondFcmSchedulerJob() {
 
         val findFirstSchedulerContent = fcmSchedulerContentService.findSecondSchedulerContent()
@@ -67,7 +66,6 @@ class FcmScheduler(
     @Bean
     fun fcmSchedulerJob(): Job =
         JobBuilder("fcmSchedulerJob",jobRepository)
-            .incrementer(RunIdIncrementer())
             .start(fcmSchedulerStep())
             .build()
 
