@@ -32,6 +32,7 @@ class FcmScheduler(
     private val transactionManager: PlatformTransactionManager,
     private val fcmSchedulerContentService: FcmSchedulerContentService,
     private val fcmSchedulerService: FcmSchedulerService,
+    private val fcmWriter: ItemWriter<String>
 ) {
     companion object {
         private const val CHUNK_SIZE = 200
@@ -50,7 +51,7 @@ class FcmScheduler(
         jobOperator.start(fcmSchedulerJob(),jobParameters)
     }
 
-    @Scheduled(cron = "0 10 22 * * *")
+    @Scheduled(cron = "0 0 22 * * *")
     fun runSecondFcmSchedulerJob() {
 
         val findFirstSchedulerContent = fcmSchedulerContentService.findSecondSchedulerContent()
@@ -76,7 +77,7 @@ class FcmScheduler(
             .chunk<String, String>(CHUNK_SIZE)
             .transactionManager(transactionManager)
             .reader(fcmReader())
-            .writer(fcmWriter(null, null))
+            .writer(fcmWriter)
             .build()
 
     @Bean
