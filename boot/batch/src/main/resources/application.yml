@@ -13,6 +13,9 @@ spring:
       prod:
         - data-prod
         - cloud-prod
+  datasource:
+    hikari:
+      pool-name: batch-db-pool
 
   jackson:
     time-zone: Asia/Seoul
