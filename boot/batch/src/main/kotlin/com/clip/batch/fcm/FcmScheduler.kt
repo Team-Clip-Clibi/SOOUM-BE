@@ -4,6 +4,7 @@ import com.clip.batch.fcm.service.FcmSchedulerService
 import com.clip.data.notification.service.FcmSchedulerContentService
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
@@ -37,6 +38,8 @@ class FcmScheduler(
     companion object {
         private const val CHUNK_SIZE = 200
     }
+
+    private val logger = KotlinLogging.logger {}
 
     @Scheduled(cron = "0 0 19 * * *")
     fun runFirstFcmSchedulerJob() {
@@ -111,5 +114,6 @@ class FcmScheduler(
             .build()
 
         fcmSchedulerService.sendMulticastFcm(message)
+        logger.info { "${chunk.items.size}개의 fcmToken을 대상으로 multicastFcm 비동기처리 하였습니다." }
     }
 }
