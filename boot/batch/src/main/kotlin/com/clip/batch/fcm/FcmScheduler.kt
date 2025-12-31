@@ -4,11 +4,11 @@ import com.clip.batch.fcm.service.FcmSchedulerService
 import com.clip.data.notification.service.FcmSchedulerContentService
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.job.parameters.JobParametersBuilder
-import org.springframework.batch.core.job.parameters.RunIdIncrementer
 import org.springframework.batch.core.launch.JobOperator
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.Step
@@ -33,15 +33,31 @@ class FcmScheduler(
     private val transactionManager: PlatformTransactionManager,
     private val fcmSchedulerContentService: FcmSchedulerContentService,
     private val fcmSchedulerService: FcmSchedulerService,
+    private val fcmWriter: ItemWriter<String>
 ) {
     companion object {
         private const val CHUNK_SIZE = 200
     }
 
-    @Scheduled(cron = "0 0 21 * * *")
-    fun runFcmSchedulerJob() {
+    private val logger = KotlinLogging.logger {}
+
+    @Scheduled(cron = "0 0 19 * * *")
+    fun runFirstFcmSchedulerJob() {
 
         val findFirstSchedulerContent = fcmSchedulerContentService.findFirstSchedulerContent()
+        val jobParameters = JobParametersBuilder()
+            .addString("title", findFirstSchedulerContent.title)
+            .addString("content", findFirstSchedulerContent.content)
+            .addString("startTime", LocalDateTime.now().toString())
+            .toJobParameters()
+
+        jobOperator.start(fcmSchedulerJob(),jobParameters)
+    }
+
+    @Scheduled(cron = "0 0 22 * * *")
+    fun runSecondFcmSchedulerJob() {
+
+        val findFirstSchedulerContent = fcmSchedulerContentService.findSecondSchedulerContent()
         val jobParameters = JobParametersBuilder()
             .addString("title", findFirstSchedulerContent.title)
             .addString("content", findFirstSchedulerContent.content)
@@ -54,7 +70,6 @@ class FcmScheduler(
     @Bean
     fun fcmSchedulerJob(): Job =
         JobBuilder("fcmSchedulerJob",jobRepository)
-            .incrementer(RunIdIncrementer())
             .start(fcmSchedulerStep())
             .build()
 
@@ -65,7 +80,7 @@ class FcmScheduler(
             .chunk<String, String>(CHUNK_SIZE)
             .transactionManager(transactionManager)
             .reader(fcmReader())
-            .writer(fcmWriter(null, null))
+            .writer(fcmWriter)
             .build()
 
     @Bean
@@ -99,5 +114,6 @@ class FcmScheduler(
             .build()
 
         fcmSchedulerService.sendMulticastFcm(message)
+        logger.info { "${chunk.items.size}개의 fcmToken을 대상으로 multicastFcm 비동기처리 하였습니다." }
     }
 }

@@ -95,7 +95,7 @@ class CreatePopularCardScheduler(
                 LEFT JOIN (
                     SELECT fl.target_card AS feed_id, COUNT(*) AS likes_cnt
                     FROM feed_like fl
-                    WHERE fl.is_deleted = FALSE
+                    WHERE fl.is_deleted = FALSE AND fl.created_at >= NOW() - INTERVAL 7 DAY
                     GROUP BY fl.target_card
                 ) l ON l.feed_id = fc.pk
                 WHERE fc.is_feed_active = TRUE

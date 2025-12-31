@@ -10,7 +10,6 @@ spring:
       keepalive-time: 30000
       validation-timeout: 1000
       max-lifetime: 600000
-      pool-name: api-db-pool
       data-source-properties:
         socketTimeout: 3000
         cachePrepStmts: true
