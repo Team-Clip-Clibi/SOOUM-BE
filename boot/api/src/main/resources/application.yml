@@ -10,6 +10,9 @@ spring:
       prod:
         - data-prod
         - cloud-prod
+  datasource:
+    hikari:
+      pool-name: api-db-pool
   threads:
     virtual:
       enabled: true
@@ -19,6 +22,12 @@ spring:
     timeout-per-shutdown-phase: 10s
 
 server:
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 50
+    connection-timeout: 10000
+    accept-count: 200
   shutdown: graceful
 
 jwt:
