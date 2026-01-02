@@ -5,7 +5,7 @@ import com.clip.data.notification.service.FcmSchedulerContentService
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.batch.core.configuration.annotation.JobScope
+import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.job.parameters.JobParametersBuilder
@@ -27,40 +27,32 @@ import javax.sql.DataSource
 
 @Configuration
 class FcmScheduler(
-    private val dataSource: DataSource,
     private val jobOperator: JobOperator,
+    private val fcmSchedulerContentService: FcmSchedulerContentService,
+    private val dataSource: DataSource,
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
-    private val fcmSchedulerContentService: FcmSchedulerContentService,
     private val fcmSchedulerService: FcmSchedulerService,
-    private val fcmWriter: ItemWriter<String>
 ) {
+
     companion object {
         private const val CHUNK_SIZE = 200
     }
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = "0 0 19,22 * * *")
     fun runFirstFcmSchedulerJob() {
 
-        val findFirstSchedulerContent = fcmSchedulerContentService.findFirstSchedulerContent()
+        val hour = LocalDateTime.now().hour
+        val content = when (hour) {
+            19 -> fcmSchedulerContentService.findFirstSchedulerContent()
+            22 -> fcmSchedulerContentService.findSecondSchedulerContent()
+            else -> throw IllegalArgumentException("Invalid hour for FCM scheduling")
+        }
         val jobParameters = JobParametersBuilder()
-            .addString("title", findFirstSchedulerContent.title)
-            .addString("content", findFirstSchedulerContent.content)
-            .addString("startTime", LocalDateTime.now().toString())
-            .toJobParameters()
-
-        jobOperator.start(fcmSchedulerJob(),jobParameters)
-    }
-
-    @Scheduled(cron = "0 0 22 * * *")
-    fun runSecondFcmSchedulerJob() {
-
-        val findFirstSchedulerContent = fcmSchedulerContentService.findSecondSchedulerContent()
-        val jobParameters = JobParametersBuilder()
-            .addString("title", findFirstSchedulerContent.title)
-            .addString("content", findFirstSchedulerContent.content)
+            .addString("title", content.title)
+            .addString("content", content.content)
             .addString("startTime", LocalDateTime.now().toString())
             .toJobParameters()
 
@@ -80,10 +72,11 @@ class FcmScheduler(
             .chunk<String, String>(CHUNK_SIZE)
             .transactionManager(transactionManager)
             .reader(fcmReader())
-            .writer(fcmWriter)
+            .writer(fcmWriter(null, null))
             .build()
 
     @Bean
+    @StepScope
     fun fcmReader(): JdbcPagingItemReader<String> =
         JdbcPagingItemReaderBuilder<String>()
             .name("fcmReader")
@@ -97,7 +90,7 @@ class FcmScheduler(
             .build()
 
     @Bean
-    @JobScope
+    @StepScope
     fun fcmWriter(
         @Value("#{jobParameters['title']}") title: String?,
         @Value("#{jobParameters['content']}") content: String?,

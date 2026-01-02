@@ -18,7 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -67,22 +69,47 @@ public class TagService {
         if (tags == null || tags.isEmpty()) {
             return List.of();
         }
-        List<Tag> existsTags = findTagList(tags);
+
+        // 1. 입력 정제 (순서 유지)
+        List<String> normalizedTags = tags.stream()
+                .map(String::strip)
+                .filter(tag -> !tag.isBlank())
+                .toList();
+
+        // 2. 중복 제거 (DB/생성용)
+        Set<String> uniqueContents = new LinkedHashSet<>(normalizedTags);
+
+        // 3. 기존 태그 조회
+        List<Tag> existsTags = findTagList(new ArrayList<>(uniqueContents));
+
+        // 4. 카운트 증가 (정책적으로 1회)
         incrementTagCount(existsTags);
 
-        tags.removeAll(
-                existsTags.stream()
-                        .map(Tag::getContent)
-                        .toList()
-        );
+        Set<String> existingContents = existsTags.stream()
+                .map(Tag::getContent)
+                .collect(Collectors.toSet());
 
+        // 5. 신규 태그 생성 (중복 없음)
         List<Tag> newTagList = saveAll(
-                tags.stream()
-                        .map(tag -> Tag.ofFeed(tag, isActiveWords(tag)))
+                uniqueContents.stream()
+                        .filter(content -> !existingContents.contains(content))
+                        .map(content -> Tag.ofFeed(content, isActiveWords(content)))
                         .toList()
         );
 
-        return Stream.concat(existsTags.stream(), newTagList.stream()).toList();
+        // 6. content → Tag 매핑
+        Map<String, Tag> tagMap =
+                Stream.concat(existsTags.stream(), newTagList.stream())
+                        .collect(Collectors.toMap(
+                                Tag::getContent,
+                                Function.identity()
+                        ));
+
+        // 7. 입력 순서 기준 결과 생성
+        return normalizedTags.stream()
+                .map(tagMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Transactional
@@ -111,9 +138,6 @@ public class TagService {
         return !DeactivateTagWords.deactivateWordsList.contains(tagContent);
     }
 
-    public List<Tag> findRecommendTags(List<Tag> excludeTags) {
-        return tagRepository.findRecommendTagList(excludeTags, DeactivateTagWords.deactivateWordsList, PageRequest.ofSize(10));
-    }
     public boolean isExistFavoriteTag(Long tagPk, Long memberPk) {
         return favoriteTagRepository.existsByTag_PkAndMember_Pk(tagPk, memberPk);
     }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class CardFcmMsgGenerator: FcmMsgGenerator {
     companion object {
-        private const val COMMENT_WRITE_SUFFIX = "님이 답카드를 작성했습니다."
+        private const val COMMENT_WRITE_SUFFIX = "님이 댓글카드를 작성했습니다."
         private const val LIKE_SUFFIX = "님이 카드에 공감했습니다."
     }
     override fun generateMsg(fcmEvent: FCMEvent): Message {

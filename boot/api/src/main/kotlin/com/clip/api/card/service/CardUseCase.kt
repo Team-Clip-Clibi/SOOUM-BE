@@ -90,7 +90,7 @@ class CardUseCase(
         if (isUserImgType(createFeedCardRequest.imgType))
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
 
-        val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags.distinct().toMutableList())
+        val savedTags = tagService.saveAllAndIncrementTagCnt(createFeedCardRequest.tags)
         applicationEventPublisher.publishEvent(TagUsageEvent(
             userId,
             feedCard.pk,
