@@ -41,7 +41,7 @@ class FcmScheduler(
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(cron = "0 30 19,22 * * *")
+    @Scheduled(cron = "0 0 19,22 * * *")
     fun runFirstFcmSchedulerJob() {
 
         val hour = LocalDateTime.now().hour
