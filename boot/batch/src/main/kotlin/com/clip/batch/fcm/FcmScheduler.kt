@@ -5,6 +5,7 @@ import com.clip.data.notification.service.FcmSchedulerContentService
 import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.batch.core.configuration.JobRegistry
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
@@ -33,6 +34,7 @@ class FcmScheduler(
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
     private val fcmSchedulerService: FcmSchedulerService,
+    private val jobRegistry: JobRegistry,
 ) {
 
     companion object {
@@ -56,23 +58,27 @@ class FcmScheduler(
             .addString("startTime", LocalDateTime.now().toString())
             .toJobParameters()
 
-        jobOperator.start(fcmSchedulerJob(),jobParameters)
+        val job = jobRegistry.getJob("fcmSchedulerJob")?: throw IllegalStateException("Job not found: fcmSchedulerJob")
+        jobOperator.start(job, jobParameters)
     }
 
     @Bean
-    fun fcmSchedulerJob(): Job =
+    fun fcmSchedulerJob(fcmSchedulerStep: Step): Job =
         JobBuilder("fcmSchedulerJob",jobRepository)
-            .start(fcmSchedulerStep())
+            .start(fcmSchedulerStep)
             .build()
 
 
     @Bean
-    fun fcmSchedulerStep(): Step =
+    fun fcmSchedulerStep(
+        fcmReader: JdbcPagingItemReader<String>,
+        fcmWriter: ItemWriter<String>,
+    ): Step =
         StepBuilder("fcmSchedulerStep", jobRepository)
             .chunk<String, String>(CHUNK_SIZE)
             .transactionManager(transactionManager)
-            .reader(fcmReader())
-            .writer(fcmWriter(null, null))
+            .reader(fcmReader)
+            .writer(fcmWriter)
             .build()
 
     @Bean
