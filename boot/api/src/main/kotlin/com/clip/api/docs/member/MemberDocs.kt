@@ -89,4 +89,10 @@ interface MemberDocs {
         - 또한, 활동 정지 상태인지에 대한 정보도 함께 제공합니다.  
     """)
     fun getRejoinableDate(userId: Long): ResponseEntity<RejoinableDateResponse>
+
+    @Operation(summary = "사용자 역할 조회 API", description = """)
+        - 사용자 역할 조회 API
+        - 사용자의 역할(ROLE_USER, ROLE_ADMIN 등)을 조회합니다.
+    """)
+    fun getUserRole(userId: Long): ResponseEntity<UserRoleResponse>
 }
