@@ -59,6 +59,7 @@ class CardUseCase(
     private val notificationHistoryService: NotificationHistoryService,
     private val commentViewService: CommentViewService,
     private val feedViewService: FeedViewService,
+    private val articleCardService: ArticleCardService,
     private val entityManager: EntityManager
 ) {
 
@@ -100,6 +101,11 @@ class CardUseCase(
             savedTags.find { it.content == tagName }
         }
         feedTagService.saveAll(feedCard, restoredTags)
+
+        if (createFeedCardRequest.isArticle == true) {
+            articleCardService.saveArticleCard(feedCard.pk)
+        }
+
         return CreateCardResponse(feedCard.pk)
     }
 
