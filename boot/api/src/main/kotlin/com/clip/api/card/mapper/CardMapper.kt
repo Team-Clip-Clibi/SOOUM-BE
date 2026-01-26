@@ -25,11 +25,15 @@ class CardMapper(
         request: CreateFeedCardRequest,
         requestIp: String,
         member: Member,
-    ): FeedCard =
-        FeedCard(
+    ): FeedCard {
+        val isAdmin = member.role == com.clip.data.member.entity.Role.ADMIN
+        val isDistanceShared = if (isAdmin) false else request.isDistanceShared
+        val isStory = if (isAdmin) false else request.isStory
+
+        return FeedCard(
             request.content,
             request.font,
-            if (request.isDistanceShared) {
+            if (isDistanceShared) {
                 geometryFactory.createPoint(
                     Coordinate(
                         request.longitude ?: throw ParameterNotFoundException("longitude"),
@@ -40,10 +44,11 @@ class CardMapper(
             request.imgType,
             request.imgName,
             member,
-            request.isStory,
+            isStory,
             request.tags.isEmpty() || DeactivateTagWords.deactivateWordsList.none { request.tags.contains(it) },
             requestIp,
         )
+    }
 
     fun toCommentCard(
         request: CreateCommentCardRequest,
