@@ -18,5 +18,6 @@ public interface ArticleCardRepository extends JpaRepository<ArticleCard, Long> 
            "limit 1")
     Optional<FeedCard> findLatestArticleFeedCard();
 
+    boolean existsByFeedCardPk(Long feedCardPk);
 }
 

@@ -17,7 +17,12 @@ public class ArticleCardService {
                 .build();
         return articleCardRepository.save(articleCard);
     }
+
     public Optional<FeedCard> findLatestArticleFeedCard() {
         return articleCardRepository.findLatestArticleFeedCard();
+    }
+
+    public boolean isArticleCard(Long feedCardPk) {
+        return articleCardRepository.existsByFeedCardPk(feedCardPk);
     }
 }
