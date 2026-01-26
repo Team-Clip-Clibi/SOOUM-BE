@@ -93,4 +93,9 @@ class MemberController(
         memberUseCase.updateNicknameAndProfileImg(profileInfoRequest, userId)
         return ResponseEntity.ok().build()
     }
+
+    @GetMapping("/role")
+    override fun getUserRole(userId: Long): ResponseEntity<UserRoleResponse> =
+        ResponseEntity.ok(memberUseCase.getUserRole(userId))
+
 }
