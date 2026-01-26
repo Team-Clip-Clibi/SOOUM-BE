@@ -36,4 +36,9 @@ public class TempAbHomeAdminCardUserRetrieveDetailService {
                         .build()
         );
     }
+
+    public boolean isReadByUser(Long userId, Long feedCardId) {
+        return tempAbHomeAdminCardUserRetrieveDetailRepository
+                .existsByUserIdAndFeedCardIdAndRetrieveType(userId, feedCardId, RetrieveType.CLICK);
+    }
 }
