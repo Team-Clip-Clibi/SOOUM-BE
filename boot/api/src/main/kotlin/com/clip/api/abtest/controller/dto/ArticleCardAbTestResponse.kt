@@ -5,6 +5,7 @@ enum class ArticleCardAbTestType {
 }
 
 sealed class ArticleCardAbTestResponse(
+    val cardId: Long,
     val abTestType: ArticleCardAbTestType,
     val profileImgUrl: String,
     val nickname: String,
@@ -17,12 +18,14 @@ class ArticleCardTypeAResponse(
     nickname: String,
     cardContent: String,
     isRead: Boolean,
+    cardId: Long,
 ) : ArticleCardAbTestResponse(
     abTestType = ArticleCardAbTestType.A,
     profileImgUrl = profileImgUrl,
     nickname = nickname,
     cardContent = cardContent,
     isRead = isRead,
+    cardId = cardId
 )
 
 class ArticleCardTypeBResponse(
@@ -32,10 +35,12 @@ class ArticleCardTypeBResponse(
     isRead: Boolean,
     val writerProfileImgUrls: List<String>,
     val totalWriterCnt: Int,
+    cardId: Long,
 ) : ArticleCardAbTestResponse(
     abTestType = ArticleCardAbTestType.B,
     profileImgUrl = profileImgUrl,
     nickname = nickname,
     cardContent = cardContent,
     isRead = isRead,
+    cardId = cardId,
 )
