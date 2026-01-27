@@ -23,6 +23,7 @@ class ArticleCardAbTestMapper(
             nickname = writer.nickname,
             cardContent = feedCard.content,
             isRead = isRead,
+            cardId = feedCard.pk
         )
     }
 
@@ -43,6 +44,7 @@ class ArticleCardAbTestMapper(
             isRead = isRead,
             writerProfileImgUrls = writerProfileImgUrls,
             totalWriterCnt = commentWriters.size,
+            cardId = feedCard.pk
         )
     }
 
