@@ -8,6 +8,7 @@ import com.clip.data.abtest.service.TempAbHomeAdminCardUserRetrieveDetailService
 import com.clip.data.card.service.ArticleCardService
 import com.clip.data.card.service.CommentCardService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AbUseCase(
@@ -18,6 +19,7 @@ class AbUseCase(
     private val tempAbHomeAdminCardUserRetrieveDetailService: TempAbHomeAdminCardUserRetrieveDetailService,
 ) {
 
+    @Transactional(readOnly = true)
     fun getLatestArticleCard(
         userId: Long
     ): ArticleCardAbTestResponse? {
@@ -33,7 +35,7 @@ class AbUseCase(
                 isRead = isRead
             )
             AbGroup.B -> {
-                val commentWriters = commentCardService.findChildCommentCardList(feedCard.pk)
+                val commentWriters = commentCardService.findChildCommentCardListWithWriter(feedCard.pk)
                     .map { it.writer }
                     .distinctBy { it.pk }
 

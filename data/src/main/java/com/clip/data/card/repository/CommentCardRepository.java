@@ -24,6 +24,9 @@ public interface CommentCardRepository extends JpaRepository<CommentCard, Long> 
     @Query("select cc from CommentCard cc where cc.parentCardPk in :parentCardPk")
     List<CommentCard> findChildCards(@Param("parentCardPk") List<Long> parentCardPk);
 
+    @Query("select cc from CommentCard cc join fetch cc.writer where cc.parentCardPk = :parentCardPk")
+    List<CommentCard> findChildCardsWithWriter(@Param("parentCardPk") Long parentCardPk);
+
     @Query("select cc from CommentCard cc join fetch cc.writer where cc.pk = :commentCardPk")
     Optional<CommentCard> findCommentCard(@Param("commentCardPk") Long commentCardPk);
 

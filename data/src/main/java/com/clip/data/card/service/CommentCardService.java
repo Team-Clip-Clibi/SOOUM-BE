@@ -25,6 +25,10 @@ public class CommentCardService {
         return commentCardRepository.findChildCards(parentCardPk);
     }
 
+    public List<CommentCard> findChildCommentCardListWithWriter(Long parentCardPk) {
+        return commentCardRepository.findChildCardsWithWriter(parentCardPk);
+    }
+
     public void deleteCommentCard(Long commentCardPk) {
         commentCardRepository.deleteById(commentCardPk);
     }
