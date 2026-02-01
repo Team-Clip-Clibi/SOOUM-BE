@@ -28,7 +28,14 @@ class FeedAspect(
         if (latestArticleCard.isEmpty || userGroup.isEmpty) {
             return pjp.proceed()
         }
+
+        val optAdminCardUserGroup =
+            tempAbHomeAdminCardUserGroupService.findTempAbHomeAdminCardUserGroup(userId)
+        if (optAdminCardUserGroup.isPresent) {
+            tempAbHomeAdminCardUserGroupService.incrementDisplayCount(userId)
+        }
         tempAbHomeAdminCardUserRetrieveDetailService.saveDisplayTypeLog(userGroup.get(), latestArticleCard.get())
+
         return pjp.proceed()
     }
 

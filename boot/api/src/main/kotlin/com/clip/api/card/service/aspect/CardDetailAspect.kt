@@ -35,9 +35,13 @@ class CardDetailAspect(
             ?: return pjp.proceed()
 
         if (adminFeedCard.writer.role == Role.ADMIN) {
+            val optAdminCardUserGroup =
+                tempAbHomeAdminCardUserGroupService.findTempAbHomeAdminCardUserGroup(userId)
+            if (optAdminCardUserGroup.isPresent) {
+                tempAbHomeAdminCardUserGroupService.incrementClickCount(userId)
+            }
             tempAbHomeAdminCardUserRetrieveDetailService.saveClickLog(userGroupOpt.get(), adminFeedCard)
         }
-
-        return pjp.proceed()
+            return pjp.proceed()
     }
 }

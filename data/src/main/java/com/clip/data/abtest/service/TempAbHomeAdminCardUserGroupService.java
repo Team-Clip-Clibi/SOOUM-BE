@@ -5,6 +5,7 @@ import com.clip.data.abtest.entity.TempAbHomeAdminCardUserGroup;
 import com.clip.data.abtest.repository.TempAbHomeAdminCardUserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -28,5 +29,15 @@ public class TempAbHomeAdminCardUserGroupService {
 
     public Optional<TempAbHomeAdminCardUserGroup> findTempAbHomeAdminCardUserGroup(Long userId) {
         return tempAbHomeAdminCardUserGroupRepository.findByMemberPk(userId);
+    }
+
+    @Transactional
+    public void incrementClickCount(Long userId) {
+        tempAbHomeAdminCardUserGroupRepository.incrementClickCount(userId);
+    }
+
+    @Transactional
+    public void incrementDisplayCount(Long userId) {
+        tempAbHomeAdminCardUserGroupRepository.incrementDisplayCount(userId);
     }
 }
