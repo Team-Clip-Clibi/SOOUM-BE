@@ -29,4 +29,12 @@ public class TempAbHomeAdminCardUserGroupService {
     public Optional<TempAbHomeAdminCardUserGroup> findTempAbHomeAdminCardUserGroup(Long userId) {
         return tempAbHomeAdminCardUserGroupRepository.findByMemberPk(userId);
     }
+
+    public void incrementClickCount(Long userId) {
+        tempAbHomeAdminCardUserGroupRepository.incrementClickCount(userId);
+    }
+
+    public void incrementDisplayCount(Long userId) {
+        tempAbHomeAdminCardUserGroupRepository.incrementDisplayCount(userId);
+    }
 }
