@@ -95,7 +95,7 @@ class MemberController(
     }
 
     @GetMapping("/role")
-    override fun getUserRole(userId: Long): ResponseEntity<UserRoleResponse> =
+    override fun getUserRole(@AccessUser userId: Long): ResponseEntity<UserRoleResponse> =
         ResponseEntity.ok(memberUseCase.getUserRole(userId))
 
 }
