@@ -201,7 +201,7 @@ class MemberUseCase(
     @Transactional
     fun updateAllowNotify(allowNotify: Boolean, userId: Long) {
         memberService.findMember(userId)
-            .takeIf { it.isAllowNotify == allowNotify }
+            .takeIf { it.isAllowNotify != allowNotify }
             ?.updateNotifyAllow(allowNotify)
     }
 
