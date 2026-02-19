@@ -19,6 +19,12 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.batch:spring-batch-bom:6.0.1")
+    }
+}
+
 dependencies {
     implementation(project(":data"))
     implementation(project(":infra"))

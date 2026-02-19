@@ -24,6 +24,7 @@ data class CreateFeedCardRequest(
 
     val isStory: Boolean,
     val tags: List<String>,
+    val isArticle: Boolean?
 ): CreateCardRequest(
     isDistanceShared = isDistanceShared,
     latitude = latitude,

@@ -225,4 +225,9 @@ class MemberUseCase(
             isActivityRestricted = isActivityRestricted
         )
     }
+
+    fun getUserRole(userId: Long): UserRoleResponse {
+        val member = memberService.findMember(userId)
+        return UserRoleResponse(role = member.role)
+    }
 }
