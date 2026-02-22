@@ -9,10 +9,11 @@ import org.springframework.data.repository.query.Param;
 //AB_TEST HomeAdminCardUserTest
 public interface TempAbHomeAdminCardUserRetrieveDetailRepository extends JpaRepository<TempAbHomeAdminCardUserRetrieveDetail, Long> {
 
-    @Query("select count(t) > 0 from TempAbHomeAdminCardUserRetrieveDetail t " +
-            "where t.adminCardUserGroup.member.pk = :userId " +
-            "and t.adminFeedCard.pk = :feedCardId " +
-            "and t.retrieveType = :retrieveType")
+    @Query(value = "SELECT EXISTS( " +
+            "SELECT 1 FROM temp_ab_home_admin_card_user_retrieve_detail t " +
+            "JOIN temp_ab_home_admin_card_user_group g ON t.admin_card_user_group_id = g.pk " +
+            "WHERE g.member_id = :userId AND t.admin_feed_card_id = :feedCardId AND t.retrieve_type = :retrieveType) ",
+            nativeQuery = true)
     boolean existsByUserIdAndFeedCardIdAndRetrieveType(
             @Param("userId") Long userId,
             @Param("feedCardId") Long feedCardId,
