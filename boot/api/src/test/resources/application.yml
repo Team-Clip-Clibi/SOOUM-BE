@@ -7,17 +7,14 @@ spring:
       dev:
         - data-dev
         - cloud-dev
-
+      prod:
+        - data-prod
+        - cloud-prod
+  threads:
+    virtual:
+      enabled: true
   jackson:
     time-zone: Asia/Seoul
-
-  data:
-    redis:
-      port: 9999
-      host: localhost
-      repositories:
-        enabled: false
-
   lifecycle:
     timeout-per-shutdown-phase: 10s
 
@@ -25,7 +22,7 @@ server:
   shutdown: graceful
 
 jwt:
-  key: slkjf2fjslifjo2jfow48jgfwjfvoiw398jvow894jfowv49w8jgf932w8gfsoiejfo
+  key: ${JWT_KEY}
 
 exclude-auth-path-patterns:
   paths:
@@ -54,8 +51,10 @@ exclude-auth-path-patterns:
     - path-pattern: /api/members/validate-nickname
       method: POST
     - path-pattern: /api/images/profile
-      method: POST
+      method: GET
     - path-pattern: /api/images/defaults
       method: GET
     - path-pattern: /api/auth/token/reissue
+      method: POST
+    - path-pattern: /api/members/account/transfer
       method: POST
