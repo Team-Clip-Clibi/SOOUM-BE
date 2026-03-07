@@ -1,6 +1,6 @@
 package com.clip.api.tag.event
 
-import com.clip.api.notification.event.MultiFcmEvent
+import com.clip.api.notification.event.MultiFcmTagEvent
 import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.NotificationHistory
 import com.clip.data.notification.service.NotificationHistoryService
@@ -56,7 +56,7 @@ class TagUsageEventListener(
                 }.toList()
 
                 val allowedFavoriteTagNotify = notificationHistories.filter { it.toMember.isAllowFavoriteTagNotify }.toList()
-                applicationEventPublisher.publishEvent(MultiFcmEvent(
+                applicationEventPublisher.publishEvent(MultiFcmTagEvent(
                     tagUsageEvent.cardId,
                     tag.content,
                     allowedFavoriteTagNotify

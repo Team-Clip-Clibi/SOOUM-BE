@@ -2,6 +2,7 @@ package com.clip.api.notification.event
 
 import com.clip.api.notification.event.fcmsender.FcmSender
 import com.clip.api.notification.event.msggenerator.FcmMsgStrategyRegistry
+import com.clip.data.notification.entity.notificationtype.NotificationType
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -23,17 +24,36 @@ class FcmEventListener(
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
-    fun sendMulticastFcm(
-        multiFcmEvent: MultiFcmEvent
+    fun sendMulticastTagNotification(
+        multiFcmTagEvent: MultiFcmTagEvent
     ) {
-        multiFcmEvent.notificationHistories.forEach { notificationHistory ->
+        multiFcmTagEvent.notificationHistories.forEach { notificationHistory ->
             val message = fcmMsgStrategyRegistry.getMessage(TagUsageFcmEvent(
-                multiFcmEvent.tagContent,
-                multiFcmEvent.targetCardId,
+                multiFcmTagEvent.tagContent,
+                multiFcmTagEvent.targetCardId,
                 notificationHistory.pk,
                 notificationHistory.toMember.deviceType,
                 notificationHistory.toMember.firebaseToken,
                 notificationHistory.notificationType
+            ))
+            fcmSender.send(message)
+        }
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun sendMulticastFollowerCardUploadNotification(
+        multiFcmTagEvent: MultiFcmFollowerCardUploadEvent
+    ) {
+        multiFcmTagEvent.recipientList.forEach { recipient ->
+            val message = fcmMsgStrategyRegistry.getMessage(FollowerCardUploadFCMEvent(
+                multiFcmTagEvent.targetCardId,
+                multiFcmTagEvent.content,
+                multiFcmTagEvent.nickname,
+                multiFcmTagEvent.userImgUrl,
+                recipient.deviceType,
+                recipient.firebaseToken,
+                NotificationType.FOLLOWER_CARD_UPLOAD
             ))
             fcmSender.send(message)
         }

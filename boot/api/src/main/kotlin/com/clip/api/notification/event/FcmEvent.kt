@@ -5,7 +5,7 @@ import com.clip.data.notification.entity.notificationtype.NotificationType
 import java.time.LocalDateTime
 
 open class FCMEvent(
-    val notificationId: Long,
+    val notificationId: Long?,
     val deviceType: DeviceType,
     val fcmToken: String,
     val notificationType: NotificationType
@@ -45,3 +45,13 @@ class FollowFCMEvent(
     fcmToken: String,
     notificationType: NotificationType
 ): FCMEvent(notificationId, targetDeviceType, fcmToken, notificationType)
+
+class FollowerCardUploadFCMEvent(
+    val targetCardId: Long,
+    val content: String,
+    val nickname: String,
+    val userImgUrl: String?,
+    targetDeviceType: DeviceType,
+    fcmToken: String,
+    notificationType: NotificationType
+): FCMEvent(null, targetDeviceType, fcmToken, notificationType)
