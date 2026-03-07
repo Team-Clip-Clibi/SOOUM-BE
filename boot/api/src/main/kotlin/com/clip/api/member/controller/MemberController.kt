@@ -26,7 +26,7 @@ class MemberController(
         @RequestBody allowNotifyRequest: AllowNotifyRequest,
         @AccessUser userId: Long
     ): ResponseEntity<Void> =
-        memberUseCase.updateAllowNotify(allowNotifyRequest.isAllowNotify, userId)
+        memberUseCase.updateAllowNotify(allowNotifyRequest, userId)
             .let { ResponseEntity.ok().build() }
 
     @GetMapping("/activity-restriction-date")

@@ -4,11 +4,7 @@ import com.clip.api.member.controller.dto.*
 import com.clip.data.member.entity.Blacklist
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.PolicyTerm
-import com.clip.data.member.service.BlacklistService
-import com.clip.data.member.service.MemberService
-import com.clip.data.member.service.PolicyService
-import com.clip.data.member.service.RefreshTokenService
-import com.clip.data.member.service.SuspendedService
+import com.clip.data.member.service.*
 import com.clip.global.exception.IllegalStateException
 import com.clip.global.exception.ImageException
 import com.clip.global.exception.TokenException
@@ -97,7 +93,6 @@ class AuthUseCase(
                     .firebaseToken(request.memberInfo.fcmToken)
                     .nickname(request.memberInfo.nickname)
                     .profileImgName(normalizedImgName)
-                    .isAllowNotify(true)
                     .build()
             )
             policyService.save(

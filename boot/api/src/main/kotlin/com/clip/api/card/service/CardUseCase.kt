@@ -148,7 +148,7 @@ class CardUseCase(
         if (parentCard.writer.pk != userId) {
             val commentWriteNotification =
                 notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
-            if (parentCard.writer.isAllowNotify)
+            if (parentCard.writer.isAllowCommentCardNotify)
                 applicationEventPublisher.publishEvent(
                     CardFCMEvent(
                         member.nickname,

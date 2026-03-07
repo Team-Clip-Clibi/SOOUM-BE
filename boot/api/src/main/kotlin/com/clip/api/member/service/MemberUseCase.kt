@@ -199,10 +199,16 @@ class MemberUseCase(
                 nickname in FORBIDDEN_NICKNAME || nickname.length > 8)
 
     @Transactional
-    fun updateAllowNotify(allowNotify: Boolean, userId: Long) {
-        memberService.findMember(userId)
-            .takeIf { it.isAllowNotify != allowNotify }
-            ?.updateNotifyAllow(allowNotify)
+    fun updateAllowNotify(allowNotifyRequest: AllowNotifyRequest, userId: Long) {
+        val findMember = memberService.findMember(userId)
+        findMember.updateCommentCardNotify(allowNotifyRequest.commentCardNotify)
+        findMember.updateCardLikeNotify(allowNotifyRequest.cardLikeNotify)
+        findMember.updateFollowUserCardNotify(allowNotifyRequest.followUserCardNotify)
+        findMember.updateNewFollowerNotify(allowNotifyRequest.newFollowerNotify)
+        findMember.updateCardNewCommentNotify(allowNotifyRequest.cardNewCommentNotify)
+        findMember.updateRecommendedContentNotify(allowNotifyRequest.recommendedContentNotify)
+        findMember.updateFavoriteTagNotify(allowNotifyRequest.favoriteTagNotify)
+        findMember.updateServiceUpdateNotify(allowNotifyRequest.serviceUpdateNotify)
     }
 
     fun getActivityRestrictionDate(userId: Long): ActivityRestrictionDateResponse {
