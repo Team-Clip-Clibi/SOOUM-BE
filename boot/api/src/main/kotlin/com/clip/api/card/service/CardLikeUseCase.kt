@@ -88,7 +88,7 @@ class CardLikeUseCase(
             else -> return
         }
 
-        if (card.writer.isAllowNotify) {
+        if (card.writer.isAllowCardLikeNotify) {
             applicationEventPublisher.publishEvent(
                 CardFCMEvent(
                     member.nickname,

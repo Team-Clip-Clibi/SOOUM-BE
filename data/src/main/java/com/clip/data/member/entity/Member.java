@@ -37,9 +37,6 @@ public class Member extends BaseEntity {
     @Column(name = "NICKNAME", columnDefinition = "VARBINARY(255) NOT NULL")
     private String nickname;
 
-    @Column(name = "IS_ALLOW_NOTIFY")
-    private boolean isAllowNotify;
-
     @Column(name = "BAN_COUNT")
     private int banCount;
 
@@ -61,21 +58,59 @@ public class Member extends BaseEntity {
     @Column(name = "PROFILE_IMG_NAME")
     private String profileImgName;
 
+    @Column(name = "COMMENT_CARD_NOTIFY")
+    private boolean commentCardNotify;
+
+    @Column(name = "CARD_LIKE_NOTIFY")
+    private boolean cardLikeNotify;
+
+    @Column(name = "FOLLOW_USER_CARD_NOTIFY")
+    private boolean followUserCardNotify;
+
+    @Column(name = "NEW_FOLLOWER_NOTIFY")
+    private boolean newFollowerNotify;
+
+    @Column(name = "CARD_NEW_COMMENT_NOTIFY")
+    private boolean cardNewCommentNotify;
+
+    @Column(name = "RECOMMENDED_CONTENT_NOTIFY")
+    private boolean recommendedContentNotify;
+
+    @Column(name = "FAVORITE_TAG_NOTIFY")
+    private boolean favoriteTagNotify;
+
+    @Column(name = "SERVICE_UPDATE_NOTIFY")
+    private boolean serviceUpdateNotify;
+
+    @Column(name = "POLICY_VIOLATION_NOTIFY")
+    private boolean policyViolationNotify;
+
     @Builder
-    public Member(String deviceId, DeviceType deviceType, String deviceModel, String deviceOsVersion, String firebaseToken, String nickname, String profileImgName, boolean isAllowNotify) {
+    public Member(
+            String deviceId, DeviceType deviceType, String deviceModel, String deviceOsVersion,
+            String firebaseToken, String nickname, String profileImgName
+    ) {
         this.deviceId = deviceId;
         this.deviceType = deviceType;
         this.deviceModel = deviceModel;
         this.deviceOsVersion = deviceOsVersion;
         this.firebaseToken = firebaseToken;
         this.nickname = nickname;
-        this.isAllowNotify = isAllowNotify;
         this.banCount = 0;
         this.totalVisitorCnt = 0;
         this.deletedAt = null;
         this.untilBan = null;
         this.profileImgName = profileImgName;
         this.role = Role.USER;
+        this.commentCardNotify = true;
+        this.cardLikeNotify = true;
+        this.followUserCardNotify = true;
+        this.newFollowerNotify = true;
+        this.cardNewCommentNotify = true;
+        this.recommendedContentNotify = true;
+        this.favoriteTagNotify = true;
+        this.serviceUpdateNotify = true;
+        this.policyViolationNotify = true;
     }
 
     public LocalDateTime ban() {
@@ -111,12 +146,76 @@ public class Member extends BaseEntity {
         this.firebaseToken = fcmToken;
     }
 
-    public void updateNotifyAllow(boolean isAllowNotify) {
-        this.isAllowNotify = isAllowNotify;
+    public void updateCommentCardNotify(boolean commentCardNotify) {
+        this.commentCardNotify = commentCardNotify;
     }
 
-    public boolean isAllowNotify() {
-        return isAllowNotify && !Objects.isNull(firebaseToken);
+    public boolean isAllowCommentCardNotify() {
+        return commentCardNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateCardLikeNotify(boolean cardLikeNotify) {
+        this.cardLikeNotify = cardLikeNotify;
+    }
+
+    public boolean isAllowCardLikeNotify() {
+        return cardLikeNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateFollowUserCardNotify(boolean followUserCardNotify) {
+        this.followUserCardNotify = followUserCardNotify;
+    }
+
+    public boolean isAllowFollowUserCardNotify() {
+        return followUserCardNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateNewFollowerNotify(boolean newFollowerNotify) {
+        this.newFollowerNotify = newFollowerNotify;
+    }
+
+    public boolean isAllowNewFollowerNotify() {
+        return newFollowerNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateCardNewCommentNotify(boolean cardNewCommentNotify) {
+        this.cardNewCommentNotify = cardNewCommentNotify;
+    }
+
+    public boolean isAllowCardNewCommentNotify() {
+        return cardNewCommentNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateRecommendedContentNotify(boolean recommendedContentNotify) {
+        this.recommendedContentNotify = recommendedContentNotify;
+    }
+
+    public boolean isAllowRecommendedContentNotify() {
+        return recommendedContentNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateFavoriteTagNotify(boolean favoriteTagNotify) {
+        this.favoriteTagNotify = favoriteTagNotify;
+    }
+
+    public boolean isAllowFavoriteTagNotify() {
+        return favoriteTagNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updateServiceUpdateNotify(boolean serviceUpdateNotify) {
+        this.serviceUpdateNotify = serviceUpdateNotify;
+    }
+
+    public boolean isAllowServiceUpdateNotify() {
+        return serviceUpdateNotify && !Objects.isNull(firebaseToken);
+    }
+
+    public void updatePolicyViolationNotify(boolean policyViolationNotify) {
+        this.policyViolationNotify = policyViolationNotify;
+    }
+
+    public boolean isAllowPolicyViolationNotify() {
+        return policyViolationNotify && !Objects.isNull(firebaseToken);
     }
 
 

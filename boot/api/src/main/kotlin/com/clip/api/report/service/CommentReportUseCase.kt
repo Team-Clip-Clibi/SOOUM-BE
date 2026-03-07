@@ -57,7 +57,7 @@ class CommentReportUseCase(
         val writer = commentCard.writer
         cardUseCase.deleteCommentCardWithRelations(commentCard)
         val notificationHistory = notificationUseCase.saveCardDeletedHistoryByReport(writer.pk)
-        if (writer.isAllowNotify) {
+        if (writer.isAllowPolicyViolationNotify) {
             eventPublisher.publishEvent(
                 SystemFCMEvent(
                     null,
@@ -74,7 +74,7 @@ class CommentReportUseCase(
         notificationUseCase.saveBlockedHistoryAndDeletePreviousHistories(member.pk)
         member.ban()
 
-        if (member.isAllowNotify) {
+        if (member.isAllowPolicyViolationNotify) {
             eventPublisher.publishEvent(
                 SystemFCMEvent(
                     member.untilBan,

@@ -55,10 +55,11 @@ class TagUsageEventListener(
                     )
                 }.toList()
 
+                val allowedFavoriteTagNotify = notificationHistories.filter { it.toMember.isAllowFavoriteTagNotify }.toList()
                 applicationEventPublisher.publishEvent(MultiFcmEvent(
                     tagUsageEvent.cardId,
                     tag.content,
-                    notificationHistories
+                    allowedFavoriteTagNotify
                 ))
             } while (favoriteTags.size == PAGE_SIZE)
         }

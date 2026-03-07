@@ -36,16 +36,18 @@ class MemberFollowUseCase(
         if (existing == null || existing.createdAt.isBefore(LocalDateTime.now().minusHours(1))) {
             existing?.let { notificationUseCase.deleteNotificationHistory(it) }
             val notificationHistory = notificationUseCase.saveFollowHistory(fromMember, toMember)
-            applicationEventPublisher.publishEvent(
-                FollowFCMEvent(
-                    fromMember.nickname,
-                    fromMember.pk,
-                    notificationHistory.pk,
-                    toMember.deviceType,
-                    toMember.firebaseToken,
-                    NotificationType.FOLLOW
+            if (toMember.isAllowNewFollowerNotify) {
+                applicationEventPublisher.publishEvent(
+                    FollowFCMEvent(
+                        fromMember.nickname,
+                        fromMember.pk,
+                        notificationHistory.pk,
+                        toMember.deviceType,
+                        toMember.firebaseToken,
+                        NotificationType.FOLLOW
+                    )
                 )
-            )
+            }
         }
         followService.saveFollower(fromMember, toMember)
 
