@@ -66,4 +66,11 @@ interface CardDocs {
     fun isDeleteCard(
         cardId: Long,
     ): DeleteCheckResponse
+
+    @Operation(summary = "아티클 카드 조회 API", description = """
+        - 최신 아티클 카드 1건 조회 API
+    """)
+    fun getLatestArticleCard(
+        userId: Long,
+    ): ResponseEntity<ArticleCardResponse>
 }

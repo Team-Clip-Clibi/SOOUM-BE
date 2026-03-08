@@ -1,6 +1,7 @@
 package com.clip.api.card.controller
 
 import com.clip.api.card.controller.dto.*
+import com.clip.api.card.service.ArticleCardUseCase
 import com.clip.api.card.service.CardUseCase
 import com.clip.api.docs.card.CardDocs
 import com.clip.global.security.annotation.AccessUser
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/cards")
 class CardController(
     private val cardUseCase: CardUseCase,
+    private val articleCardUseCase: ArticleCardUseCase,
 ) : CardDocs {
 
     @PostMapping
@@ -67,5 +69,13 @@ class CardController(
     override fun deleteCard(@PathVariable cardId: Long, @AccessUser userId: Long): ResponseEntity<Unit> =
         cardUseCase.deleteCard(cardId, userId)
             .let { ResponseEntity.ok().build() }
+
+    @GetMapping("/article")
+    override fun getLatestArticleCard(
+        @AccessUser userId: Long
+    ): ResponseEntity<ArticleCardResponse> =
+        articleCardUseCase.getLatestArticleCard(userId)
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
 
 }

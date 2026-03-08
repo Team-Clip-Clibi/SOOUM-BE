@@ -18,4 +18,8 @@ public class FeedViewService {
     public Long countView(FeedCard feedCard) {
         return feedViewRepository.countView(feedCard);
     }
+
+    public boolean isViewedByMember(Long feedCardPk, Long memberPk) {
+        return feedViewRepository.existsByFeedCardPkAndVisitorPk(feedCardPk, memberPk);
+    }
 }
