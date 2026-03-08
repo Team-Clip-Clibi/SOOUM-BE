@@ -55,3 +55,11 @@ class FollowerCardUploadFCMEvent(
     fcmToken: String,
     notificationType: NotificationType
 ): FCMEvent(null, targetDeviceType, fcmToken, notificationType)
+
+class FeedCommentViewedCardFCMEvent(
+    val targetCardId: Long,
+    val commentContent: String,
+    targetDeviceType: DeviceType,
+    fcmToken: String,
+    notificationType: NotificationType
+): FCMEvent(null, targetDeviceType, fcmToken, notificationType)
