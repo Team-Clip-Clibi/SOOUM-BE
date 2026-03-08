@@ -5,6 +5,7 @@ import com.clip.api.card.mapper.FeedMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.data.block.service.BlockMemberService
 import com.clip.data.card.service.CommentCardService
+import com.clip.data.card.service.ArticleCardService
 import com.clip.data.card.service.FeedCardService
 import com.clip.data.card.service.FeedLikeService
 import org.springframework.stereotype.Service
@@ -15,6 +16,7 @@ class LatestFeedUseCase(
     private val blockMemberService: BlockMemberService,
     private val feedLikeService: FeedLikeService,
     private val commentCardService: CommentCardService,
+    private val articleCardService: ArticleCardService,
     private val feedMapper: FeedMapper,
     private val feedCardService: FeedCardService,
 )  {
@@ -37,6 +39,8 @@ class LatestFeedUseCase(
                 comments,
                 feedLikes,
                 DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude))
+        }.filterNot { feedResponse ->
+            feedResponse.isAdminCard && articleCardService.isArticleCard(feedResponse.cardId)
         }
     }
 }
