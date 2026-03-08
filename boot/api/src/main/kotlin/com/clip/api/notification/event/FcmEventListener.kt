@@ -86,6 +86,7 @@ class FcmEventListener(
         multiFcmEvent: MultiFcmFeedCardCommentViewersEvent
     ) {
         multiFcmEvent.recipientList.forEach { recipient ->
+            if (recipient.firebaseToken.isNullOrBlank()) return@forEach
             val message = fcmMsgStrategyRegistry.getMessage(
                 FeedCommentViewedCardFCMEvent(
                     multiFcmEvent.targetCardId,
