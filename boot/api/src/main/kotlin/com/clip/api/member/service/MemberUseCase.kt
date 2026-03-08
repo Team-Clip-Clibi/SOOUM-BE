@@ -199,16 +199,34 @@ class MemberUseCase(
                 nickname in FORBIDDEN_NICKNAME || nickname.length > 8)
 
     @Transactional
-    fun updateAllowNotify(allowNotifyRequest: AllowNotifyRequest, userId: Long) {
+    fun updateAllowNotify(allowNotifyDto: AllowNotifyDto, userId: Long) {
         val findMember = memberService.findMember(userId)
-        findMember.updateCommentCardNotify(allowNotifyRequest.commentCardNotify)
-        findMember.updateCardLikeNotify(allowNotifyRequest.cardLikeNotify)
-        findMember.updateFollowUserCardNotify(allowNotifyRequest.followUserCardNotify)
-        findMember.updateNewFollowerNotify(allowNotifyRequest.newFollowerNotify)
-        findMember.updateCardNewCommentNotify(allowNotifyRequest.cardNewCommentNotify)
-        findMember.updateRecommendedContentNotify(allowNotifyRequest.recommendedContentNotify)
-        findMember.updateFavoriteTagNotify(allowNotifyRequest.favoriteTagNotify)
-        findMember.updateServiceUpdateNotify(allowNotifyRequest.serviceUpdateNotify)
+        findMember.updateCommentCardNotify(allowNotifyDto.commentCardNotify)
+        findMember.updateCardLikeNotify(allowNotifyDto.cardLikeNotify)
+        findMember.updateFollowUserCardNotify(allowNotifyDto.followUserCardNotify)
+        findMember.updateNewFollowerNotify(allowNotifyDto.newFollowerNotify)
+        findMember.updateCardNewCommentNotify(allowNotifyDto.cardNewCommentNotify)
+        findMember.updateRecommendedContentNotify(allowNotifyDto.recommendedContentNotify)
+        findMember.updateFavoriteTagNotify(allowNotifyDto.favoriteTagNotify)
+        findMember.updateServiceUpdateNotify(allowNotifyDto.serviceUpdateNotify)
+        findMember.updatePolicyViolationNotify(allowNotifyDto.policyViolationNotify)
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserNotifyConfig(userId: Long): AllowNotifyDto {
+        val member = memberService.findMember(userId)
+
+        return AllowNotifyDto(
+            commentCardNotify = member.isAllowCommentCardNotify,
+            cardLikeNotify = member.isAllowCardLikeNotify,
+            followUserCardNotify = member.isAllowFollowUserCardNotify,
+            newFollowerNotify = member.isAllowNewFollowerNotify,
+            cardNewCommentNotify = member.isAllowCardNewCommentNotify,
+            recommendedContentNotify = member.isAllowRecommendedContentNotify,
+            favoriteTagNotify = member.isAllowFavoriteTagNotify,
+            serviceUpdateNotify = member.isAllowServiceUpdateNotify,
+            policyViolationNotify = member.isAllowPolicyViolationNotify,
+        )
     }
 
     fun getActivityRestrictionDate(userId: Long): ActivityRestrictionDateResponse {

@@ -23,10 +23,17 @@ class MemberController(
 
     @PatchMapping("/notify")
     override fun updateNotifyAllow(
-        @RequestBody allowNotifyRequest: AllowNotifyRequest,
+        @RequestBody allowNotifyDto: AllowNotifyDto,
         @AccessUser userId: Long
     ): ResponseEntity<Void> =
-        memberUseCase.updateAllowNotify(allowNotifyRequest, userId)
+        memberUseCase.updateAllowNotify(allowNotifyDto, userId)
+            .let { ResponseEntity.ok().build() }
+
+    @GetMapping("/notify")
+    override fun getNotifyAllowConfig(
+        @AccessUser userId: Long
+    ): ResponseEntity<AllowNotifyDto> =
+        memberUseCase.getUserNotifyConfig(userId)
             .let { ResponseEntity.ok().build() }
 
     @GetMapping("/activity-restriction-date")

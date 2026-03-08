@@ -74,7 +74,13 @@ interface MemberDocs {
         - 푸시알림 수신 여부를 설정하는 API입니다.
         - allowNotify가 true이면 푸시알림을 수신하고, false이면 수신하지 않습니다.
     """)
-    fun updateNotifyAllow(allowNotifyRequest: AllowNotifyRequest, userId: Long): ResponseEntity<Void>
+    fun updateNotifyAllow(allowNotifyDto: AllowNotifyDto, userId: Long): ResponseEntity<Void>
+
+    @Operation(summary = "푸시알림 ON/OFF 설정 조회 API", description = """
+        - 푸시알림 수신 동의 설정을 조회하는 API입니다.
+        - true이면 푸시알림을 수신하고, false이면 수신하지 않습니다.
+    """)
+    fun getNotifyAllowConfig(userId: Long): ResponseEntity<AllowNotifyDto>
 
     @Operation(summary = "활동 제한 날짜 조회 API", description = """
         - 활동 제한 날짜 조회 API
