@@ -6,6 +6,7 @@ import com.clip.api.card.event.FollowUserCardEvent
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.CardFCMEvent
+import com.clip.api.notification.event.MultiFcmFeedCardCommentViewersEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.api.tag.event.TagUsageEvent
 import com.clip.data.block.service.BlockMemberService
@@ -61,6 +62,7 @@ class CardUseCase(
     private val notificationHistoryService: NotificationHistoryService,
     private val commentViewService: CommentViewService,
     private val feedViewService: FeedViewService,
+    private val feedCardViewHistoryService: FeedCardViewHistoryService,
     private val articleCardService: ArticleCardService,
     private val entityManager: EntityManager
 ) {
@@ -176,6 +178,24 @@ class CardUseCase(
                     )
                 )
         }
+
+        if (parentCardType == CardType.FEED_CARD) {
+            val notifiableViewers = feedCardViewHistoryService.findNotifiableViewers(
+                parentCard.pk,
+                userId,
+                parentCard.writer.pk
+            )
+
+            if (notifiableViewers.isNotEmpty()) {
+                applicationEventPublisher.publishEvent(
+                    MultiFcmFeedCardCommentViewersEvent(
+                        commentCard.content,
+                        commentCard.pk,
+                        notifiableViewers
+                    )
+                )
+            }
+        }
         return CreateCardResponse(commentCard.pk)
     }
 
@@ -189,6 +209,8 @@ class CardUseCase(
 
         return when (card) {
             is FeedCard -> {
+                feedCardViewHistoryService.saveViewedFeedCard(userId, card.pk)
+
                 if (card.writer.pk != userId)
                     feedViewService.save(
                         FeedView(
