@@ -1,7 +1,7 @@
 package com.clip.api.card.event
 
-import com.clip.api.notification.event.MultiFcmFollowerCardUploadEvent
-import com.clip.data.follow.service.FollowService
+import com.clip.api.notification.event.MultiFcmArticleCardUploadEvent
+import com.clip.data.member.service.MemberService
 import com.clip.infra.s3.S3ImgPathProperties
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
@@ -13,45 +13,43 @@ import org.springframework.transaction.event.TransactionalEventListener
 import java.util.*
 
 @Component
-class FollowUserCardEventListener(
+class ArticleCardEventListener(
     private val S3ImgPathProperties: S3ImgPathProperties,
     @Value("\${spring.cloud.aws.s3.img.bucket}") private val bucket: String,
-    private val followService: FollowService,
+    private val memberService: MemberService,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
-
     companion object {
         const val PAGE_SIZE = 50
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    fun sendFollowerCardUploadNotification(
-        followUserCardEvent: FollowUserCardEvent
+    fun sendArticleCardUploadNotification(
+        articleCardEvent: ArticleCardEvent
     ) {
         var lastId: Long? = null
         do {
-            val followers = followService.findFollowerWithoutBlockedMembers(
-                Optional.ofNullable(lastId),
-                followUserCardEvent.cardCreatorId,
-                emptyList()
-            ).map { follower -> follower.fromMember }.toList()
-            if (followers.isEmpty()) break
+            val allowRecommendedContentNotifyMembers = memberService.findAllowRecommendedContentNotifyMembers(
+                Optional.ofNullable(lastId)
+            )
 
-            lastId = followers.last().pk
+            if (allowRecommendedContentNotifyMembers.isEmpty()) break
 
-            val targetUsers = followers.filter { follower-> follower.isAllowFollowUserCardNotify }.toList()
+            lastId = allowRecommendedContentNotifyMembers.last().pk
+
             applicationEventPublisher.publishEvent(
-                MultiFcmFollowerCardUploadEvent(
-                    followUserCardEvent.cardId,
-                    followUserCardEvent.content,
-                    followUserCardEvent.nickname,
-                    followUserCardEvent.userImgName?.let {
+                MultiFcmArticleCardUploadEvent(
+                    articleCardEvent.cardId,
+                    articleCardEvent.content,
+                    articleCardEvent.imgName?.let {
                         "https://${bucket}.amazonaws.com/${S3ImgPathProperties.userCardImg}${it}"
                     },
-                    targetUsers
+                    allowRecommendedContentNotifyMembers
                 )
             )
-        }while (followers.size == PAGE_SIZE)
+        }while (allowRecommendedContentNotifyMembers.size == PAGE_SIZE)
     }
+
+
 }
