@@ -1,6 +1,7 @@
 package com.clip.api.card.service
 
 import com.clip.api.card.controller.dto.*
+import com.clip.api.card.event.FollowUserCardEvent
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.CardFCMEvent
@@ -88,6 +89,17 @@ class CardUseCase(
                 member
             )
         )
+
+        applicationEventPublisher.publishEvent(
+            FollowUserCardEvent(
+                feedCard.pk,
+                userId,
+                member.nickname,
+                feedCard.imgName.takeIf { isUserImgType(createFeedCardRequest.imgType) },
+                feedCard.content
+            )
+        )
+
         if (isUserImgType(createFeedCardRequest.imgType))
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
 
