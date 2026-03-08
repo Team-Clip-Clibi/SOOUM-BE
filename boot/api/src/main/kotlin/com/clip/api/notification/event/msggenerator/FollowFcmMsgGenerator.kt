@@ -3,7 +3,6 @@ package com.clip.api.notification.event.msggenerator
 import com.clip.api.notification.event.FCMEvent
 import com.clip.api.notification.event.FollowFCMEvent
 import com.clip.data.member.entity.DeviceType
-import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.google.firebase.messaging.ApnsConfig
 import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.Message
@@ -31,7 +30,7 @@ class FollowFcmMsgGenerator: FcmMsgGenerator {
             .setNotification(
                 Notification.builder()
                     .setTitle(FcmMsgGenerator.TITLE)
-                    .setBody(generateFollowMsgBody(fcmDto.followingNickname, fcmDto.notificationType))
+                    .setBody(generateFollowMsgBody(fcmDto.followingNickname))
                     .build()
             )
             .setApnsConfig(
@@ -50,7 +49,7 @@ class FollowFcmMsgGenerator: FcmMsgGenerator {
 
         return Message.builder()
             .putAllData(data + mapOf("title" to FcmMsgGenerator.TITLE,
-                "body" to generateFollowMsgBody(fcmDto.followingNickname, fcmDto.notificationType)))
+                "body" to generateFollowMsgBody(fcmDto.followingNickname)))
             .setToken(fcmDto.fcmToken)
             .build()
     }
@@ -66,11 +65,8 @@ class FollowFcmMsgGenerator: FcmMsgGenerator {
 
     private fun generateFollowMsgBody(
         publisherName: String,
-        notificationType: NotificationType
-    ): String = publisherName + when (notificationType) {
-        NotificationType.FOLLOW -> FOLLOW_SUFFIX
-        else -> throw IllegalArgumentException("Unsupported notificationType: $notificationType")
-    }
+    ): String = publisherName + FOLLOW_SUFFIX
+
 
     override fun isSupported(fcmEvent: FCMEvent): Boolean {
         return fcmEvent is FollowFCMEvent
