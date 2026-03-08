@@ -5,6 +5,7 @@ import com.clip.api.notification.event.FollowerCardUploadFCMEvent
 import com.clip.data.member.entity.DeviceType
 import com.google.firebase.messaging.*
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
@@ -69,6 +70,7 @@ class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
     private fun generateGeneralMsgByAos(fcmDto: FollowerCardUploadFCMEvent): Message {
 
         val data = toFollowFcmData(fcmDto) + mapOf(
+            "notificationId" to UUID.randomUUID().toString(),
             "title" to FcmMsgGenerator.TITLE,
             "body" to generateFollowMsgBody(fcmDto.nickname, fcmDto.content)
         )
