@@ -1,6 +1,7 @@
 package com.clip.api.card.service
 
 import com.clip.api.card.controller.dto.*
+import com.clip.api.card.event.ArticleCardEvent
 import com.clip.api.card.event.FollowUserCardEvent
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
@@ -118,6 +119,9 @@ class CardUseCase(
 
         if (createFeedCardRequest.isArticle == true) {
             articleCardService.saveArticleCard(feedCard.pk)
+            applicationEventPublisher.publishEvent(
+                ArticleCardEvent(feedCard.pk, feedCard.content, feedCard.imgName)
+            )
         }
 
         return CreateCardResponse(feedCard.pk)

@@ -28,6 +28,7 @@ class FcmEventListener(
         multiFcmTagEvent: MultiFcmTagEvent
     ) {
         multiFcmTagEvent.notificationHistories.forEach { notificationHistory ->
+            if (notificationHistory.toMember.firebaseToken.isNullOrBlank()) return@forEach
             val message = fcmMsgStrategyRegistry.getMessage(TagUsageFcmEvent(
                 multiFcmTagEvent.tagContent,
                 multiFcmTagEvent.targetCardId,
@@ -46,6 +47,7 @@ class FcmEventListener(
         multiFcmTagEvent: MultiFcmFollowerCardUploadEvent
     ) {
         multiFcmTagEvent.recipientList.forEach { recipient ->
+            if (recipient.firebaseToken.isNullOrBlank()) return@forEach
             val message = fcmMsgStrategyRegistry.getMessage(FollowerCardUploadFCMEvent(
                 multiFcmTagEvent.targetCardId,
                 multiFcmTagEvent.content,
@@ -61,10 +63,30 @@ class FcmEventListener(
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun sendMulticastArticleCardUploadNotification(
+        multiFcmArticleEvent: MultiFcmArticleCardUploadEvent
+    ) {
+        multiFcmArticleEvent.recipientList.forEach { recipient ->
+            if (recipient.firebaseToken.isNullOrBlank()) return@forEach
+            val message = fcmMsgStrategyRegistry.getMessage(ArticleCardUploadFCMEvent(
+                multiFcmArticleEvent.targetCardId,
+                multiFcmArticleEvent.content,
+                multiFcmArticleEvent.userImgUrl,
+                recipient.deviceType,
+                recipient.firebaseToken,
+                NotificationType.FOLLOWER_CARD_UPLOAD
+            ))
+            fcmSender.send(message)
+        }
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     fun sendMulticastFeedCardCommentViewersNotification(
         multiFcmEvent: MultiFcmFeedCardCommentViewersEvent
     ) {
         multiFcmEvent.recipientList.forEach { recipient ->
+            if (recipient.firebaseToken.isNullOrBlank()) return@forEach
             val message = fcmMsgStrategyRegistry.getMessage(
                 FeedCommentViewedCardFCMEvent(
                     multiFcmEvent.targetCardId,
