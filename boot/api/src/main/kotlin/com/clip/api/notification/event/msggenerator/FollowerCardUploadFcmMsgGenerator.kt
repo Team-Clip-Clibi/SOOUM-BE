@@ -23,7 +23,6 @@ class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
     }
 
     private fun generateGeneralMsgByIos(cardUploadFcmEvent: FollowerCardUploadFCMEvent): Message {
-        val data = toFollowFcmData(cardUploadFcmEvent)
 
         val hasImage = !cardUploadFcmEvent.userImgUrl.isNullOrBlank()
 
@@ -56,24 +55,12 @@ class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
                     .build()
             )
             .setApnsConfig(apnsConfigBuilder.build())
-            .putAllData(
-                data + mapOf(
-                    "title" to FcmMsgGenerator.TITLE,
-                    "body" to generateFollowMsgBody(cardUploadFcmEvent.nickname, cardUploadFcmEvent.content),
-                    "imageUrl" to (cardUploadFcmEvent.userImgUrl ?: "")
-                )
-            )
+            .putAllData(toFollowFcmData(cardUploadFcmEvent))
             .setToken(cardUploadFcmEvent.fcmToken)
             .build()
     }
 
     private fun generateGeneralMsgByAos(fcmDto: FollowerCardUploadFCMEvent): Message {
-
-        val data = toFollowFcmData(fcmDto) + mapOf(
-            "notificationId" to UUID.randomUUID().toString(),
-            "title" to FcmMsgGenerator.TITLE,
-            "body" to generateFollowMsgBody(fcmDto.nickname, fcmDto.content)
-        )
 
         val messageBuilder = Message.builder()
 
@@ -92,7 +79,7 @@ class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
             }
 
         return messageBuilder
-            .putAllData(data)
+            .putAllData(toFollowFcmData(fcmDto))
             .setToken(fcmDto.fcmToken)
             .build()
     }
@@ -101,7 +88,11 @@ class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
         followFCMEvent: FollowerCardUploadFCMEvent
     ): Map<String, String> = mapOf(
         "targetCardId" to followFCMEvent.targetCardId.toString(),
-        "notificationType" to followFCMEvent.notificationType.name
+        "notificationType" to followFCMEvent.notificationType.name,
+        "notificationId" to UUID.randomUUID().toString(),
+        "title" to FcmMsgGenerator.TITLE,
+        "body" to generateFollowMsgBody(followFCMEvent.nickname,followFCMEvent.content),
+        "imageUrl" to (followFCMEvent.userImgUrl ?: "")
     )
 
     private fun generateFollowMsgBody(

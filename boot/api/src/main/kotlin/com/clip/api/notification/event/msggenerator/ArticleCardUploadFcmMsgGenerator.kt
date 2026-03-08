@@ -55,24 +55,12 @@ class ArticleCardUploadFcmMsgGenerator: FcmMsgGenerator {
                     .build()
             )
             .setApnsConfig(apnsConfigBuilder.build())
-            .putAllData(
-                data + mapOf(
-                    "title" to FcmMsgGenerator.TITLE,
-                    "body" to generateFollowMsgBody(cardUploadFcmEvent.content),
-                    "imageUrl" to (cardUploadFcmEvent.userImgUrl ?: "")
-                )
-            )
+            .putAllData(data)
             .setToken(cardUploadFcmEvent.fcmToken)
             .build()
     }
 
     private fun generateGeneralMsgByAos(fcmDto: ArticleCardUploadFCMEvent): Message {
-
-        val data = toArticleFcmData(fcmDto) + mapOf(
-            "notificationId" to UUID.randomUUID().toString(),
-            "title" to FcmMsgGenerator.TITLE,
-            "body" to generateFollowMsgBody(fcmDto.content)
-        )
 
         val messageBuilder = Message.builder()
 
@@ -91,16 +79,20 @@ class ArticleCardUploadFcmMsgGenerator: FcmMsgGenerator {
             }
 
         return messageBuilder
-            .putAllData(data)
+            .putAllData(toArticleFcmData(fcmDto))
             .setToken(fcmDto.fcmToken)
             .build()
     }
 
     private fun toArticleFcmData(
-        followFCMEvent: ArticleCardUploadFCMEvent
+        articleFCMEvent: ArticleCardUploadFCMEvent
     ): Map<String, String> = mapOf(
-        "targetCardId" to followFCMEvent.targetCardId.toString(),
-        "notificationType" to followFCMEvent.notificationType.name
+        "targetCardId" to articleFCMEvent.targetCardId.toString(),
+        "notificationType" to articleFCMEvent.notificationType.name,
+        "notificationId" to UUID.randomUUID().toString(),
+        "title" to FcmMsgGenerator.TITLE,
+        "body" to generateFollowMsgBody(articleFCMEvent.content),
+        "imageUrl" to (articleFCMEvent.userImgUrl ?: "")
     )
 
     private fun generateFollowMsgBody(
