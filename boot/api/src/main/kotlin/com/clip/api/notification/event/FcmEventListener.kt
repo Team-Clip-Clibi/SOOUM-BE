@@ -58,4 +58,23 @@ class FcmEventListener(
             fcmSender.send(message)
         }
     }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    fun sendMulticastFeedCardCommentViewersNotification(
+        multiFcmEvent: MultiFcmFeedCardCommentViewersEvent
+    ) {
+        multiFcmEvent.recipientList.forEach { recipient ->
+            val message = fcmMsgStrategyRegistry.getMessage(
+                FeedCommentViewedCardFCMEvent(
+                    multiFcmEvent.targetCardId,
+                    multiFcmEvent.commentContent,
+                    recipient.deviceType,
+                    recipient.firebaseToken,
+                    NotificationType.VIEWED_FEED_COMMENT_WRITE
+                )
+            )
+            fcmSender.send(message)
+        }
+    }
 }
