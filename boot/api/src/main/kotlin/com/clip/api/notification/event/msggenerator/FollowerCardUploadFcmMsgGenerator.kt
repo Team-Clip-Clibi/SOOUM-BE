@@ -11,7 +11,7 @@ import java.util.*
 class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
 
     companion object {
-        private const val FOLLOWER_SUFFIX = "님의 새로운 카드가 올라왔어요."
+        private const val FOLLOWER_SUFFIX = "님의 새로운 카드가 올라왔어요:"
     }
     override fun generateMsg(fcmEvent: FCMEvent): Message {
         fcmEvent as FollowerCardUploadFCMEvent
@@ -107,7 +107,13 @@ class FollowerCardUploadFcmMsgGenerator: FcmMsgGenerator {
     private fun generateFollowMsgBody(
         publisherName: String,
         content: String
-    ): String = "$publisherName$FOLLOWER_SUFFIX: $content"
+    ): String {
+        val lines = content.lines()
+        val trimmed = lines.take(2).joinToString("\n")
+        val suffix = if (lines.size > 2) "..." else ""
+
+        return "$publisherName$FOLLOWER_SUFFIX $trimmed$suffix"
+    }
 
     override fun isSupported(fcmEvent: FCMEvent): Boolean {
         return fcmEvent is FollowerCardUploadFCMEvent
