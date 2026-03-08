@@ -42,26 +42,14 @@ class FeedCommentViewedCardFcmMsgGenerator : FcmMsgGenerator {
                     .putHeader("apns-collapse-id", fcmEvent.notificationId.toString())
                     .build()
             )
-            .putAllData(
-                data + mapOf(
-                    "title" to FcmMsgGenerator.TITLE,
-                    "body" to body
-                )
-            )
+            .putAllData(data)
             .setToken(fcmEvent.fcmToken)
             .build()
     }
 
     private fun generateGeneralMsgByAos(fcmEvent: FeedCommentViewedCardFCMEvent): Message {
-        val body = generateFeedCommentMsgBody(fcmEvent.commentContent)
         return Message.builder()
-            .putAllData(
-                toFeedCommentFcmData(fcmEvent) + mapOf(
-                    "notificationId" to UUID.randomUUID().toString(),
-                    "title" to FcmMsgGenerator.TITLE,
-                    "body" to body
-                )
-            )
+            .putAllData(toFeedCommentFcmData(fcmEvent))
             .setToken(fcmEvent.fcmToken)
             .build()
     }
@@ -70,7 +58,10 @@ class FeedCommentViewedCardFcmMsgGenerator : FcmMsgGenerator {
         fcmEvent: FeedCommentViewedCardFCMEvent
     ): Map<String, String> = mapOf(
         "targetCardId" to fcmEvent.targetCardId.toString(),
-        "notificationType" to fcmEvent.notificationType.name
+        "notificationType" to fcmEvent.notificationType.name,
+        "notificationId" to UUID.randomUUID().toString(),
+        "title" to FcmMsgGenerator.TITLE,
+        "body" to generateFeedCommentMsgBody(fcmEvent.commentContent)
     )
 
     private fun generateFeedCommentMsgBody(commentContent: String): String {

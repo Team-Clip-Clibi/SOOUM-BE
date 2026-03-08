@@ -19,7 +19,7 @@ public interface FeedCardViewHistoryRepository extends JpaRepository<FeedCardVie
             "where h.targetFeedCard.pk = :feedCardPk " +
             "and h.viewer.pk <> :requesterPk " +
             "and h.viewer.pk <> :feedWriterPk " +
-            "and h.viewer.commentCardNotify = true " +
+            "and h.viewer.cardNewCommentNotify = true " +
             "and h.viewer.firebaseToken is not null")
     List<Member> findNotifiableViewers(
             @Param("feedCardPk") Long feedCardPk,

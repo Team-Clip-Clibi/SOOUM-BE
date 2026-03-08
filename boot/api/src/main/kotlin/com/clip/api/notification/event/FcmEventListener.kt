@@ -74,7 +74,7 @@ class FcmEventListener(
                 multiFcmArticleEvent.userImgUrl,
                 recipient.deviceType,
                 recipient.firebaseToken,
-                NotificationType.FOLLOWER_CARD_UPLOAD
+                NotificationType.ARTICLE_CARD_UPLOAD
             ))
             fcmSender.send(message)
         }
