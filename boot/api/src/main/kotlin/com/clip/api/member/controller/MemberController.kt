@@ -34,7 +34,7 @@ class MemberController(
         @AccessUser userId: Long
     ): ResponseEntity<AllowNotifyDto> =
         memberUseCase.getUserNotifyConfig(userId)
-            .let { ResponseEntity.ok().build() }
+            .let { ResponseEntity.ok(it) }
 
     @GetMapping("/activity-restriction-date")
     override fun getActivityRestrictionDate(@AccessUser userId: Long): ResponseEntity<ActivityRestrictionDateResponse> =
