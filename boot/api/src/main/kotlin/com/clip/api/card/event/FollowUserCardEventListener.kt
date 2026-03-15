@@ -16,6 +16,7 @@ import java.util.*
 class FollowUserCardEventListener(
     private val S3ImgPathProperties: S3ImgPathProperties,
     @Value("\${spring.cloud.aws.s3.img.bucket}") private val bucket: String,
+    @Value("\${spring.cloud.aws.region}") private val region: String,
     private val followService: FollowService,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
@@ -47,7 +48,7 @@ class FollowUserCardEventListener(
                     followUserCardEvent.content,
                     followUserCardEvent.nickname,
                     followUserCardEvent.userImgName?.let {
-                        "https://${bucket}.amazonaws.com/${S3ImgPathProperties.userCardImg}${it}"
+                        "https://${bucket}.s3.${region}.amazonaws.com/${S3ImgPathProperties.userCardImg}${it}"
                     },
                     targetUsers
                 )
