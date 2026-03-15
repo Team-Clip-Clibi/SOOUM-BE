@@ -16,6 +16,7 @@ import java.util.*
 class ArticleCardEventListener(
     private val S3ImgPathProperties: S3ImgPathProperties,
     @Value("\${spring.cloud.aws.s3.img.bucket}") private val bucket: String,
+    @Value("\${spring.cloud.aws.region}") private val region: String,
     private val memberService: MemberService,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
@@ -43,7 +44,7 @@ class ArticleCardEventListener(
                     articleCardEvent.cardId,
                     articleCardEvent.content,
                     articleCardEvent.imgName?.let {
-                        "https://${bucket}.amazonaws.com/${S3ImgPathProperties.userCardImg}${it}"
+                        "https://${bucket}.s3.${region}.amazonaws.com/${S3ImgPathProperties.userCardImg}${it}"
                     },
                     allowRecommendedContentNotifyMembers
                 )
