@@ -5,7 +5,7 @@ import com.clip.api.card.event.ArticleCardEvent
 import com.clip.api.card.event.FollowUserCardEvent
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
-import com.clip.api.notification.event.CardFCMEvent
+import com.clip.api.notification.event.CommentWriteCardFCMEvent
 import com.clip.api.notification.event.MultiFcmFeedCardCommentViewersEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.api.tag.event.TagUsageEvent
@@ -168,9 +168,10 @@ class CardUseCase(
                 notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
             if (parentCard.writer.isAllowCommentCardNotify)
                 applicationEventPublisher.publishEvent(
-                    CardFCMEvent(
+                    CommentWriteCardFCMEvent(
                         member.nickname,
                         commentCard.pk,
+                        commentCard.content,
                         commentWriteNotification.pk,
                         parentCard.writer.deviceType,
                         parentCard.writer.firebaseToken,
