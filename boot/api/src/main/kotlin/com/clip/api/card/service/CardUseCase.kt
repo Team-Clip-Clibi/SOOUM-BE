@@ -63,6 +63,7 @@ class CardUseCase(
     private val commentViewService: CommentViewService,
     private val feedViewService: FeedViewService,
     private val feedCardViewHistoryService: FeedCardViewHistoryService,
+    private val feedCardCommentViewerNotifyHistoryService: FeedCardCommentViewerNotifyHistoryService,
     private val articleCardService: ArticleCardService,
     private val entityManager: EntityManager
 ) {
@@ -186,13 +187,18 @@ class CardUseCase(
                 userId,
                 parentCard.writer.pk
             )
+            val firstNotifiedViewers = feedCardCommentViewerNotifyHistoryService.markFirstNotifiedViewers(
+                parentCard.pk,
+                member.pk,
+                notifiableViewers
+            )
 
-            if (notifiableViewers.isNotEmpty()) {
+            if (firstNotifiedViewers.isNotEmpty()) {
                 applicationEventPublisher.publishEvent(
                     MultiFcmFeedCardCommentViewersEvent(
                         commentCard.content,
                         commentCard.pk,
-                        notifiableViewers
+                        firstNotifiedViewers
                     )
                 )
             }
