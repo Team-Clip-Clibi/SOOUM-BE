@@ -1,0 +1,21 @@
+sentry:
+  enabled: true
+  environment: dev
+  dsn: ${SENTRY_DSN}
+  send-default-pii: true
+  logs:
+    enabled: true
+  logging:
+    minimum-level: info
+    minimum-breadcrumb-level: info
+    minimum-event-level: error
+  traces-sample-rate: 1.0
+  profile-session-sample-rate: 1.0
+  profile-lifecycle: trace
+
+otel:
+  sdk:
+    disabled: false
+  resource:
+    attributes:
+      deployment.environment: dev
