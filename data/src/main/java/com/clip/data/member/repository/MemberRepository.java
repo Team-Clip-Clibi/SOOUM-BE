@@ -28,4 +28,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("lastPk") Long lastMemberId,
             PageRequest pageRequest
     );
+
+    @Modifying
+    @Transactional
+    @Query("update Member m set m.firebaseToken = null where m.firebaseToken = :firebaseToken")
+    void updateFcmTokenToNullByUnregisteredToken(@Param("firebaseToken") String firebaseToken);
 }

@@ -24,7 +24,7 @@ class CommentReportUseCase(
     private val notificationUseCase: NotificationUseCase,
 ) {
     companion object {
-        private const val REPORT_LIMIT = 7
+        private const val REPORT_LIMIT = 3
     }
 
     fun hasAlreadyReported(cardId: Long, userId: Long): Boolean =

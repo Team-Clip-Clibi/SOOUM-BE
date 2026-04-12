@@ -91,6 +91,7 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
     @Query("select count(f) " +
             "from FeedCard f " +
             "where f.writer = :cardOwnerMember " +
+                "and f.isDeleted = false " +
                 "and (f.isStory = false " +
                     "or (f.isStory = true and f.createdAt > (current_timestamp - 1 day)))")
     Long findFeedCardCnt(@Param("cardOwnerMember") Member cardOwnerMember);
@@ -98,6 +99,7 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
     @Query("select fc from FeedCard fc " +
             "where (fc.isStory=false or (fc.isStory = true and fc.createdAt > (current_timestamp - 1 day))) " +
                 "and fc.writer.pk = :memberPk " +
+                "and fc.isDeleted = false " +
                 "and (:lastPk is null or fc.pk < :lastPk) " +
             "order by fc.pk desc ")
     List<FeedCard> findMemberFeedCards(@Param("memberPk") Long memberPk,
@@ -109,6 +111,15 @@ public interface FeedCardRepository extends JpaRepository<FeedCard, Long> {
     @Query("delete from FeedCard fc WHERE fc.writer.pk = :memberPk")
     void deleteFeedCardByMemberPk(@Param("memberPk") Long memberPk);
 
-    @Query("select f from FeedCard f join fetch f.writer where f.pk = :feedCardPk")
+    @Query("select f from FeedCard f join fetch f.writer where f.pk = :feedCardPk and f.isDeleted = false ")
     Optional<FeedCard> findWithMember(@Param("feedCardPk") Long feedCardPk);
+
+    Optional<FeedCard> findByPkAndIsDeletedFalse(Long feedCardPk);
+
+    boolean existsByPkAndIsDeletedFalse(Long feedCardPk);
+
+    @Modifying
+    @Transactional
+    @Query("update FeedCard fc set fc.isDeleted = true where fc.pk = :feedCardPk")
+    void softDeleteById(Long feedCardPk);
 }

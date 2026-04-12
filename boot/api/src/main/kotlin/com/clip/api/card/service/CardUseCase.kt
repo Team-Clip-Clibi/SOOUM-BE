@@ -310,14 +310,14 @@ class CardUseCase(
     fun deleteFeedCardWithRelations(feedCard: FeedCard) {
         feedTagService.deleteByFeedCardPk(feedCard.pk)
         feedLikeService.deleteAllFeedLikes(feedCard.pk)
-        feedCardService.deleteFeedCard(feedCard.pk)
+        feedCardService.softDeleteFeedCard(feedCard.pk)
     }
 
     @Transactional
     fun deleteCommentCardWithRelations(commentCard: CommentCard) {
         commentTagService.deleteByCommentCardPk(commentCard.pk)
         commentLikeService.deleteAllFeedLikes(commentCard.pk)
-        commentCardService.deleteCommentCard(commentCard.pk)
+        commentCardService.softDeleteCommentCard(commentCard.pk)
     }
 
     @Transactional
@@ -330,13 +330,13 @@ class CardUseCase(
             is FeedCard -> {
                 deleteFeedCardDependencies(card)
                 entityManager.clear()
-                feedCardService.deleteFeedCard(card.pk)
+                feedCardService.softDeleteFeedCard(card.pk)
             }
 
             is CommentCard -> {
                 deleteCommentCardDependencies(card)
                 entityManager.clear()
-                commentCardService.deleteCommentCard(card.pk)
+                commentCardService.softDeleteCommentCard(card.pk)
             }
 
             else -> throw RuntimeException()

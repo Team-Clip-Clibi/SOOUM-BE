@@ -29,8 +29,8 @@ public class CommentCardService {
         return commentCardRepository.findChildCardsWithWriter(parentCardPk);
     }
 
-    public void deleteCommentCard(Long commentCardPk) {
-        commentCardRepository.deleteById(commentCardPk);
+    public void softDeleteCommentCard(Long commentCardPk) {
+        commentCardRepository.softDeleteById(commentCardPk);
     }
 
     public List<CommentCard> findByMasterCardPk(Long masterCardPk) {
@@ -47,16 +47,16 @@ public class CommentCardService {
     }
 
     public CommentCard findByPk(Long commentCardPk) {
-        return commentCardRepository.findById(commentCardPk)
+        return commentCardRepository.findByPkAndIsDeletedFalse(commentCardPk)
                 .orElseThrow(() -> new EntityNotFoundException("댓글 카드를 찾을 수 없습니다."));
     }
 
     public CommentCard findCommentCardOrNull(Long commentCardPk) {
-        return commentCardRepository.findById(commentCardPk).orElse(null);
+        return commentCardRepository.findByPkAndIsDeletedFalse(commentCardPk).orElse(null);
     }
 
     public boolean isExistCommentCard(Long commentCardPk) {
-        return commentCardRepository.existsById(commentCardPk);
+        return commentCardRepository.existsByPkAndIsDeletedFalse(commentCardPk);
     }
 
     public CardType findCardType(Long cardPk) {

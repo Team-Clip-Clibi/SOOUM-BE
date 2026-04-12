@@ -1,5 +1,6 @@
 package com.clip.api.notification.event.fcmsender
 
+import com.clip.data.member.service.MemberService
 import com.clip.global.exception.FCMException
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingException
@@ -10,34 +11,32 @@ import org.springframework.resilience.annotation.Retryable
 import org.springframework.stereotype.Component
 
 @Component
-class FcmSender {
+class FcmSender(
+    private val memberService: MemberService
+) {
     companion object {
         private val log = LoggerFactory.getLogger(FcmSender::class.java)
     }
+
     @Retryable(includes = [FCMException::class], maxRetries = 3, delay = 1000, multiplier = 2.0)
-    fun send(message: Message) {
+    fun send(message: Message, fcmToken: String?) {
         try {
             FirebaseMessaging.getInstance().send(message)
         } catch (e: FirebaseMessagingException) {
-            if (isRetryable(e.messagingErrorCode)) {
-                log.warn(
-                    "FCM retryable error. code={}, msg={}",
-                    e.messagingErrorCode, e.message
-                )
-                throw FCMException()
-            } else {
-                log.error(
-                    "FCM non-retryable error. code={}, msg={}",
-                    e.messagingErrorCode, e.message, e
-                )
+            when (e.messagingErrorCode) {
+                MessagingErrorCode.UNREGISTERED -> {
+                    memberService.clearFcmTokenByToken(fcmToken)
+                    return
+                }
+                MessagingErrorCode.INTERNAL,
+                MessagingErrorCode.UNAVAILABLE,
+                MessagingErrorCode.QUOTA_EXCEEDED -> {
+                    throw FCMException()
+                }
+                else -> {
+                    log.error("FCM non-retryable error. code={}, msg={}", e.messagingErrorCode, e.message, e)
+                }
             }
         }
-    }
-
-    private fun isRetryable(code: MessagingErrorCode?): Boolean = when (code) {
-        MessagingErrorCode.INTERNAL,
-        MessagingErrorCode.UNAVAILABLE,
-        MessagingErrorCode.QUOTA_EXCEEDED -> true
-        else -> false
     }
 }
