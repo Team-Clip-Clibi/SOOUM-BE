@@ -94,15 +94,18 @@ class CardUseCase(
             )
         )
 
-        applicationEventPublisher.publishEvent(
-            FollowUserCardEvent(
-                feedCard.pk,
-                userId,
-                member.nickname,
-                feedCard.imgName.takeIf { isUserImgType(createFeedCardRequest.imgType) },
-                feedCard.content
+        if (createFeedCardRequest.isArticle != true) {
+            applicationEventPublisher.publishEvent(
+                FollowUserCardEvent(
+                    feedCard.pk,
+                    userId,
+                    member.nickname,
+                    feedCard.imgName.takeIf { isUserImgType(createFeedCardRequest.imgType) },
+                    feedCard.content
+                )
             )
-        )
+        }
+
 
         if (isUserImgType(createFeedCardRequest.imgType))
             cardImgService.updateCardImg(feedCard, createFeedCardRequest.imgName)
