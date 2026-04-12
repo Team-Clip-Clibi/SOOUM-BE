@@ -1,6 +1,6 @@
 package com.clip.api.card.service
 
-import com.clip.api.notification.event.CardFCMEvent
+import com.clip.api.notification.event.CardLikeFCMEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.data.card.entity.*
 import com.clip.data.card.service.CommentCardService
@@ -90,7 +90,7 @@ class CardLikeUseCase(
 
         if (card.writer.isAllowCardLikeNotify) {
             applicationEventPublisher.publishEvent(
-                CardFCMEvent(
+                CardLikeFCMEvent(
                     member.nickname,
                     card.pk,
                     notificationPk,
@@ -136,4 +136,3 @@ class CardLikeUseCase(
             else -> throw IllegalArgumentException.CardNotFoundException("카드(id: $cardId)를 찾을 수 없습니다.", cardId)
         }
 }
-

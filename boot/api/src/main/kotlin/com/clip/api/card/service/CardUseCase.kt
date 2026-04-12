@@ -5,7 +5,7 @@ import com.clip.api.card.event.ArticleCardEvent
 import com.clip.api.card.event.FollowUserCardEvent
 import com.clip.api.card.mapper.CardMapper
 import com.clip.api.card.util.DistanceDisplayUtil
-import com.clip.api.notification.event.CardFCMEvent
+import com.clip.api.notification.event.CommentWriteCardFCMEvent
 import com.clip.api.notification.event.MultiFcmFeedCardCommentViewersEvent
 import com.clip.api.notification.service.NotificationUseCase
 import com.clip.api.tag.event.TagUsageEvent
@@ -63,6 +63,7 @@ class CardUseCase(
     private val commentViewService: CommentViewService,
     private val feedViewService: FeedViewService,
     private val feedCardViewHistoryService: FeedCardViewHistoryService,
+    private val feedCardCommentViewerNotifyHistoryService: FeedCardCommentViewerNotifyHistoryService,
     private val articleCardService: ArticleCardService,
     private val entityManager: EntityManager
 ) {
@@ -168,9 +169,10 @@ class CardUseCase(
                 notificationUseCase.saveCommentCardHistory(userId, commentCard.pk, parentCard)
             if (parentCard.writer.isAllowCommentCardNotify)
                 applicationEventPublisher.publishEvent(
-                    CardFCMEvent(
+                    CommentWriteCardFCMEvent(
                         member.nickname,
                         commentCard.pk,
+                        commentCard.content,
                         commentWriteNotification.pk,
                         parentCard.writer.deviceType,
                         parentCard.writer.firebaseToken,
@@ -185,13 +187,18 @@ class CardUseCase(
                 userId,
                 parentCard.writer.pk
             )
+            val firstNotifiedViewers = feedCardCommentViewerNotifyHistoryService.markFirstNotifiedViewers(
+                parentCard.pk,
+                member.pk,
+                notifiableViewers
+            )
 
-            if (notifiableViewers.isNotEmpty()) {
+            if (firstNotifiedViewers.isNotEmpty()) {
                 applicationEventPublisher.publishEvent(
                     MultiFcmFeedCardCommentViewersEvent(
                         commentCard.content,
                         commentCard.pk,
-                        notifiableViewers
+                        firstNotifiedViewers
                     )
                 )
             }

@@ -19,7 +19,17 @@ class SystemFCMEvent(
     notificationType: NotificationType
 ): FCMEvent(notificationId, targetDeviceType, fcmToken, notificationType)
 
-class CardFCMEvent(
+class CommentWriteCardFCMEvent(
+    val writerNickname: String,
+    val targetCardId: Long,
+    val commentContent: String,
+    notificationId: Long,
+    targetDeviceType: DeviceType,
+    fcmToken: String,
+    notificationType: NotificationType
+): FCMEvent(notificationId, targetDeviceType, fcmToken, notificationType)
+
+class CardLikeFCMEvent(
     val writerNickname: String,
     val targetCardId: Long,
     notificationId: Long,
