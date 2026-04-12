@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: sooum-api
   profiles:
     group:
       local:
@@ -32,6 +34,25 @@ server:
 
 jwt:
   key: ${JWT_KEY}
+
+sentry:
+  server-name: sooum-api-server
+
+otel:
+  traces:
+    exporter: none
+  metrics:
+    exporter: none
+  logs:
+    exporter: none
+
+  instrumentation:
+    jdbc:
+      enabled: true
+    logback-appender:
+      enabled: false
+    log4j-appender:
+      enabled: false
 
 exclude-auth-path-patterns:
   paths:

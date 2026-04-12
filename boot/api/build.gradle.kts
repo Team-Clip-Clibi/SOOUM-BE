@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "4.0.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.graalvm.buildtools.native") version "0.11.3"
+    id("io.sentry.jvm.gradle") version "6.4.0"
 }
 
 group = "com.clip"
@@ -24,6 +25,13 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":infra"))
 
+    implementation(platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.26.1"))
+
+    implementation("io.sentry:sentry-spring-boot-4-starter:8.38.0")
+    implementation("io.sentry:sentry-logback:8.38.0")
+    implementation("io.sentry:sentry-async-profiler:8.38.0")
+    implementation("io.sentry:sentry-opentelemetry-agentless:8.38.0")
+    implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -56,4 +64,20 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+tasks.withType<JavaExec>().configureEach {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "phew"
+    projectName = "sooum"
+    authToken = System.getProperty("SENTRY_AUTH_TOKEN")
 }
