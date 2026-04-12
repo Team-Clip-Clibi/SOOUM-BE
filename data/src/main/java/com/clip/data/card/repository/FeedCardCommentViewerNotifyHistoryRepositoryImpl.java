@@ -31,7 +31,6 @@ public class FeedCardCommentViewerNotifyHistoryRepositoryImpl implements FeedCar
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(@NonNull PreparedStatement ps, int i) throws SQLException {
-                // 👉 바로 이 부분입니다!
                 long generatedTsid = TSID.Factory.getTsid().toLong();
 
                 ps.setLong(1, generatedTsid);
