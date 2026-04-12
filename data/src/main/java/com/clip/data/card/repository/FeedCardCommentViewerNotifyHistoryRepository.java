@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FeedCardCommentViewerNotifyHistoryRepository extends JpaRepository<FeedCardCommentViewerNotifyHistory, Long> {
+public interface FeedCardCommentViewerNotifyHistoryRepository extends JpaRepository<FeedCardCommentViewerNotifyHistory, Long>, FeedCardCommentViewerNotifyHistoryBulkRepository{
     @Query("select h.recipient.pk " +
             "from FeedCardCommentViewerNotifyHistory h " +
             "where h.targetFeedCard.pk = :feedCardPk " +

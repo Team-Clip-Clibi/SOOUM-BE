@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_feed_card_comment_notify_history_target_recipient_writer",
-                        columnNames = {"target_feed_card", "recipient", "comment_writer"}
+                        columnNames = {"target_feed_card", "comment_writer", "recipient"}
                 )
         }
 )
