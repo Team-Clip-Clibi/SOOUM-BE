@@ -4,7 +4,9 @@ import com.clip.data.card.entity.ArticleCard;
 import com.clip.data.card.entity.FeedCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ArticleCardRepository extends JpaRepository<ArticleCard, Long> {
@@ -19,5 +21,8 @@ public interface ArticleCardRepository extends JpaRepository<ArticleCard, Long> 
     Optional<FeedCard> findLatestArticleFeedCard();
 
     boolean existsByFeedCardPk(Long feedCardPk);
+
+    @Query("select a from ArticleCard a where a.feedCardPk in :feedCardPkList")
+    List<ArticleCard> findArticleCardInFeedCards(@Param("feedCardPkList") List<Long> feedCardPkList);
 }
 

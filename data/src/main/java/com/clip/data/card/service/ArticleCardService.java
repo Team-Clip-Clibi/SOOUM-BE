@@ -4,6 +4,8 @@ import com.clip.data.card.entity.FeedCard;
 import com.clip.data.card.repository.ArticleCardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
@@ -24,5 +26,9 @@ public class ArticleCardService {
 
     public boolean isArticleCard(Long feedCardPk) {
         return articleCardRepository.existsByFeedCardPk(feedCardPk);
+    }
+
+    public List<ArticleCard> findAllArticleCardInFeedCards(List<Long> feedCardList) {
+        return articleCardRepository.findArticleCardInFeedCards(feedCardList);
     }
 }
