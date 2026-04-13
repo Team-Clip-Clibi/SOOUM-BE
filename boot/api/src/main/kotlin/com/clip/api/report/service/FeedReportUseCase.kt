@@ -24,7 +24,7 @@ class FeedReportUseCase(
     private val cardUseCase: CardUseCase,
 ) {
     companion object {
-        private const val REPORT_LIMIT = 7
+        private const val REPORT_LIMIT = 3
     }
 
     fun hasAlreadyReported(cardId: Long, userId: Long): Boolean =

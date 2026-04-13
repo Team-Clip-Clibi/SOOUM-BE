@@ -17,7 +17,7 @@ public class CommentReportService {
     private final CommentReportRepository commentReportRepository;
 
     public boolean hasAlreadyReported(Long cardPk, Long memberPk) {
-        return commentReportRepository.existsByReporter_PkAndTargetCard_Pk(cardPk, memberPk);
+        return commentReportRepository.existsByReporter_PkAndTargetCard_Pk(memberPk, cardPk);
     }
 
     public void save(Member member, CommentCard card, ReportType reportType) {

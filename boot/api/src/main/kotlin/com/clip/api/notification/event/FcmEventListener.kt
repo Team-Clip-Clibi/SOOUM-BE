@@ -19,7 +19,7 @@ class FcmEventListener(
         fcmEvent: FCMEvent
     ) {
         val message = fcmMsgStrategyRegistry.getMessage(fcmEvent)
-        fcmSender.send(message)
+        fcmSender.send(message, fcmEvent.fcmToken)
     }
 
     @Async
@@ -37,7 +37,7 @@ class FcmEventListener(
                 notificationHistory.toMember.firebaseToken,
                 notificationHistory.notificationType
             ))
-            fcmSender.send(message)
+            fcmSender.send(message, null)
         }
     }
 
@@ -57,7 +57,7 @@ class FcmEventListener(
                 recipient.firebaseToken,
                 NotificationType.FOLLOWER_CARD_UPLOAD
             ))
-            fcmSender.send(message)
+            fcmSender.send(message, null)
         }
     }
 
@@ -76,7 +76,7 @@ class FcmEventListener(
                 recipient.firebaseToken,
                 NotificationType.ARTICLE_CARD_UPLOAD
             ))
-            fcmSender.send(message)
+            fcmSender.send(message, null)
         }
     }
 
@@ -96,7 +96,7 @@ class FcmEventListener(
                     NotificationType.VIEWED_FEED_COMMENT_WRITE
                 )
             )
-            fcmSender.send(message)
+            fcmSender.send(message, null)
         }
     }
 }

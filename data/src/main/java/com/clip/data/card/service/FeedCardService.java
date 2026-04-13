@@ -34,8 +34,8 @@ public class FeedCardService {
         }
     }
 
-    public void deleteFeedCard(Long feedCardPk) {
-        feedCardRepository.deleteById(feedCardPk);
+    public void softDeleteFeedCard(Long feedCardPk) {
+        feedCardRepository.softDeleteById(feedCardPk);
     }
 
     public FeedCard findFeedCard(Long feedCardPk) {
@@ -44,15 +44,15 @@ public class FeedCardService {
     }
 
     public FeedCard findFeedCardOrNull(Long commentCardPk) {
-        return feedCardRepository.findById(commentCardPk).orElse(null);
+        return feedCardRepository.findByPkAndIsDeletedFalse(commentCardPk).orElse(null);
     }
 
     public boolean isExistFeedCard(Long feedCardPk) {
-        return feedCardRepository.existsById(feedCardPk);
+        return feedCardRepository.existsByPkAndIsDeletedFalse(feedCardPk);
     }
 
     public FeedCard findByPk(Long feedCardPk) {
-        return feedCardRepository.findById(feedCardPk)
+        return feedCardRepository.findByPkAndIsDeletedFalse(feedCardPk)
                 .orElseThrow(() -> new EntityNotFoundException("카드를 찾을 수 없습니다."));
     }
 

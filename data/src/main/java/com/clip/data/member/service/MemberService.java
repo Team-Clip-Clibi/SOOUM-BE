@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,5 +53,10 @@ public class MemberService {
 
     public void incrementTotalVisitorCnt(Member profileOwnerMember) {
         memberRepository.incrementTotalVisitorCnt(profileOwnerMember);
+    }
+
+    @Transactional
+    public void clearFcmTokenByToken(String fcmToken) {
+        memberRepository.updateFcmTokenToNullByUnregisteredToken(fcmToken);
     }
 }
