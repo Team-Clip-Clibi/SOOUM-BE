@@ -35,18 +35,21 @@ class DistanceFeedUseCase(
         val userLocation = GeometryFactory().createPoint(Coordinate(longitude, latitude))
         val distanceFeeds = feedCardService.findFeedsByDistance(Optional.ofNullable(lastId), userLocation, distance , blockedMembers)
 
+        val articleCardPksInFeedCards = articleCardService.findAllArticleCardInFeedCards(
+            distanceFeeds.map { it.pk }.toList()
+        ).map { it.feedCardPk }.toSet()
+        val filteredDistanceFeeds = distanceFeeds.filterNot { articleCardPksInFeedCards.contains(it.pk) }
+
         val feedLikes = feedLikeService.findByTargetCardIds(distanceFeeds.map { it.pk })
         val comments = commentCardService.findChildCommentsByParents(distanceFeeds.map { it.pk })
 
-        return distanceFeeds.map {
+        return filteredDistanceFeeds.map {
             feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,
                 DistanceDisplayUtil.calculateAndFormat(JTS.to(it.location), latitude, longitude)
             )
-        }.filterNot { feedResponse ->
-            feedResponse.isAdminCard && articleCardService.isArticleCard(feedResponse.cardId)
         }
     }
 }

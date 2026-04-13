@@ -4,8 +4,8 @@ import com.clip.api.card.controller.dto.FeedCardResponse
 import com.clip.api.card.mapper.FeedMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.data.block.service.BlockMemberService
-import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.ArticleCardService
+import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.FeedCardService
 import com.clip.data.card.service.FeedLikeService
 import org.springframework.stereotype.Service
@@ -28,19 +28,25 @@ class LatestFeedUseCase(
         userId: Long
     ): List<FeedCardResponse> {
         val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
-        val latestFeeds = feedCardService.getLatestFeeds(Optional.ofNullable(lastId), blockedMembers)
+        val latestFeeds = feedCardService.getLatestFeeds(
+            Optional.ofNullable(lastId),
+            blockedMembers
+        )
+        val articleCardPksInFeedCards = articleCardService.findAllArticleCardInFeedCards(
+            latestFeeds.map { it.pk }.toList()
+        ).map { it.feedCardPk }.toSet()
+        val filteredLatestFeeds = latestFeeds.filterNot { articleCardPksInFeedCards.contains(it.pk) }
 
-        val feedLikes = feedLikeService.findByTargetCards(latestFeeds)
-        val comments = commentCardService.findChildCommentsByParents(latestFeeds.map { it.pk })
 
-        return latestFeeds.map {
+        val feedLikes = feedLikeService.findByTargetCards(filteredLatestFeeds)
+        val comments = commentCardService.findChildCommentsByParents(filteredLatestFeeds.map { it.pk })
+
+        return filteredLatestFeeds.map {
             feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,
                 DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude))
-        }.filterNot { feedResponse ->
-            feedResponse.isAdminCard && articleCardService.isArticleCard(feedResponse.cardId)
         }
     }
 }

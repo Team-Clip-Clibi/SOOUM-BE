@@ -23,11 +23,15 @@ class PopularFeedUseCase(
     fun findPopularFeeds(latitude: Double?, longitude: Double?, userId: Long): List<FeedCardResponse> {
         val blockedMembers = blockMemberService.findAllBlockMemberPks(userId)
         val popularFeeds = popularFeedService.getPopularFeeds(blockedMembers)
+        val articleCardPksInFeedCards = articleCardService.findAllArticleCardInFeedCards(
+            popularFeeds.map { it.pk }.toList()
+        ).map { it.feedCardPk }.toSet()
+        val filteredPopularFeeds = popularFeeds.filterNot { articleCardPksInFeedCards.contains(it.pk) }
 
         val feedLikes = feedLikeService.findByTargetCards(popularFeeds)
         val comments = commentCardService.findChildCommentsByParents(popularFeeds.map { it.pk })
 
-        return popularFeeds.map {
+        return filteredPopularFeeds.map {
             feedMapper.toFeedResponse(
                 it,
                 comments,
