@@ -16,6 +16,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: phew
+        SENTRY_PROJECT: sooum
 
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +33,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew boot:api:build -x test
+        run: ./gradlew boot:api:build -x test -DSENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Get AWS Credential
         if: success()
