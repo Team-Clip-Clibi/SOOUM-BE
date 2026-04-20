@@ -58,10 +58,10 @@ class AuthUseCase(
     @Transactional
     fun signUp(request: SignUpRequest): SignUpResponse {
         val encryptedDeviceId = request.memberInfo.encryptedDeviceId
-        suspendedService.findSuspensionByDeviceId(encryptedDeviceId).ifPresent {
+        val deviceId = decodeWithRsa.execute(encryptedDeviceId)
+        suspendedService.findSuspensionByDeviceId(deviceId).ifPresent {
             throw IllegalStateException.SuspendedUserException()
         }
-        val deviceId = decodeWithRsa.execute(encryptedDeviceId)
 
         val normalizedImgName = request.memberInfo.profileImage
             ?.trim()
@@ -127,7 +127,7 @@ class AuthUseCase(
                 jwtProvider.getUserId(request.refreshToken),
                 jwtProvider.getDeviceId(request.refreshToken)
             )
-        } catch (e: ExpiredJwtException) {
+        } catch (_: ExpiredJwtException) {
             throw TokenException.ExpiredRefreshTokenException(token = request.refreshToken)
         }
         val reissueToken = jwtProvider.reissueToken(request.refreshToken, userId, deviceId)
