@@ -1,6 +1,7 @@
 sentry:
   enabled: true
   environment: prod
+  release: ${SENTRY_RELEASE}
   dsn: ${SENTRY_DSN}
   send-default-pii: true
   logs:
