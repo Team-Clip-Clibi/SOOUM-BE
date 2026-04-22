@@ -12,6 +12,7 @@ env:
   S3_APP_SPEC_YML_NAME: appspec.yml
   S3_APP_SPEC_SCRIPT_NAME: application_start.sh
   S3_DEPLOY_FILE_NAME: deploy-sooum.zip
+  RELEASE_ENV_FILE_NAME: release.env
 
 jobs:
   build:
@@ -32,8 +33,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Set Sentry release
+        run: echo "SENTRY_RELEASE=${GITHUB_SHA}" >> $GITHUB_ENV
+
       - name: Build with Gradle
         run: ./gradlew boot:api:build -x test -DSENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Create release env file
+        run: echo "SENTRY_RELEASE=${SENTRY_RELEASE}" > ./$RELEASE_ENV_FILE_NAME
 
       - name: Get AWS Credential
         if: success()
@@ -54,7 +61,7 @@ jobs:
 
       - name: Make zip file
         if: success()
-        run: zip -j ./$S3_DEPLOY_FILE_NAME ./boot/api/build/libs/api-0.0.1-SNAPSHOT.jar ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_YML_NAME ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_SCRIPT_NAME
+        run: zip -j ./$S3_DEPLOY_FILE_NAME ./boot/api/build/libs/api-0.0.1-SNAPSHOT.jar ./$RELEASE_ENV_FILE_NAME ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_YML_NAME ./$S3_APP_SPEC_DIC_NAME/$S3_APP_SPEC_SCRIPT_NAME
         shell: bash
 
       - name: Upload to S3
