@@ -17,6 +17,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: phew
+        SENTRY_PROJECT: sooum
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +37,7 @@ jobs:
         run: echo "SENTRY_RELEASE=${GITHUB_SHA}" >> $GITHUB_ENV
 
       - name: Build with Gradle
-        run: ./gradlew boot:api:build -x test
+        run: ./gradlew boot:api:build -x test -DSENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Create release env file
         run: echo "SENTRY_RELEASE=${SENTRY_RELEASE}" > ./$RELEASE_ENV_FILE_NAME
