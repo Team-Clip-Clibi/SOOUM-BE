@@ -9,6 +9,7 @@ import com.google.firebase.messaging.MessagingErrorCode
 import org.slf4j.LoggerFactory
 import org.springframework.resilience.annotation.Retryable
 import org.springframework.stereotype.Component
+import java.net.SocketException
 
 @Component
 class FcmSender(
@@ -33,7 +34,21 @@ class FcmSender(
                 MessagingErrorCode.QUOTA_EXCEEDED -> {
                     throw FCMException()
                 }
+
+                MessagingErrorCode.SENDER_ID_MISMATCH -> {
+                    log.error(
+                        "FCM sender id mismatch. code={}, msg={}, fcmToken={}",
+                        e.messagingErrorCode,
+                        e.message,
+                        fcmToken,
+                        e
+                    )
+
+                }
                 else -> {
+                    if (e.cause is SocketException) {
+                        throw FCMException()
+                    }
                     log.error("FCM non-retryable error. code={}, msg={}", e.messagingErrorCode, e.message, e)
                 }
             }
