@@ -21,6 +21,8 @@ class FcmSender(
 
     @Retryable(includes = [FCMException::class], maxRetries = 3, delay = 1000, multiplier = 2.0)
     fun send(message: Message, fcmToken: String?) {
+        if (fcmToken.isNullOrBlank()) return
+
         try {
             FirebaseMessaging.getInstance().send(message)
         } catch (e: FirebaseMessagingException) {
