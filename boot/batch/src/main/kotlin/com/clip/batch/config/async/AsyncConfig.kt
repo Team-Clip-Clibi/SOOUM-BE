@@ -10,14 +10,14 @@ import java.util.concurrent.Executor
 @Configuration
 class AsyncConfig {
 
-    @Bean(name = ["taskExecutor"])
-    fun taskExecutor(): Executor = ThreadPoolTaskExecutor().apply {
-        corePoolSize = 0
-        maxPoolSize = Int.MAX_VALUE
-        queueCapacity = 0
+    @Bean(name = ["fcmTaskExecutor"])
+    fun fcmTaskExecutor(): Executor = ThreadPoolTaskExecutor().apply {
+        corePoolSize = 4
+        maxPoolSize = 16
+        queueCapacity = 1_000
         keepAliveSeconds = 60
         setAllowCoreThreadTimeOut(true)
-        setThreadNamePrefix("cached-async-")
+        setThreadNamePrefix("fcm-async-")
         setWaitForTasksToCompleteOnShutdown(true)
         initialize()
     }

@@ -11,7 +11,7 @@ class FcmSchedulerService {
 
     private val logger = KotlinLogging.logger {}
 
-    @Async
+    @Async("fcmTaskExecutor")
     fun sendMulticastFcm(message: MulticastMessage) {
         runCatching {
             FirebaseMessaging.getInstance().sendEachForMulticast(message)
