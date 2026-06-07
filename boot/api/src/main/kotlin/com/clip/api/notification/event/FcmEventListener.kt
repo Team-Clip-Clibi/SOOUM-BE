@@ -37,7 +37,7 @@ class FcmEventListener(
                 notificationHistory.toMember.firebaseToken,
                 notificationHistory.notificationType
             ))
-            fcmSender.send(message, null)
+            fcmSender.send(message, notificationHistory.toMember.firebaseToken)
         }
     }
 
@@ -57,7 +57,7 @@ class FcmEventListener(
                 recipient.firebaseToken,
                 NotificationType.FOLLOWER_CARD_UPLOAD
             ))
-            fcmSender.send(message, null)
+            fcmSender.send(message, recipient.firebaseToken)
         }
     }
 
@@ -76,7 +76,7 @@ class FcmEventListener(
                 recipient.firebaseToken,
                 NotificationType.ARTICLE_CARD_UPLOAD
             ))
-            fcmSender.send(message, null)
+            fcmSender.send(message, recipient.firebaseToken)
         }
     }
 
@@ -96,7 +96,7 @@ class FcmEventListener(
                     NotificationType.VIEWED_FEED_COMMENT_WRITE
                 )
             )
-            fcmSender.send(message, null)
+            fcmSender.send(message, recipient.firebaseToken)
         }
     }
 }
