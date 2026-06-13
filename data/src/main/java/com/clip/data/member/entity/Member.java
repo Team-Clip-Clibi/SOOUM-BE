@@ -37,6 +37,9 @@ public class Member extends BaseEntity {
     @Column(name = "NICKNAME", columnDefinition = "VARBINARY(255) NOT NULL")
     private String nickname;
 
+    @Column(name = "BIO", length = 300)
+    private String bio;
+
     @Column(name = "BAN_COUNT")
     private int banCount;
 
@@ -136,6 +139,10 @@ public class Member extends BaseEntity {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateBio(String bio) {
+        this.bio = bio;
     }
 
     public void updateProfileImgName(String profileImgName) {

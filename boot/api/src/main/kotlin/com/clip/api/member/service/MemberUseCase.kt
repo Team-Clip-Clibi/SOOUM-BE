@@ -62,7 +62,11 @@ class MemberUseCase(
 
     @Transactional
     fun updateNicknameAndProfileImg(profileInfoRequest: ProfileInfoRequest, userId: Long) {
-        profileInfoRequest.nickname?.let { updateNickname(it, userId) }
+        profileInfoRequest.nickname?.let {
+            updateNickname(it, userId)
+        }
+        memberService.findMember(userId)
+            .updateBio(profileInfoRequest.profileBio)
         updateProfileImage(profileInfoRequest.profileImgName, userId)
     }
 
@@ -155,7 +159,8 @@ class MemberUseCase(
             todayVisitCnt,
             feedCardCnt,
             followingCnt,
-            followerCnt
+            followerCnt,
+            member.bio
         )
     }
 
@@ -183,7 +188,8 @@ class MemberUseCase(
             followingCnt,
             followerCnt,
             alreadyFollowing,
-            isBlocked
+            isBlocked,
+            profileOwner.bio
         )
     }
 
