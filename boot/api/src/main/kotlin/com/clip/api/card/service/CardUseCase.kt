@@ -20,6 +20,8 @@ import com.clip.data.member.entity.Role
 import com.clip.data.member.service.MemberService
 import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.data.notification.service.NotificationHistoryService
+import com.clip.data.poll.service.FeedPollService
+import com.clip.data.poll.service.PollOptionService
 import com.clip.data.report.service.CommentReportService
 import com.clip.data.report.service.FeedReportService
 import com.clip.data.tag.service.CommentTagService
@@ -65,6 +67,8 @@ class CardUseCase(
     private val feedCardViewHistoryService: FeedCardViewHistoryService,
     private val feedCardCommentViewerNotifyHistoryService: FeedCardCommentViewerNotifyHistoryService,
     private val articleCardService: ArticleCardService,
+    private val feedPollService: FeedPollService,
+    private val pollOptionService: PollOptionService,
     private val entityManager: EntityManager
 ) {
 
@@ -126,6 +130,11 @@ class CardUseCase(
             applicationEventPublisher.publishEvent(
                 ArticleCardEvent(feedCard.pk, feedCard.content, feedCard.imgName)
             )
+        }
+
+        if (createFeedCardRequest is CreateFeedCardWithPollRequest && createFeedCardRequest.hasPoll) {
+            val feedPoll = feedPollService.saveFeedPoll(feedCard, createFeedCardRequest.pollType)
+            pollOptionService.savePollOptions(feedPoll, createFeedCardRequest.pollContents)
         }
 
         return CreateCardResponse(feedCard.pk)

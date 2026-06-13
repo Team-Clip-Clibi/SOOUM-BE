@@ -6,6 +6,7 @@ import com.clip.api.card.service.CardUseCase
 import com.clip.api.docs.card.CardDocs
 import com.clip.global.security.annotation.AccessUser
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -24,6 +25,17 @@ class CardController(
     ): ResponseEntity<CreateCardResponse> =
         cardUseCase.createFeedCard(request, createFeedCardRequest, userId)
             .let { ResponseEntity.ok(it) }
+
+    @PostMapping("/v2")
+    override fun createFeedCardV2(
+        request: HttpServletRequest,
+        @Valid @RequestBody createFeedCardWithPollRequest: CreateFeedCardWithPollRequest,
+        @AccessUser userId: Long,
+    ) = cardUseCase.createFeedCard(
+            request,
+            createFeedCardWithPollRequest,
+            userId
+        ).let { ResponseEntity.ok(it) }
 
 
     @GetMapping("/{cardId}/delete-check")
