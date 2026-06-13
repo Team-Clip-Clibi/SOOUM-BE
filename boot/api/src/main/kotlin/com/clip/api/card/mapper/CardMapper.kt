@@ -44,9 +44,10 @@ class CardMapper(
             request.imgType,
             request.imgName,
             member,
+            requestIp,
             isStory,
             request.tags.isEmpty() || DeactivateTagWords.deactivateWordsList.none { request.tags.contains(it) },
-            requestIp,
+            request.hasPoll,
         )
     }
 
