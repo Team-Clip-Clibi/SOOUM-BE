@@ -4,6 +4,7 @@ import com.clip.api.card.controller.dto.*
 import com.clip.api.card.event.ArticleCardEvent
 import com.clip.api.card.event.FollowUserCardEvent
 import com.clip.api.card.mapper.CardMapper
+import com.clip.api.card.mapper.CardPollMapper
 import com.clip.api.card.util.DistanceDisplayUtil
 import com.clip.api.notification.event.CommentWriteCardFCMEvent
 import com.clip.api.notification.event.MultiFcmFeedCardCommentViewersEvent
@@ -22,6 +23,7 @@ import com.clip.data.notification.entity.notificationtype.NotificationType
 import com.clip.data.notification.service.NotificationHistoryService
 import com.clip.data.poll.service.FeedPollService
 import com.clip.data.poll.service.PollOptionService
+import com.clip.data.poll.service.PollVoteService
 import com.clip.data.report.service.CommentReportService
 import com.clip.data.report.service.FeedReportService
 import com.clip.data.tag.service.CommentTagService
@@ -46,6 +48,7 @@ class CardUseCase(
     private val rekognitionService: RekognitionService,
     private val s3ImgService: S3ImgService,
     private val cardMapper: CardMapper,
+    private val cardPollMapper: CardPollMapper,
     private val cardImgService: CardImgService,
     private val memberService: MemberService,
     private val tagService: TagService,
@@ -69,6 +72,7 @@ class CardUseCase(
     private val articleCardService: ArticleCardService,
     private val feedPollService: FeedPollService,
     private val pollOptionService: PollOptionService,
+    private val pollVoteService: PollVoteService,
     private val entityManager: EntityManager
 ) {
 
@@ -242,6 +246,7 @@ class CardUseCase(
                 val comments = commentCardService.findChildCommentCardList(cardId)
                 val feedViews = feedViewService.countView(card)
                 val isReported = feedReportService.hasAlreadyReported(cardId, userId)
+                val poll = getPollResponse(card, userId)
                 cardMapper.toFeedCardDetailResponse(
                     card,
                     writer,
@@ -251,7 +256,8 @@ class CardUseCase(
                     userId,
                     tags,
                     feedViews,
-                    isReported
+                    isReported,
+                    poll
                 )
             }
 
@@ -387,6 +393,21 @@ class CardUseCase(
         else if (commentCardService.isExistCommentCard(cardId))
             commentCardService.findCommentCard(cardId)
         else throw IllegalArgumentException.CardNotFoundException()
+    }
+
+    private fun getPollResponse(feedCard: FeedCard, userId: Long): PollResponse? {
+        val feedPoll = feedPollService.findByFeedCardPk(feedCard.pk).orElse(null) ?: return null
+        val pollOptions = pollOptionService.findByFeedPollPk(feedPoll.pk)
+        if (pollOptions.isEmpty()) return null
+
+        val votedPollOptionPks = pollVoteService.findPollOptionPksByFeedPollPk(feedPoll.pk)
+        val votedOptionPks = pollVoteService.findVotedPollOptionPks(feedPoll.pk, userId).toSet()
+
+        return cardPollMapper.toPollResponse(
+            pollOptions = pollOptions,
+            votedPollOptionPks = votedPollOptionPks,
+            votedOptionPks = votedOptionPks,
+        )
     }
 
     private fun handleBanStatus(member: Member): Member {

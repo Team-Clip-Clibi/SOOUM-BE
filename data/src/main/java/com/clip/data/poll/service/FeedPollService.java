@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class FeedPollService {
@@ -19,5 +22,16 @@ public class FeedPollService {
                 .feedCard(feedCard)
                 .pollType(pollType)
                 .build());
+    }
+
+    public Optional<FeedPoll> findByFeedCardPk(Long feedCardPk) {
+        return feedPollRepository.findByFeedCardPk(feedCardPk);
+    }
+
+    public List<Long> findFeedCardPksByFeedCardPks(List<Long> feedCardPks) {
+        if (feedCardPks == null || feedCardPks.isEmpty()) {
+            return List.of();
+        }
+        return feedPollRepository.findFeedCardPksByFeedCardPks(feedCardPks);
     }
 }

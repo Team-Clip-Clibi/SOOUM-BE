@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface PollVoteRepository extends JpaRepository<PollVote, Long>, PollVoteInsertRepository {
+public interface PollVoteRepository extends JpaRepository<PollVote, Long> {
+    @Query("select pv.feedPoll.feedCard.pk from PollVote pv where pv.feedPoll.feedCard.pk in :feedCardPks")
+    List<Long> findVotedFeedCardPksByFeedCardPks(@Param("feedCardPks") List<Long> feedCardPks);
+
     @Query("select pv.pollOption.pk from PollVote pv where pv.feedPoll.pk = :feedPollPk")
     List<Long> findPollOptionPksByFeedPollPk(@Param("feedPollPk") Long feedPollPk);
 

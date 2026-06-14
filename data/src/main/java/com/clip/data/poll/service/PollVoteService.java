@@ -20,6 +20,13 @@ public class PollVoteService {
         pollVoteRepository.deleteByFeedPollPkAndPollOptionPkAndVoterPk(feedPollPk, pollOptionPk, voterPk);
     }
 
+    public List<Long> findVotedFeedCardPksByFeedCardPks(List<Long> feedCardPks) {
+        if (feedCardPks == null || feedCardPks.isEmpty()) {
+            return List.of();
+        }
+        return pollVoteRepository.findVotedFeedCardPksByFeedCardPks(feedCardPks);
+    }
+
     public List<Long> findPollOptionPksByFeedPollPk(Long feedPollPk) {
         return pollVoteRepository.findPollOptionPksByFeedPollPk(feedPollPk);
     }

@@ -8,6 +8,8 @@ import com.clip.data.card.service.ArticleCardService
 import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.FeedLikeService
 import com.clip.data.card.service.PopularFeedService
+import com.clip.data.poll.service.FeedPollService
+import com.clip.data.poll.service.PollVoteService
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +20,8 @@ class PopularFeedUseCase(
     private val commentCardService: CommentCardService,
     private val articleCardService: ArticleCardService,
     private val feedMapper: FeedMapper,
+    private val feedPollService: FeedPollService,
+    private val pollVoteService: PollVoteService,
 ) {
 
     fun findPopularFeeds(latitude: Double?, longitude: Double?, userId: Long): List<FeedCardResponse> {
@@ -30,13 +34,22 @@ class PopularFeedUseCase(
 
         val feedLikes = feedLikeService.findByTargetCards(popularFeeds)
         val comments = commentCardService.findChildCommentsByParents(popularFeeds.map { it.pk })
+        val pollVoterCntByFeedCardPk = pollVoteService.findVotedFeedCardPksByFeedCardPks(
+            filteredPopularFeeds.map { it.pk }
+        ).groupingBy { it }.eachCount()
+        val pollFeedCardPks = feedPollService.findFeedCardPksByFeedCardPks(
+            filteredPopularFeeds.map { it.pk }
+        ).toSet()
 
         return filteredPopularFeeds.map {
             feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,
-                DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude))
+                DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude),
+                userId,
+                if (pollFeedCardPks.contains(it.pk)) pollVoterCntByFeedCardPk[it.pk]?.toLong() ?: 0L else null
+            )
         }.filterNot { feedResponse ->
             feedResponse.isAdminCard && articleCardService.isArticleCard(feedResponse.cardId)
         }

@@ -2,6 +2,7 @@ package com.clip.api.card.controller.dto
 
 import com.clip.data.card.entity.font.Font
 import com.fasterxml.jackson.annotation.JsonFormat
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 sealed class CardDetailResponse(
@@ -41,6 +42,7 @@ class FeedCardDetailResponse(
     val tags: List<TagResponse>,
     val isOwnCard: Boolean,
     val isFeedCard: Boolean,
+    val poll: PollResponse?,
     val visitedCnt: Long,
 ) : CardDetailResponse(
     cardId = cardId,
@@ -96,4 +98,18 @@ class CommentCardDetailResponse(
 data class TagResponse (
     val tagId: Long,
     val name: String,
+)
+
+data class PollResponse(
+    val totalVoterCnt: Long,
+    val isVoted: Boolean,
+    val options: List<PollOptionResponse>,
+)
+
+data class PollOptionResponse(
+    val pollOptionId: Long,
+    val content: String,
+    val voteCnt: Long? = null,
+    val votePercentage: BigDecimal? = null,
+    val isVoted: Boolean = false,
 )
