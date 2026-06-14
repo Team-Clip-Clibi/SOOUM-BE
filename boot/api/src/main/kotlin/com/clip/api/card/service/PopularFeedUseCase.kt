@@ -8,6 +8,7 @@ import com.clip.data.card.service.ArticleCardService
 import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.FeedLikeService
 import com.clip.data.card.service.PopularFeedService
+import com.clip.data.poll.service.FeedPollService
 import com.clip.data.poll.service.PollVoteService
 import org.springframework.stereotype.Service
 
@@ -19,6 +20,7 @@ class PopularFeedUseCase(
     private val commentCardService: CommentCardService,
     private val articleCardService: ArticleCardService,
     private val feedMapper: FeedMapper,
+    private val feedPollService: FeedPollService,
     private val pollVoteService: PollVoteService,
 ) {
 
@@ -35,6 +37,9 @@ class PopularFeedUseCase(
         val pollVoterCntByFeedCardPk = pollVoteService.findVotedFeedCardPksByFeedCardPks(
             filteredPopularFeeds.map { it.pk }
         ).groupingBy { it }.eachCount()
+        val pollFeedCardPks = feedPollService.findFeedCardPksByFeedCardPks(
+            filteredPopularFeeds.map { it.pk }
+        ).toSet()
 
         return filteredPopularFeeds.map {
             feedMapper.toFeedResponse(
@@ -43,7 +48,7 @@ class PopularFeedUseCase(
                 feedLikes,
                 DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude),
                 userId,
-                pollVoterCntByFeedCardPk[it.pk]?.toLong() ?: 0L
+                if (pollFeedCardPks.contains(it.pk)) pollVoterCntByFeedCardPk[it.pk]?.toLong() ?: 0L else null
             )
         }.filterNot { feedResponse ->
             feedResponse.isAdminCard && articleCardService.isArticleCard(feedResponse.cardId)

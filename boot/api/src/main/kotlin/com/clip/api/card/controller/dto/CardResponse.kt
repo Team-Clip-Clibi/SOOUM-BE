@@ -54,7 +54,7 @@ class FeedCardResponse(
     createdAt: LocalDateTime,
     isAdminCard: Boolean,
     val isLike: Boolean,
-    val pollVoterCnt: Long,
+    val pollVoterCnt: Long?,
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     val storyExpirationTime: LocalDateTime?,
 ) : CardResponse(

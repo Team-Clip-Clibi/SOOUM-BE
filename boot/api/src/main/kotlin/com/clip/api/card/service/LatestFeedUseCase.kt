@@ -8,6 +8,7 @@ import com.clip.data.card.service.ArticleCardService
 import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.FeedCardService
 import com.clip.data.card.service.FeedLikeService
+import com.clip.data.poll.service.FeedPollService
 import com.clip.data.poll.service.PollVoteService
 import org.springframework.stereotype.Service
 import java.util.*
@@ -20,6 +21,7 @@ class LatestFeedUseCase(
     private val articleCardService: ArticleCardService,
     private val feedMapper: FeedMapper,
     private val feedCardService: FeedCardService,
+    private val feedPollService: FeedPollService,
     private val pollVoteService: PollVoteService,
 )  {
 
@@ -45,6 +47,9 @@ class LatestFeedUseCase(
         val pollVoterCntByFeedCardPk = pollVoteService.findVotedFeedCardPksByFeedCardPks(
             filteredLatestFeeds.map { it.pk }
         ).groupingBy { it }.eachCount()
+        val pollFeedCardPks = feedPollService.findFeedCardPksByFeedCardPks(
+            filteredLatestFeeds.map { it.pk }
+        ).toSet()
 
         return filteredLatestFeeds.map {
             feedMapper.toFeedResponse(
@@ -53,7 +58,7 @@ class LatestFeedUseCase(
                 feedLikes,
                 DistanceDisplayUtil.calculateAndFormat(it.location, latitude, longitude),
                 userId,
-                pollVoterCntByFeedCardPk[it.pk]?.toLong() ?: 0L
+                if (pollFeedCardPks.contains(it.pk)) pollVoterCntByFeedCardPk[it.pk]?.toLong() ?: 0L else null
             )
         }
     }

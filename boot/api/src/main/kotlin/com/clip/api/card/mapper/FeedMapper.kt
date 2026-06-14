@@ -22,7 +22,7 @@ class FeedMapper(
         feedLikes: List<FeedLike>,
         distance: String?,
         userId: Long,
-        pollVoterCnt: Long,
+        pollVoterCnt: Long?,
     ): FeedCardResponse =
         FeedCardResponse(
             cardId = targetFeedCard.pk,
@@ -49,7 +49,7 @@ class FeedMapper(
         feedLikes: List<FeedLike>,
         distance: String?,
         userId: Long,
-        pollVoterCnt: Long,
+        pollVoterCnt: Long?,
     ): FeedCardResponse =
         FeedCardResponse(
             cardId = feedcard.pk,
