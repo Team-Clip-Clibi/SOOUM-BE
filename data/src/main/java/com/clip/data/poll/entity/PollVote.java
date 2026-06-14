@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @Entity
 @Table(
@@ -39,4 +41,10 @@ public class PollVote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "POLL_OPTION", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private PollOption pollOption;
+
+    public PollVote(Member voter, FeedPoll feedPoll, PollOption pollOption) {
+        this.voter = Objects.requireNonNull(voter);
+        this.feedPoll = Objects.requireNonNull(feedPoll);
+        this.pollOption = Objects.requireNonNull(pollOption);
+    }
 }

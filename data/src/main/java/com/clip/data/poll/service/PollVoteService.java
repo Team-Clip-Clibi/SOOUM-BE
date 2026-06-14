@@ -1,5 +1,6 @@
 package com.clip.data.poll.service;
 
+import com.clip.data.poll.entity.PollVote;
 import com.clip.data.poll.repository.PollVoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,8 @@ import java.util.List;
 public class PollVoteService {
     private final PollVoteRepository pollVoteRepository;
 
-    public void insertIfAbsentPollVote(Long feedPollPk, Long pollOptionPk, Long voterPk) {
-        pollVoteRepository.insertIfAbsentPollVote(feedPollPk, pollOptionPk, voterPk);
+    public void save(PollVote pollVote) {
+        pollVoteRepository.save(pollVote);
     }
 
     public void deletePollVote(Long feedPollPk, Long pollOptionPk, Long voterPk) {
