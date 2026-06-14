@@ -90,4 +90,13 @@ class CardController(
             ?.let { ResponseEntity.ok(it) }
             ?: ResponseEntity.noContent().build()
 
+    @GetMapping("/article/v2")
+    override fun getLatestArticleCards(
+        @AccessUser userId: Long
+    ): ResponseEntity<List<ArticleCardResponse>> =
+        articleCardUseCase.getLatestArticleCards(userId)
+            .takeIf { it.isNotEmpty() }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.noContent().build()
+
 }
