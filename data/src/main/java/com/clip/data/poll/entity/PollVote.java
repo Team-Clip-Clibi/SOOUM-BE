@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "poll_vote",
         uniqueConstraints = {
-                @UniqueConstraint(name = "UK_POLL_VOTE_FEED_POLL_VOTER", columnNames = {"FEED_POLL", "VOTER"})
+                @UniqueConstraint(name = "UK_POLL_VOTE_OPTION_VOTER", columnNames = {"POLL_OPTION", "VOTER"})
         },
         indexes = {
                 @Index(name = "IDX_VOTER", columnList = "VOTER"),
