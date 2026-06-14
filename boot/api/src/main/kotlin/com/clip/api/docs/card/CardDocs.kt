@@ -83,4 +83,11 @@ interface CardDocs {
     fun getLatestArticleCard(
         userId: Long,
     ): ResponseEntity<ArticleCardResponse>
+
+    @Operation(summary = "아티클 카드 조회 API V2", description = """
+        - 최신 아티클 카드 3건 조회 API
+    """)
+    fun getLatestArticleCards(
+        userId: Long,
+    ): ResponseEntity<List<ArticleCardResponse>>
 }

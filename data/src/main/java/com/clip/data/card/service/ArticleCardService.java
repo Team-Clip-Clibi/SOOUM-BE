@@ -24,6 +24,10 @@ public class ArticleCardService {
         return articleCardRepository.findLatestArticleFeedCard();
     }
 
+    public List<FeedCard> findLatestArticleFeedCards() {
+        return articleCardRepository.findLatestArticleFeedCards();
+    }
+
     public boolean isArticleCard(Long feedCardPk) {
         return articleCardRepository.existsByFeedCardPk(feedCardPk);
     }
