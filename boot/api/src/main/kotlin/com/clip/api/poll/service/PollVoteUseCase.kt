@@ -4,8 +4,11 @@ import com.clip.api.poll.controller.dto.PollVoteResponse
 import com.clip.api.poll.mapper.PollMapper
 import com.clip.data.member.service.MemberService
 import com.clip.data.poll.entity.FeedPoll
+import com.clip.data.poll.entity.PollVote
 import com.clip.data.poll.service.PollOptionService
 import com.clip.data.poll.service.PollVoteService
+import com.clip.global.exception.IllegalStateException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,8 +25,12 @@ class PollVoteUseCase(
         val selectedOption = pollOptionService.findWithFeedPoll(pollOptionId)
         val feedPoll = selectedOption.feedPoll
 
-        pollVoteService.insertIfAbsentPollVote(feedPoll.pk, selectedOption.pk, voter.pk)
-        return getPollVoteResult(feedPoll, voter.pk)
+        return try {
+        pollVoteService.save(PollVote(voter, feedPoll, selectedOption))
+        getPollVoteResult(feedPoll, voter.pk)
+        } catch (e: DataIntegrityViolationException) {
+            throw IllegalStateException.AlreadyCompletedException()
+        }
     }
 
     @Transactional
