@@ -88,7 +88,8 @@ class CardMapper(
         userId: Long,
         tags: List<Tag>,
         feedViews: Long,
-        isReported: Boolean
+        isReported: Boolean,
+        poll: PollResponse?
     ): FeedCardDetailResponse =
         FeedCardDetailResponse(
             cardId = card.pk,
@@ -113,6 +114,7 @@ class CardMapper(
             tags = tags.map { TagResponse(it.pk, it.content) },
             isOwnCard = writer.pk == userId,
             isFeedCard = true,
+            poll = poll,
             visitedCnt = feedViews,
             isReported = isReported
         )

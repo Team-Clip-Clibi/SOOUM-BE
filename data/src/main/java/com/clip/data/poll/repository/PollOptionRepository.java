@@ -14,4 +14,7 @@ public interface PollOptionRepository extends JpaRepository<PollOption, Long> {
 
     @Query("select po from PollOption po where po.feedPoll.pk = :feedPollPk order by po.pk asc")
     List<PollOption> findByFeedPollPk(@Param("feedPollPk") Long feedPollPk);
+
+    @Query("select po from PollOption po where po.feedPoll.feedCard.pk = :feedCardPk order by po.pk asc")
+    List<PollOption> findByFeedCardPk(@Param("feedCardPk") Long feedCardPk);
 }
