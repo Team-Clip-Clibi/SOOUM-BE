@@ -86,7 +86,7 @@ class CardUseCase(
     @Transactional
     fun createFeedCard(
         httpServletRequest: HttpServletRequest,
-        createFeedCardRequest: CreateFeedCardRequest,
+        createFeedCardRequest: FeedCardCreateRequest,
         userId: Long
     ): CreateCardResponse {
         val member = handleBanStatus(memberService.findMember(userId))
@@ -97,6 +97,7 @@ class CardUseCase(
         val feedCard = feedCardService.saveFeedCard(
             cardMapper.toFeedCard(
                 createFeedCardRequest,
+                (createFeedCardRequest as? CreateFeedCardWithPollRequest)?.hasPoll ?: false,
                 getIp(httpServletRequest),
                 member
             )
@@ -137,8 +138,8 @@ class CardUseCase(
         }
 
         if (createFeedCardRequest is CreateFeedCardWithPollRequest && createFeedCardRequest.hasPoll) {
-            val feedPoll = feedPollService.saveFeedPoll(feedCard, createFeedCardRequest.pollType)
-            pollOptionService.savePollOptions(feedPoll, createFeedCardRequest.pollContents)
+            val feedPoll = feedPollService.saveFeedPoll(feedCard, requireNotNull(createFeedCardRequest.pollType))
+            pollOptionService.savePollOptions(feedPoll, requireNotNull(createFeedCardRequest.pollContents))
         }
 
         return CreateCardResponse(feedCard.pk)
