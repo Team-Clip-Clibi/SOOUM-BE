@@ -7,6 +7,7 @@ import com.clip.data.follow.service.FollowService
 import com.clip.data.img.service.ProfileImgService
 import com.clip.data.member.entity.Member
 import com.clip.data.member.entity.Role
+import com.clip.data.member.service.InternalTesterService
 import com.clip.data.member.service.MemberService
 import com.clip.data.member.service.SuspendedService
 import com.clip.data.visitor.service.VisitorService
@@ -35,6 +36,7 @@ class MemberUseCase(
     private val feedCardService: FeedCardService,
     private val followService: FollowService,
     private val blockMemberService: BlockMemberService,
+    private val internalTesterService: InternalTesterService,
 ) {
     companion object {
         private val FORBIDDEN_NICKNAME = listOf("숨 운영자", "숨 운영진", "숨 관리자", "숨 관리진", "운영자", "운영진", "관리자", "관리진")
@@ -258,6 +260,9 @@ class MemberUseCase(
 
     fun getUserRole(userId: Long): UserRoleResponse {
         val member = memberService.findMember(userId)
-        return UserRoleResponse(role = member.role)
+        return UserRoleResponse(
+            role = member.role,
+            isTester = internalTesterService.isTester(userId)
+        )
     }
 }
