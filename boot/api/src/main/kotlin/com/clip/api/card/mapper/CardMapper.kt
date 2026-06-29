@@ -22,7 +22,8 @@ class CardMapper(
     private val s3ImgPathProperties: S3ImgPathProperties
 ) {
     fun toFeedCard(
-        request: CreateFeedCardRequest,
+        request: FeedCardCreateRequest,
+        hasPoll: Boolean,
         requestIp: String,
         member: Member,
     ): FeedCard {
@@ -47,7 +48,7 @@ class CardMapper(
             requestIp,
             isStory,
             request.tags.isEmpty() || DeactivateTagWords.deactivateWordsList.none { request.tags.contains(it) },
-            request.hasPoll,
+            hasPoll,
         )
     }
 
