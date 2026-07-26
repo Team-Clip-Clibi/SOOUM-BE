@@ -99,6 +99,7 @@ interface MemberDocs {
     @Operation(summary = "사용자 역할 조회 API", description = """)
         - 사용자 역할 조회 API
         - 사용자의 역할(ROLE_USER, ROLE_ADMIN 등)을 조회합니다.
+        - 내부 테스터 여부를 함께 조회합니다.
     """)
     fun getUserRole(userId: Long): ResponseEntity<UserRoleResponse>
 }

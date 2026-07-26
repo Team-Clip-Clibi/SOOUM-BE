@@ -9,7 +9,8 @@ data class MyProfileInfoResponse(
     val todayVisitCnt: Long,
     val cardCnt: Long,
     val followingCnt: Long,
-    val followerCnt: Long
+    val followerCnt: Long,
+    val bio: String?,
 )
 
 data class UserProfileInfoResponse(
@@ -22,5 +23,6 @@ data class UserProfileInfoResponse(
     val followingCnt: Long,
     val followerCnt: Long,
     val isAlreadyFollowing: Boolean,
-    val isBlocked: Boolean
+    val isBlocked: Boolean,
+    val bio: String?,
 )

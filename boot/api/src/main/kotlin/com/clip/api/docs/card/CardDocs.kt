@@ -18,6 +18,16 @@ interface CardDocs {
         userId: Long,
     ): ResponseEntity<CreateCardResponse>
 
+    @Operation(summary = "피드 카드 작성 API V2", description = """
+        - 피드 카드 작성 API
+        - 투표 기능이 추가된 버전입니다.
+    """)
+    fun createFeedCardV2(
+        request: HttpServletRequest,
+        createFeedCardWithPollRequest: CreateFeedCardWithPollRequest,
+        userId: Long,
+    ): ResponseEntity<CreateCardResponse>
+
     @Operation(summary = "답카드 작성 API", description = """
         - 답카드 작성 API
     """)
@@ -73,4 +83,11 @@ interface CardDocs {
     fun getLatestArticleCard(
         userId: Long,
     ): ResponseEntity<ArticleCardResponse>
+
+    @Operation(summary = "아티클 카드 조회 API V2", description = """
+        - 최신 아티클 카드 3건 조회 API
+    """)
+    fun getLatestArticleCards(
+        userId: Long,
+    ): ResponseEntity<List<ArticleCardResponse>>
 }

@@ -21,6 +21,8 @@ class FeedMapper(
         comments: List<CommentCard>,
         feedLikes: List<FeedLike>,
         distance: String?,
+        userId: Long,
+        pollVoterCnt: Long?,
     ): FeedCardResponse =
         FeedCardResponse(
             cardId = targetFeedCard.pk,
@@ -36,7 +38,9 @@ class FeedMapper(
             distance = distance,
             createdAt = targetFeedCard.createdAt,
             storyExpirationTime = if (targetFeedCard.isStory) targetFeedCard.createdAt.plusHours(24) else null,
-            isAdminCard = targetFeedCard.writer.role == Role.ADMIN
+            isAdminCard = targetFeedCard.writer.role == Role.ADMIN,
+            isLike = CardUtil.isLiked(targetFeedCard, feedLikes, userId),
+            pollVoterCnt = pollVoterCnt
         )
 
     fun toFeedResponse(
@@ -44,6 +48,8 @@ class FeedMapper(
         comments: List<CommentCard>,
         feedLikes: List<FeedLike>,
         distance: String?,
+        userId: Long,
+        pollVoterCnt: Long?,
     ): FeedCardResponse =
         FeedCardResponse(
             cardId = feedcard.pk,
@@ -59,7 +65,9 @@ class FeedMapper(
             distance = distance,
             createdAt = feedcard.createdAt,
             storyExpirationTime = if (feedcard.isStory) feedcard.createdAt.plusHours(24) else null,
-            isAdminCard = Role.valueOf(feedcard.role) == Role.ADMIN
+            isAdminCard = Role.valueOf(feedcard.role) == Role.ADMIN,
+            isLike = feedLikes.any { it.targetCard?.pk == feedcard.pk && it.likedMember?.pk == userId },
+            pollVoterCnt = pollVoterCnt
         )
 
 

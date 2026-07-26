@@ -20,9 +20,17 @@ public interface ArticleCardRepository extends JpaRepository<ArticleCard, Long> 
            "limit 1")
     Optional<FeedCard> findLatestArticleFeedCard();
 
+    @Query("select f from FeedCard f " +
+            "join ArticleCard a on f.pk = a.feedCardPk " +
+            "join fetch f.writer " +
+            "where f.isDeleted = false " +
+            "and f.isFeedActive = true " +
+            "order by a.pk desc " +
+            "limit 3")
+    List<FeedCard> findLatestArticleFeedCards();
+
     boolean existsByFeedCardPk(Long feedCardPk);
 
     @Query("select a from ArticleCard a where a.feedCardPk in :feedCardPkList")
     List<ArticleCard> findArticleCardInFeedCards(@Param("feedCardPkList") List<Long> feedCardPkList);
 }
-

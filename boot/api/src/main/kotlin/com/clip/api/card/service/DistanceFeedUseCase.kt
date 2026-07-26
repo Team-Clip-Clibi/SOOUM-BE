@@ -8,6 +8,8 @@ import com.clip.data.card.service.ArticleCardService
 import com.clip.data.card.service.CommentCardService
 import com.clip.data.card.service.FeedCardService
 import com.clip.data.card.service.FeedLikeService
+import com.clip.data.poll.service.FeedPollService
+import com.clip.data.poll.service.PollVoteService
 import org.geolatte.geom.jts.JTS
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -22,6 +24,8 @@ class DistanceFeedUseCase(
     private val articleCardService: ArticleCardService,
     private val feedMapper: FeedMapper,
     private val feedCardService: FeedCardService,
+    private val feedPollService: FeedPollService,
+    private val pollVoteService: PollVoteService,
 ) {
 
     fun findDistanceFeeds(
@@ -42,13 +46,21 @@ class DistanceFeedUseCase(
 
         val feedLikes = feedLikeService.findByTargetCardIds(distanceFeeds.map { it.pk })
         val comments = commentCardService.findChildCommentsByParents(distanceFeeds.map { it.pk })
+        val pollVoterCntByFeedCardPk = pollVoteService.findVotedFeedCardPksByFeedCardPks(
+            filteredDistanceFeeds.map { it.pk }
+        ).groupingBy { it }.eachCount()
+        val pollFeedCardPks = feedPollService.findFeedCardPksByFeedCardPks(
+            filteredDistanceFeeds.map { it.pk }
+        ).toSet()
 
         return filteredDistanceFeeds.map {
             feedMapper.toFeedResponse(
                 it,
                 comments,
                 feedLikes,
-                DistanceDisplayUtil.calculateAndFormat(JTS.to(it.location), latitude, longitude)
+                DistanceDisplayUtil.calculateAndFormat(JTS.to(it.location), latitude, longitude),
+                userId,
+                if (pollFeedCardPks.contains(it.pk)) pollVoterCntByFeedCardPk[it.pk]?.toLong() ?: 0L else null
             )
         }
     }

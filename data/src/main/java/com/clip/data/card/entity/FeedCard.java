@@ -24,11 +24,18 @@ public class FeedCard extends Card {
     @Column(name = "IS_FEED_ACTIVE")
     private boolean isFeedActive;
 
+    @Column(name = "HAS_POLL", nullable = false)
+    private boolean hasPoll;
+
     @Builder
-    public FeedCard(String content, Font font, Point location, CardImgType imgType, String imgName, Member writer, boolean isStory, boolean isFeedActive, String writerIp) {
+    public FeedCard(
+            String content, Font font, Point location, CardImgType imgType,
+            String imgName, Member writer, String writerIp,
+            boolean isStory, boolean isFeedActive, boolean hasPoll) {
         super(content, font, location, imgType, imgName, writer, writerIp);
         this.isStory = isStory;
         this.isFeedActive = isFeedActive;
+        this.hasPoll = hasPoll;
     }
 
     @Override
