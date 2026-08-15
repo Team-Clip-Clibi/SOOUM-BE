@@ -23,10 +23,13 @@ class RequesterInfoAspect {
         }
 
         log.info {
-            "[Request URI]: ${request.requestURI}, " +
-                    "[Auth Header]: ${request.getHeader("Authorization")}, " +
-                    "[User-Agent]: ${request.getHeader("User-Agent")}," +
-                    " [Client IP]: $ip"
+            listOf(
+                "[Request URI]: ${request.requestURI}",
+                "[Auth Header]: ${request.getHeader("Authorization")}",
+                "[User-Agent]: ${request.getHeader("User-Agent")}",
+                "[APP-version]: ${request.getHeader("version")}",
+                "[Client IP]: $ip"
+            ).joinToString(", ")
         }
     }
 }

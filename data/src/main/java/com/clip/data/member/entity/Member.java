@@ -30,6 +30,9 @@ public class Member extends BaseEntity {
     @Column(name = "DEVICE_OS_VERSION", nullable = false)
     private String deviceOsVersion;
 
+    @Column(name = "APP_VERSION")
+    private String appVersion;
+
     @Column(name = "FIREBASE_TOKEN", columnDefinition = "VARBINARY(400)")
     private String firebaseToken;
 
@@ -91,12 +94,13 @@ public class Member extends BaseEntity {
     @Builder
     public Member(
             String deviceId, DeviceType deviceType, String deviceModel, String deviceOsVersion,
-            String firebaseToken, String nickname, String profileImgName
+            String appVersion, String firebaseToken, String nickname, String profileImgName
     ) {
         this.deviceId = deviceId;
         this.deviceType = deviceType;
         this.deviceModel = deviceModel;
         this.deviceOsVersion = deviceOsVersion;
+        this.appVersion = appVersion;
         this.firebaseToken = firebaseToken;
         this.nickname = nickname;
         this.banCount = 0;
@@ -238,6 +242,13 @@ public class Member extends BaseEntity {
         this.deviceType = deviceType;
         this.deviceModel = deviceModel;
         this.deviceOsVersion = deviceOsVersion;
+        return this;
+    }
+
+    public Member updateAppVersion(String appVersion) {
+        if (appVersion != null && !appVersion.isBlank()) {
+            this.appVersion = appVersion;
+        }
         return this;
     }
 

@@ -22,21 +22,28 @@ class AuthController(
             .let { ResponseEntity.ok().build() }
 
     @PostMapping("/login")
-    override fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
-        val response = authUseCase.login(loginRequest)
+    override fun login(
+        @RequestBody loginRequest: LoginRequest,
+        @RequestHeader("version", required = false) appVersion: String?
+    ): ResponseEntity<LoginResponse> {
+        val response = authUseCase.login(loginRequest, appVersion)
         return ResponseEntity.ok(response)
     }
 
     @PostMapping("/sign-up")
-    override fun signUp(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse> {
-        val response = authUseCase.signUp(signUpRequest)
+    override fun signUp(
+        @RequestBody signUpRequest: SignUpRequest,
+        @RequestHeader("version", required = false) appVersion: String?
+    ): ResponseEntity<SignUpResponse> {
+        val response = authUseCase.signUp(signUpRequest, appVersion)
         return ResponseEntity.ok(response)
     }
 
     @PostMapping("/token/reissue")
     override fun getReissueAccessToken(
         @RequestBody tokenDto: TokenDto,
+        @RequestHeader("version", required = false) appVersion: String?,
     ): ResponseEntity<TokenDto> =
-        authUseCase.reissueAccessToken(tokenDto)
+        authUseCase.reissueAccessToken(tokenDto, appVersion)
             .let { ResponseEntity.ok(it) }
 }

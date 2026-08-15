@@ -32,7 +32,7 @@ class AuthUseCase(
 ) {
 
     @Transactional
-    fun login(request: LoginRequest): LoginResponse {
+    fun login(request: LoginRequest, appVersion: String?): LoginResponse {
         val encryptedDeviceId = request.encryptedDeviceId
         val deviceId = decodeWithRsa.execute(encryptedDeviceId)
 
@@ -46,7 +46,7 @@ class AuthUseCase(
                 request.deviceType,
                 request.deviceModel,
                 request.deviceOsVersion
-            )
+            ).updateAppVersion(appVersion)
         )
 
         return LoginResponse(
@@ -56,7 +56,7 @@ class AuthUseCase(
     }
 
     @Transactional
-    fun signUp(request: SignUpRequest): SignUpResponse {
+    fun signUp(request: SignUpRequest, appVersion: String?): SignUpResponse {
         val encryptedDeviceId = request.memberInfo.encryptedDeviceId
         val deviceId = decodeWithRsa.execute(encryptedDeviceId)
         suspendedService.findSuspensionByDeviceId(deviceId).ifPresent {
@@ -90,6 +90,7 @@ class AuthUseCase(
                     .deviceType(request.memberInfo.deviceType)
                     .deviceModel(request.memberInfo.deviceModel)
                     .deviceOsVersion(request.memberInfo.deviceOsVersion)
+                    .appVersion(appVersion)
                     .firebaseToken(request.memberInfo.fcmToken)
                     .nickname(request.memberInfo.nickname)
                     .profileImgName(normalizedImgName)
@@ -118,7 +119,7 @@ class AuthUseCase(
     }
 
     @Transactional
-    fun reissueAccessToken(request: TokenDto): TokenDto {
+    fun reissueAccessToken(request: TokenDto, appVersion: String?): TokenDto {
         if (blacklistService.findByToken(request.refreshToken).isPresent)
             throw TokenException.BlacklistTokenException(token = request.refreshToken)
 
@@ -134,6 +135,7 @@ class AuthUseCase(
         val refreshToken = refreshTokenService.findByMember(userId)
             .update(reissueToken.refreshToken)
         refreshTokenService.save(refreshToken)
+        memberService.save(memberService.findMember(userId).updateAppVersion(appVersion))
 
         blacklistService.save(
             Blacklist(

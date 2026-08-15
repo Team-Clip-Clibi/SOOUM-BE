@@ -19,14 +19,14 @@ interface AuthDocs {
         - 가입이 되어있는 사용자 : 가입 가능 여부 확인 API에서 banned, withdrawn, registered 값이 모두 false인 사용자
         - accessToken과 refreshToken을 발급합니다.
     """)
-    fun login(loginRequest: LoginRequest) : ResponseEntity<LoginResponse>
+    fun login(loginRequest: LoginRequest, appVersion: String?) : ResponseEntity<LoginResponse>
 
     @Operation(summary = "회원가입 API", description = """
         - 사용자가 회원가입할 수 있도록 합니다. 가입 가능 여부 확인 API에서 가입이 가능한 사용자로 확인된 경우에만 회원가입이 가능합니다.
         - 가입이 가능한 사용자 : 가입 가능 여부 확인 API에서 banned, withdrawn 값이 false이고 registered 값이 true인 사용자
         - 회원가입 시 deviceId는 RSA로 암호화되어 전송됩니다.
     """)
-    fun signUp(signUpRequest: SignUpRequest): ResponseEntity<SignUpResponse>
+    fun signUp(signUpRequest: SignUpRequest, appVersion: String?): ResponseEntity<SignUpResponse>
 
     @Operation(summary = "Access token 재발행 API", description = """
         - Authentication Header에 토큰을 담아 요청하지 않아도 됩니다.
@@ -34,5 +34,5 @@ interface AuthDocs {
         - Refresh Token도 사용되었기 때문에 동일한 기간만큼만 유요한 새로운 Refresh Token도 함께 발행됩니다.
         - 기존의 Refresh Token은 폐기됩니다.
     """)
-    fun getReissueAccessToken(tokenDto: TokenDto): ResponseEntity<TokenDto>
+    fun getReissueAccessToken(tokenDto: TokenDto, appVersion: String?): ResponseEntity<TokenDto>
 }

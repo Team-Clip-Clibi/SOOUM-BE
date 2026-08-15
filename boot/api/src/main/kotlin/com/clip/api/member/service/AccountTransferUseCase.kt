@@ -54,7 +54,7 @@ class AccountTransferUseCase(
     }
 
     @Transactional
-    fun transferMemberAccount(transferRequest: TransferAccountRequest) {
+    fun transferMemberAccount(transferRequest: TransferAccountRequest, appVersion: String?) {
         val accountTransfer = accountTransferService.findAvailableAccountTransfer(transferRequest.transferCode)
         val transferCodeOwner = accountTransfer.member
         val decryptedNewDeviceId = rsaUseCase.decodeDeviceId(transferRequest.encryptedDeviceId)
@@ -66,7 +66,8 @@ class AccountTransferUseCase(
             transferRequest.deviceType,
             transferRequest.deviceModel,
             transferRequest.deviceOsVersion
-        ).updateFCMToken(memberService.findByDeviceId(decryptedNewDeviceId).firebaseToken)
+        ).updateAppVersion(appVersion)
+            .updateFCMToken(memberService.findByDeviceId(decryptedNewDeviceId).firebaseToken)
 
         accountTransferService.deleteAccountTransfer(transferCodeOwner.pk)
 
