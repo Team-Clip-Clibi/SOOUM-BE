@@ -23,7 +23,11 @@ class MemberSettingController(
         ResponseEntity.ok(accountTransferUseCase.updateAccountTransferId(userId))
 
     @PostMapping ("/account/transfer")
-    override fun transferAccount(@RequestBody transferRequest: TransferAccountRequest, @AccessUser userId: Long) {
-        accountTransferUseCase.transferMemberAccount(transferRequest)
+    override fun transferAccount(
+        @RequestBody transferRequest: TransferAccountRequest,
+        @AccessUser userId: Long,
+        @RequestHeader("version", required = false) appVersion: String?
+    ) {
+        accountTransferUseCase.transferMemberAccount(transferRequest, appVersion)
     }
 }

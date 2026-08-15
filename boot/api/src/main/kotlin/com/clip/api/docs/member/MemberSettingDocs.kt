@@ -22,5 +22,5 @@ interface MemberSettingDocs {
     @Operation(summary = "계정 이관 API", description = """
         - 사용자가 자신의 계정을 이관할 수 있도록 합니다.
     """)
-    fun transferAccount(transferRequest: TransferAccountRequest, userId: Long)
+    fun transferAccount(transferRequest: TransferAccountRequest, userId: Long, appVersion: String?)
 }
